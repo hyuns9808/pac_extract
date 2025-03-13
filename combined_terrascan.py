@@ -230,7 +230,7 @@ if len(matchService) == 0:
     print(f"\n{toolName.upper()} does not have a specific folder of policies for '{findcatOrg}'...")
 # 1.B: 1 SPECIFIC folder for service, get contents of that folder
 elif len(matchService) == 1:
-    print(f"{toolName.upper()} provides the following folder for '{findcatOrg}':")
+    print(f"{toolName.upper()} provides a specific folder of policies for '{findcatOrg}':")
     for service in matchService:
         specificTotal += get_policy_from_folder(service, extracted_data)
     print("Please refer to specific folder for further details.")

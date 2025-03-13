@@ -188,6 +188,8 @@ def write_policies_to_worksheet(givenWorksheet, policyData, format):
 
 # Create "toolName_targetString.xlsx" file and write policies extracted from policyList
 def write_to_excel(policyList, toolName, targetString, path):
+    print(f"\n{toolName.upper()} SUMMARY:")
+    print(f"\n{toolName.upper()} TOTAL POLICIES: {len(policyList)}")
     if not os.path.exists(f'{path}\\{findcatOrg}'):
         os.makedirs(f'{path}\\{findcatOrg}')
     try:
@@ -280,7 +282,7 @@ if len(matchService) == 0:
 # 1.B: 1 SPECIFIC folder for service, get contents of that folder
 elif len(matchService) == 1:
     for service in matchService:
-        print(f"\nTfsec provides the following folder for '{findcatOrg}': {service}")
+        print(f"\nTfsec provides a specific folder of policies for '{findcatOrg}': {service}")
         print("Please refer to specific folder for further details.")
         get_policy_from_folder(service, extracted_data)
 # 1.C: More than 1 SPECIFIC folder for service, get contents of all folders
