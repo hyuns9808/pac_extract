@@ -13,7 +13,7 @@ Although most open-source IaC scanning tools provide information regarding polic
 3. [checkov](https://github.com/bridgecrewio/checkov)
 4. [tfsec](https://github.com/aquasecurity/tfsec)
 
-This allows anyone planning to create a database for PaC files to gather insight into what PaC popular open-source IaC tools use!
+This allows anyone planning to create a database for PaC files to gather insight into what PaCs popular open-source IaC tools use!
 
 ## Highlights
 
@@ -51,12 +51,12 @@ Finally, all parsed policies are saved as .xlsx files per tool.
 
 ## Creator
 
-<p align="center">
-  <img alt="https://github.com/hyuns9808" src="https://github.com/hyuns9808.png?size=300">
-</p>
-<p align="center">
-  Fun fact: this majestic beast is a stray that I met at <a href="https://maps.app.goo.gl/78d8uQ19jJc6BPx88">Gamcheon Culture Village!</a>
-</p>
+<div style="text-align: center; margin-top: 20px;">
+    <!-- Image with explanation below it -->
+    <img src="https://github.com/hyuns9808.png?size=300" alt="Cute, majestic cat I found" title="Majestic Cat" style="max-width: 100%; height: auto;">
+    <p>Fun fact: this majestic beast is a stray that I met at <a href="https://maps.app.goo.gl/78d8uQ19jJc6BPx88">Gamcheon Culture Village!</a></p>
+</div>
+
 <h3 align="center">
     <a href="https://github.com/hyuns9808">Calvin(Hyunsoo) Yang</a>
 </h3>
