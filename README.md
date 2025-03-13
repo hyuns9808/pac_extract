@@ -50,8 +50,13 @@ Then it locates the policy files within the open source tools and parses them vi
 All parsed policies are finally saved as .xlsx files per tool.
 
 ## Creator
-[![Hyunsoo Yang](https://github.com/hyuns9808.png?size=300)](https://github.com/hyuns9808)
 
-[Calvin(Hyunsoo) Yang | 양현수](https://github.com/hyuns9808.png?size=100)
-
-Check out my [personal website!](https://hyuns9808.github.io/calya/)
+<p align="center">
+  <img alt="https://github.com/hyuns9808" src="https://github.com/hyuns9808.png?size=300">
+</p>
+<h3 align="center">
+    <a href="https://github.com/hyuns9808">Calvin(Hyunsoo) Yang</a>
+</h3>
+<h3 align="center">
+    Check out my <a href="https://hyuns9808.github.io/calya/">personal website!</a>
+</h3>
