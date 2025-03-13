@@ -101,7 +101,7 @@ Finally, all parsed PaCs are saved as .xlsx files per tool.
 
 <div align="center" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100vh; width: 100%;">
     <img src="https://github.com/hyuns9808.png?size=300" alt="Majestic cat I found" title="Majestic Cat" style="max-width: 100%; height: auto;">
-    <p>Fun fact: this majestic beast is a stray that I met at <a href="https://maps.app.goo.gl/78d8uQ19jJc6BPx88">Gamcheon Culture Village!</a></p>
+    <p>Fun fact: This majestic beast is a stray that I met at <a href="https://maps.app.goo.gl/78d8uQ19jJc6BPx88">Gamcheon Culture Village!</a></p>
 </div>
 
 <h3 align="center">
