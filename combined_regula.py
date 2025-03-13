@@ -83,11 +83,11 @@ def search_all_policies(targetString, serviceList, resultList):
         result = get_matching_policy_from_folder(service, targetString, resultList)
         if result != 0:
             matchServices[service] = result
+            total += result
     if total != 0:
         print("Folders that contain policies related to " + findcatOrg + ":")
         for matchService in matchServices:
             print(f"\t{matchService}: {matchServices[matchService]}")
-            total += matchServices[matchService]
     else:
         print(f"No additional folders with policies that mention {findcatOrg}...")
     return total

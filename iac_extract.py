@@ -29,9 +29,11 @@ def open_folder(path):
 def initial_run(tools, toolFolder, resultFolder):
     # Input header
     print('-' * 80)
-    print("PaC Lookup Parser")
+    print("IaC_Extract")
     print('-' * 80)
-    print("Written by HYUNSOO YANG/양현수")
+    print("Written by Calvin (Hyunsoo) Yang | 양현수 - https://github.com/hyuns9808")
+    print("Public repo of IaC_Extract - https://github.com/hyuns9808/IaC_Extract")
+    print("")
     print('-' * 80)
     print("This program automatically downloads the most recent version of each open source program.")   
     print("Then takes a STRING as an input and gets the PaC files of 4 tools that contains the string.")
