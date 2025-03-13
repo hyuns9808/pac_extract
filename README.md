@@ -51,7 +51,7 @@ Finally, all parsed policies are saved as .xlsx files per tool.
 
 ## Creator
 
-<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100vh;">
+<div style="margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center; text-align: center;">>
     <img src="https://github.com/hyuns9808.png?size=300" alt="Cute, majestic cat I found" title="Majestic Cat" style="max-width: 100%; height: auto;">
     <p>Fun fact: this majestic beast is a stray that I met at <a href="https://maps.app.goo.gl/78d8uQ19jJc6BPx88">Gamcheon Culture Village!</a></p>
 </div>
