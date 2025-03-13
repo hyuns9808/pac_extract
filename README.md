@@ -85,7 +85,7 @@ This allows anyone planning to create a database for PaC files to gather insight
 
 **IaC_Extract** requires the following conditions:
 
-- A computer with at least 100MB of free memory
+- A computer with at least 100MB of free storage space
 - The following Python packages:
     - requests
     - xlsxwriter
