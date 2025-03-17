@@ -108,5 +108,5 @@ Finally, all parsed PaCs are saved as .xlsx files per tool.
     <a href="https://github.com/hyuns9808">Calvin(Hyunsoo) Yang</a>
 </h3>
 <h3 align="center">
-    Check out my <a href="https://hyuns9808.github.io/calya/">personal website!</a>
+    Check out my <a href="https://hyuns9808.github.io/">personal website!</a>
 </h3>
