@@ -15,9 +15,10 @@ This allows anyone planning to create a database for PaC files to gather insight
 
 ## How does it work?
 
-**IaC_Extract** downloads the repositories provided by all four open-source tools. 
-Next, it locates the PaC files within the open-source tools and parses them via RegEx defined per tool.
-Finally, all parsed PaCs are saved as .xlsx files per tool.
+**IaC_Extract** operates in the following order:
+1. Downloads repositories provided by all four open-source tools. 
+2. Locates PaC files within the open-source tools and parses them via RegEx defined per tool.
+3. All parsed PaCs are saved as .xlsx files per tool.
 
 ## Requirements
 
