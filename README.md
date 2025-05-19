@@ -3,9 +3,7 @@
 <h1 align="center" style="border-bottom: none;">⚗️ IaC_Extract</h1>
 <h3 align="center">Fully automated PaC(Policy as Code) extraction from open-source IaC(Infrastructure as Code) tools</h3>
 
-**IaC_Extract** automates the tiresome process of locating relevant PaC(Policy as Code) files from popular open-source IaC(Infrastructure as Code) tools.
-
-Although most open-source IaC scanning tools provide information regarding policies they use to scan IaC files, there is no combined document or process to collect such information.
+**IaC_Extract** automates the tiresome process of locating relevant PaC(Policy as Code) files from popular open-source IaC(Infrastructure as Code) tools. Although most open-source IaC scanning tools provide information regarding policies they use to scan IaC files, there is no combined document or process to collect such information.
 
 **IaC_Extract** directly pools all relevant PaCs from the following 4 popular open-source IaC scanning tools:
 1. [Regula](https://github.com/fugue/regula)
@@ -14,6 +12,22 @@ Although most open-source IaC scanning tools provide information regarding polic
 4. [tfsec](https://github.com/aquasecurity/tfsec)
 
 This allows anyone planning to create a database for PaC files to gather insight into what PaCs popular open-source IaC tools use!
+
+## How does it work?
+
+**IaC_Extract** downloads the repositories provided by all four open-source tools. 
+Next, it locates the PaC files within the open-source tools and parses them via RegEx defined per tool.
+Finally, all parsed PaCs are saved as .xlsx files per tool.
+
+## Requirements
+
+**IaC_Extract** requires the following conditions:
+
+- A computer with at least 100MB of free storage space
+- The following Python packages:
+    - requests
+    - xlsxwriter
+    - pathlib (if using Python version lower than 3.4+)
 
 ## Highlights
 
@@ -51,23 +65,6 @@ This allows anyone planning to create a database for PaC files to gather insight
     - **Secure Example**: Code snippet of secure case corresponding to PaC
     - **Policy**: Link to tfsec GitHub docs that describe the policy of the corresponding PaC
     - **Links**: Links to tfsec GitHub docs or any external links that describes the corresponding PaC and its issues
-    
-
-## Requirements
-
-**IaC_Extract** requires the following conditions:
-
-- A computer with at least 100MB of free storage space
-- The following Python packages:
-    - requests
-    - xlsxwriter
-    - pathlib (if using Python version lower than 3.4+)
-
-## How does it work?
-
-**IaC_Extract** downloads the repositories provided by all four open-source tools. 
-Next, it locates the PaC files within the open-source tools and parses them via RegEx defined per tool.
-Finally, all parsed PaCs are saved as .xlsx files per tool.
 
 ## Creator
 
