@@ -20,65 +20,37 @@ This allows anyone planning to create a database for PaC files to gather insight
 - Searches all PaCs of four open-source IaC scanning tools related to user input
 - Saves them in separate excel(.xlsx) files per tool
 - Saves the following properties per PaC of **Regula**:
-    - RuleID
-        - Identification code assigned per PaC
-    - Title
-        - Brief description of what the PaC checks
-    - File Location
-        - PaC file location from the downloaded repository of Regula
-    - {search_String} Specified
-        - Whether there is a specific PaC folder related to the user's input string
-    - Severity
-        - How severe the issue detected by the PaC is regarding security or infrastructure integrity
-    - Summary
-        - Detailed description of what the PaC checks
+    - **RuleID**: Identification code assigned per PaC
+    - **Title**: Brief description of what the PaC checks
+    - **File Location**: PaC file location from the downloaded repository of Regula
+    - **{search_String} Specified**: Whether there is a specific PaC folder related to the user's input string
+    - **Severity**: How severe the issue detected by the PaC is regarding security or infrastructure integrity
+    - **Summary**: Detailed description of what the PaC checks
 - Saves the following properties per PaC of **Terrascan**:
-    - JSON ID
-        - JSON identification code assigned per PaC
-    - Rego ID
-        - Rego identification code assigned per PaC
-    - Category
-        - Assigned Terrascan internal category of PaC
-    - File Location
-        - PaC file location from the downloaded repository of Terrascan
-    - {search_String} Specified
-        - Whether there is a specific PaC folder related to the user's input string
-    - Severity
-        - How severe the issue detected by the PaC is regarding security or infrastructure integrity
-    - Description
-        - Detailed description of what the PaC checks
+    - **JSON ID**: JSON identification code assigned per PaC
+    - **Rego ID**: Rego identification code assigned per PaC
+    - **Category**: Assigned Terrascan internal category of PaC
+    - **File Location**: PaC file location from the downloaded repository of Terrascan
+    - **{search_String} Specified**: Whether there is a specific PaC folder related to the user's input string
+    - **Severity**: How severe the issue detected by the PaC is regarding security or infrastructure integrity
+    - **Description**: Detailed description of what the PaC checks
 - Saves the following properties per PaC of **Checkov**:
-    - Code
-        - Identification code assigned per PaC
-    - Resource
-        - Assigned Checkov internal resource(similar to category) of PaC
-    - Description
-        - Detailed description of what the PaC checks
-    - File Name
-        - Name of corresponding PaC file
-    - Link
-        - Link to Checkov GitHub docs that describes the corresponding PaC
+    - **Code**: Identification code assigned per PaC
+    - **Resource**: Assigned Checkov internal resource(similar to category) of PaC
+    - **Description**: Detailed description of what the PaC checks
+    - **File Name**: Name of corresponding PaC file
+    - **Link**: Link to Checkov GitHub docs that describes the corresponding PaC
 - Saves the following properties per PaC of **tfsec**:
-    - Rule Code
-        - Identification code assigned per PaC
-    - Severity
-        - How severe the issue detected by the PaC is regarding security or infrastructure integrity
-    - Title
-        - Brief description of what the PaC checks
-    - Explanation
-        - Detailed Explanation of what the PaC checks
-    - Possible Impact
-        - Potential impact of issues caused by problem detected by PaC
-    - Suggested Resolution
-        - tfsec's suggested solution to problem detected by PaC
-    - Insecure Example
-        - Code snippet of insecure case corresponding to PaC
-    - Secure Example
-        - Code snippet of secure case corresponding to PaC
-    - Policy
-        - Link to tfsec GitHub docs that describe the policy of the corresponding PaC
-    - Links
-        - Links to tfsec GitHub docs or any external links that describes the corresponding PaC and its issues
+    - **Rule Code**: Identification code assigned per PaC
+    - **Severity**: How severe the issue detected by the PaC is regarding security or infrastructure integrity
+    - **Title**: Brief description of what the PaC checks
+    - **Explanation**: Detailed Explanation of what the PaC checks
+    - **Possible Impact**: Potential impact of issues caused by problem detected by PaC
+    - **Suggested Resolution**: tfsec's suggested solution to problem detected by PaC
+    - **Insecure Example**: Code snippet of insecure case corresponding to PaC
+    - **Secure Example**: Code snippet of secure case corresponding to PaC
+    - **Policy**: Link to tfsec GitHub docs that describe the policy of the corresponding PaC
+    - **Links**: Links to tfsec GitHub docs or any external links that describes the corresponding PaC and its issues
     
 
 ## Requirements
