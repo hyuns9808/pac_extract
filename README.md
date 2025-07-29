@@ -1,11 +1,11 @@
-# IaC_Extract
+# PaC_Extract
 
-<h1 align="center" style="border-bottom: none;">⚗️ IaC_Extract</h1>
+<h1 align="center" style="border-bottom: none;">⚗️ PaC_Extract</h1>
 <h3 align="center">Fully automated PaC(Policy as Code) extraction from open-source IaC(Infrastructure as Code) tools</h3>
 
-**IaC_Extract** automates the tiresome process of locating relevant PaC(Policy as Code) files from popular open-source IaC(Infrastructure as Code) tools. Although most open-source IaC scanning tools provide information regarding policies they use to scan IaC files, there is no combined document or process to collect such information.
+**PaC_Extract** automates the tiresome process of locating relevant PaC(Policy as Code) files from popular open-source IaC(Infrastructure as Code) tools. Although most open-source IaC scanning tools provide information regarding policies they use to scan IaC files, there is no combined document or process to collect such information.
 
-**IaC_Extract** directly pools all relevant PaCs from the following 4 popular open-source IaC scanning tools:
+**PaC_Extract** directly pools all relevant PaCs from the following 4 popular open-source IaC scanning tools:
 1. [Regula](https://github.com/fugue/regula)
 2. [Terrascan](https://github.com/tenable/terrascan)
 3. [Checkov](https://github.com/bridgecrewio/checkov)
@@ -15,14 +15,14 @@ This allows anyone planning to create a database for PaC files to gather insight
 
 ## How does it work?
 
-**IaC_Extract** operates in the following order:
+**PaC_Extract** operates in the following order:
 1. Downloads repositories provided by all four open-source tools. 
 2. Locates PaC files within the open-source tools and parses them via RegEx defined per tool.
 3. All parsed PaCs are saved as .xlsx files per tool.
 
 ## Requirements
 
-**IaC_Extract** requires the following conditions:
+**PaC_Extract** requires the following conditions:
 
 - A computer with at least 100MB of free storage space
 - The following Python packages:
