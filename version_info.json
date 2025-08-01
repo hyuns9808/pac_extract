@@ -1,0 +1,26 @@
+{
+    "version": "1.0.0",
+    "date": "20250801",
+    "tool_info": {
+        "Checkov": {
+            "repo_git": "https://github.com/bridgecrewio/checkov.git",
+            "folder_path": "checkov/terraform/checks/resource",
+            "branch": "main"
+        },
+        "KICS": {
+            "repo_git": "https://github.com/Checkmarx/kics.git",
+            "folder_path": "assets/queries/terraform",
+            "branch": "master"
+        },
+        "Terrascan": {
+            "repo_git": "https://github.com/tenable/terrascan.git",
+            "folder_path": "pkg/policies/opa/rego",
+            "branch": "master"
+        },
+        "Trivy": {
+            "repo_git": "https://github.com/aquasecurity/trivy-checks.git",
+            "folder_path": "checks",
+            "branch": "main"
+        }
+    }
+}
