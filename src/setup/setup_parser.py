@@ -15,4 +15,10 @@ def parser_setup():
     # --tools/-t = List of tools to update
     parser.add_argument('-t', '--tools', nargs="+",
                         help="List of tools to update repos (only allowed with --update)")
+    # --tools/-t = List of tools to update
+    # parser.add_argument('--id', required=True, help='Partial ID to match')
+    # --iac/-i = Type of IaC to look for(Terraform, CloudFormation, etc.)
+    parser.add_argument('-i','--iac', required=True, help='IaC type (e.g., Terraform)')
+    # --keyword/-k = Partial keyword to look for in either resource name or description. Returns any matches.
+    parser.add_argument('-k','--keyword', required=True, help='Keyword to match in Entity or Policy')
     return parser

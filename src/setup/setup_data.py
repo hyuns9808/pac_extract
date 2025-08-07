@@ -1,5 +1,5 @@
 '''
-File that stores all functions related to downloading pac data from repos
+File that stores all functions related to downloading repo/URL
 '''
 import os
 import re
@@ -8,6 +8,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 from typing import List, Optional
+from .setup_url.setup_kics import get_kics_queries
+
 
 # Regexes to detect progress lines from git
 PHASE_PATTERNS = {
@@ -16,6 +18,11 @@ PHASE_PATTERNS = {
     "Compressing objects": re.compile(r"Compressing objects:\s+(\d+)%"),
     "Resolving deltas":    re.compile(r"Resolving deltas:\s+(\d+)%"),
     "Updating files":      re.compile(r"Updating files:\s+(\d+)%"),
+}
+
+# URL tool function mappings
+tool_function = {
+    "KICS": get_kics_queries
 }
 
 def _make_progress():
@@ -178,24 +185,13 @@ def get_pac_folder(
     finally:
         # Remove temporary clone (keeps disk clean)
         shutil.rmtree(temp_root, ignore_errors=True)
-        print(f"✅ Download complete:  {tool_name}\n")
-
-'''
-if __name__ == "__main__":
-    save_dir = create_base_dir()
-    
-    get_pac_folder(
-        tool_name="Checkov",
-        repo_git="https://github.com/bridgecrewio/checkov.git",
-        folder="checkov/terraform/checks/resource",
-        dest=os.path.join(save_dir, "Checkvo"),
-        ref="main",
-        )
-    get_pac_folder(
-        tool_name="KICS",
-        repo_git="https://github.com/Checkmarx/kics.git",
-        folder="assets/queries/terraform",
-        dest=os.path.join(save_dir, "KICS"),
-        ref="master",
-        )
-'''   
+        print(f"PaC folder download complete of tool:  {tool_name}\n")
+        
+def get_pac_url(
+    tool_name: str,
+    url: str
+):
+    """
+    Call function per tool to get PaCs from specified URL
+    """
+    tool_function[tool_name](url)

@@ -5,11 +5,10 @@ Runs the following operations:
 2. If initial run, invalid init_token or data different than info in version_info.json, ignore user input and download all repos
 3. If init_token info and data is correct, download only input given from user
 '''
-import difflib
+import ast
 import json
 import os
 import re
-import sys
 
 def get_version_data(version_data_json_path):
     '''Read 'version_info.json' file'''
@@ -50,21 +49,26 @@ def data_checker():
         # 2. Check if 'version_token.flag' exists and is valid
         if os.path.exists(ver_token_path):
             # 3. Check if 'version_info.json' and 'version_token.flag' content matches
-            # By logic, if version_token is correct, this indicates that all defined repos downloaded correctly
             token_info = get_token_data(ver_token_path)
             match = re.search(token_pattern, token_info, re.MULTILINE)
             if match:
                 version = match.group(1).strip()
                 date = match.group(2).strip()
                 tool_list_str = match.group(3).strip()
+                # str comparison
                 if version_info["version"] == version and version_info["date"] == date and json.dumps(list(version_info["tool_info"].keys())) == tool_list_str:
-                    is_valid = True
+                    # 4. Check if all tool directories exist within 'data' dir
+                    tool_dir = [f for f in os.listdir(data_dir_path) if os.path.isdir(os.path.join(data_dir_path, f))]
+                    # set comparison
+                    if set(tool_dir) == set(list(version_info["tool_info"].keys())):
+                        is_valid = True
             else:
                 print(f"❌ ERROR: Token file is invalid...\n")
+    print("✅ Integrity check complete.")
     if is_valid is True:
-        print("✅ Integrity check complete. All files are valid...\n")
+        print("✅ All files are valid.\n")
     else:
-        print("✅ Integrity check complete. Invalid file composition, redownloading all files...\n")
+        print("❗ Invalid file composition, redownloading all files...\n")
     return is_valid, version_info
 
 def create_ver_token(version_info):
