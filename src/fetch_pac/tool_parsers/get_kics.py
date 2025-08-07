@@ -24,10 +24,11 @@ def get_kics_pac(file_path=file_path):
     # Read CSV as a dataframe
     df = pd.read_csv(file_path)
     # Patch DF to common format
-    # Tool-ID-Name-IaC-Provider-Severity-Query Document-Related Document
+    # Tool-ID-Description-IaC-Provider-Severity-Query Document-Related Document
     result = pd.DataFrame()
     result["Tool"] = ["KICS"] * len(df)
     result["ID"] = df["Query ID"]
+    result["Description"] = df["Query Name"]
     result["IaC"] = df["Platform "]
     name_ptn = r"https://docs.kics.io/latest/queries/[^/]+/([^/]+)/[^/]+"
     result["Provider"] = df["Query Details"].str.extract(name_ptn)[0].map(id_to_provider)
@@ -53,5 +54,5 @@ def filter_policies(df, partial_id, iac_type, keyword):
 '''
 if __name__ == '__main__':
     df = get_kics_pac()
-    print(df)
+    df.to_csv("result.csv")
 '''

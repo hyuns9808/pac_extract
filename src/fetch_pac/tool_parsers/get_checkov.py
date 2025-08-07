@@ -59,10 +59,11 @@ def get_checkov_pac(file_path=file_path):
         data.append(row)
     df = pd.DataFrame(data, columns=headers)
     # Patch DF to common format
-    # Tool-ID-Name-IaC-Provider-Severity-Query Document-Related Document
+    # Tool-ID-Description-IaC-Provider-Severity-Query Document-Related Document
     result = pd.DataFrame()
     result["Tool"] = ["Checkov"] * len(df)
     result["ID"] = df["Id"]
+    result["Description"] = df["Policy"]
     result["IaC"] = df["IaC"]
     name_ptn = r"([^_]+)_([^_]+)_([^_]+)"
     result["Provider"] = df["Id"].str.extract(name_ptn)[1].map(id_to_provider)
