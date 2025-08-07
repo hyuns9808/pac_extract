@@ -1,2 +1,4 @@
 # data folder and all subdirectories; all repos must be freshly cloned when user runs script
 data
+# pycache
+**/__pycache__/
