@@ -29,7 +29,7 @@ up_tool_list = get_update_tool_list(is_valid, args.tools, full_tool_list)
 
 # 4. Download PaC repos of list of tools to update
 for tool in up_tool_list:
-    if full_tool_info[tool]["is_repo"] is True:
+    if full_tool_info[tool]["is_repo"] == "True":
         get_pac_folder(
             tool_name=tool,
             repo_git=full_tool_info[tool]["url"],

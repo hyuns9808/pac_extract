@@ -1,75 +1,59 @@
 '''
 Functions related to getting relevant Terrascan PaCs
 '''
+import os
+import json
 import pandas as pd
 
 # Change file path of md if necessary
-file_path = "data\\Checkov\\5.Policy Index\\all.md"
+folder_path = "data\\Terrascan\\rego"
 # Correctly parses code into provider name
+# ['aws' 'azure' 'docker' 'gcp' 'github' 'k8s']
 id_to_provider = {
-    "ADO": "Azure DevOps",
-    "ALI": "Alibaba Cloud",
-    "ANSIBLE": "Ansible",
-    "ARGO": "argo",
-    "AWS": "AWS",
-    "AZURE": "Azure",
-    "AZUREPIPELINES": "Azure Pipelines",
-    "BCW": "Bridgecrew Cloud",
-    "BITBUCKET": "Bitbucket",
-    "BITBUCKETPIPELINES": "Bitbucket Pipelines",
-    "CIRCLECIPIPELINES": "CircleCI Pipelines",
-    "DIO": "DigitalOcean",
-    "DOCKER": "Docker",
-    "GCP": "Google Cloud Platform",
-    "GHA": "GitHub Actions",
-    "GIT": "GitHub",
-    "GITHUB": "GitHub Configuration",
-    "GITLAB": "GitLab",
-    "GITLABCI": "GitLab CI",
-    "GLB": "GitLab Branch",
-    "IBM": "IBM Cloud",
-    "K8S": "Kubernetes",
-    "LIN": "Linode",
-    "NCP": "Naver Cloud",
-    "OCI": "Oracle Cloud Infrastructure",
-    "OPENAPI": "OpenAPI",
-    "OPENSTACK": "OpenStack",
-    "PAN": "PAN-OS",
-    "SECRET": "Secrets",
-    "TC": "Tencent Cloud",
-    "TF": "Terraform",
-    "YC": "Yandex Cloud"
+    "aws": "AWS",
+    "azure": "Azure",
+    "docker": "Docker",
+    "gcp": "Google Cloud Platform",
+    "github": "GitHub Configuration",
+    "k8s": "Kubernetes"
 }
-    
-def get_terrascan_pac(file_path=file_path):
+
+def get_terrascan_pac(folder_path=folder_path):
     '''
-    Creates final pandas df for Checkov
+    Creates final pandas df for Terrascan
     '''
-    # Read markdown table as raw text and manually parse
-    with open(file_path, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
-    # Strip lines and ignore separators
-    lines = [line.strip() for line in lines if line.strip() and line.startswith('|')]
-    # Parse header
-    headers = [h.strip() for h in lines[0].split('|')[1:-1]]
-    # Parse rows
-    data = []
-    for line in lines[2:]:
-        row = [cell.strip() for cell in line.split('|')[1:-1]]
-        data.append(row)
-    df = pd.DataFrame(data, columns=headers)
+    records = []
+    for root, dirs, files in os.walk(folder_path):
+        folder_name = os.path.basename(root)
+        for file in files:
+            if file.endswith('.json'):
+                folder_path = os.path.join(root, file)
+                try:
+                    with open(folder_path, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                    # Extract desired fields; here extracting all top-level keys, adding folder name
+                    record = data.copy()
+                    record['folder_name'] = folder_name
+                    records.append(record)
+                except Exception as e:
+                    print(f"Failed to parse {folder_path}: {e}")
+    # Create temporary dataframe
+    df = pd.DataFrame(records)
     # Patch DF to common format
+    # Index(['name', 'file', 'policy_type', 'resource_type', 'template_args',       
+    #   'severity', 'description', 'reference_id', 'category', 'version', 'id',
+    #   'folder_name'],
     # Tool-ID-Description-IaC-Provider-Severity-Query Document-Related Document
     result = pd.DataFrame()
-    result["Tool"] = ["Checkov"] * len(df)
-    result["ID"] = df["Id"]
-    result["Description"] = df["Policy"]
-    result["IaC"] = df["IaC"]
-    name_ptn = r"([^_]+)_([^_]+)_([^_]+)"
-    result["Provider"] = df["Id"].str.extract(name_ptn)[1].map(id_to_provider)
-    result["Severity"] = "NaN"
-    result["Query Document"] = df["Resource Link"]
+    result["Tool"] = ["Terrascan"] * len(df)
+    result["ID"] = df["reference_id"]
+    result["Description"] = df["description"]
+    result["IaC"] = ["Terraform"] * len(df)
+    result["Provider"] = df["policy_type"].map(id_to_provider)
+    result["Severity"] = df["severity"]
+    result["Query Document"] = "NaN"
     result["Related Document"] = "NaN"
+    
     return result
 
 def filter_policies(df, partial_id, iac_type, keyword):
@@ -88,6 +72,6 @@ def filter_policies(df, partial_id, iac_type, keyword):
 
 '''
 if __name__ == '__main__':
-    df = get_checkov_pac()
+    df = get_terrascan_pac()
     print(df)
 '''

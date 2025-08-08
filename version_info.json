@@ -13,12 +13,14 @@
             "is_repo": "False"
         },
         "Terrascan": {
-            "repo_git": "https://github.com/tenable/terrascan.git",
+            "url": "https://github.com/tenable/terrascan.git",
+            "is_repo": "True",
             "folder_path": "pkg/policies/opa/rego",
             "branch": "master"
         },
         "Trivy": {
-            "repo_git": "https://github.com/aquasecurity/trivy-checks.git",
+            "url": "https://github.com/aquasecurity/trivy-checks.git",
+            "is_repo": "True",
             "folder_path": "checks",
             "branch": "main"
         }
