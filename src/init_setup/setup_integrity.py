@@ -9,10 +9,6 @@ import json
 import os
 import re
 
-# Directory name of master directory
-# Change if needed
-MASTER_DIR_NAME = "MASTER"
-
 def get_version_data(version_data_json_path):
     '''Read 'version_info.json' file'''
     try:
@@ -37,11 +33,8 @@ def get_token_data(ver_token_path):
         raise UnicodeDecodeError(f"Cannot read {ver_token_path}: {e}") from e
     return token_info
 
-def data_checker():
+def data_checker(project_root, data_dir_path):
     '''Checks if 'data' dir is valid'''
-    # Update any directory or token info here
-    project_root = os.getcwd()
-    data_dir_path = os.path.join(project_root, "data")
     data_json_path = os.path.join(project_root, "version_info.json")
     ver_token_path = os.path.join(data_dir_path, ".version_token.flag")
     token_pattern = r'Version:\s*([^\n]+)\s+Date:\s*(\d{8})\s+Tool list:\s*(\[[^\]]+\])'
@@ -62,9 +55,6 @@ def data_checker():
                 if version_info["version"] == version and version_info["date"] == date and json.dumps(list(version_info["tool_info"].keys())) == tool_list_str:
                     # 4. Check if all tool directories exist within 'data' dir
                     tool_dir = [f for f in os.listdir(data_dir_path) if os.path.isdir(os.path.join(data_dir_path, f))]
-                    # Exclude "MASTER" folder; not required, just need to make sure all tools are intact
-                    if MASTER_DIR_NAME in tool_dir:
-                        tool_dir.remove(MASTER_DIR_NAME)
                     tool_set = set(version_info["tool_info"].keys())
                     if set(tool_dir) == tool_set:
                         is_valid = True
@@ -87,6 +77,7 @@ def create_ver_token(version_info):
     with open(ver_token_path, 'w') as f:
         f.writelines([line_0, line_1, line_2])
         
-
+'''
 if __name__ == "__main__":
     data_checker()
+'''

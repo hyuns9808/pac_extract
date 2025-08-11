@@ -8,7 +8,7 @@ import os
 def save_dataframe(df: pd.DataFrame, user_input: str):
     # Directory to save master dataframe
     project_root = os.getcwd()
-    master_dir = os.path.join(project_root, f"data/MASTER")
+    master_dir = os.path.join(project_root, f"data\\MASTER")
     
     # Define all convertable file format here
     formats = {
