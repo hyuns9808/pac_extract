@@ -59,32 +59,20 @@ def get_checkov_pac(file_path=file_path):
         data.append(row)
     df = pd.DataFrame(data, columns=headers)
     # Patch DF to common format
-    # Tool-ID-Description-IaC-Provider-Severity-Query Document-Related Document
+    # Tool-ID-Title-Description-IaC-Category-Provider-Severity-Query Document-Related Document
     result = pd.DataFrame()
     result["Tool"] = ["Checkov"] * len(df)
     result["ID"] = df["Id"]
-    result["Description"] = df["Policy"]
+    result["Title"] = df["Policy"]
+    result["Description"] = ["NaN"] * len(df)
     result["IaC"] = df["IaC"]
+    result["Category"] = ["NaN"] * len(df)
     name_ptn = r"([^_]+)_([^_]+)_([^_]+)"
     result["Provider"] = df["Id"].str.extract(name_ptn)[1].map(id_to_provider)
     result["Severity"] = "NaN"
     result["Query Document"] = df["Resource Link"]
     result["Related Document"] = "NaN"
     return result
-
-def filter_policies(df, partial_id, iac_type, keyword):
-    '''
-    Returns dataframe that consists of partial id, iac type and keyword match
-    '''
-    keyword = keyword.lower()
-    return df[
-        df['Id'].str.contains(partial_id, case=False, na=False) &
-        df['IaC'].str.lower().eq(iac_type.lower()) &
-        (
-            df['Entity'].str.lower().str.contains(keyword, na=False) |
-            df['Policy'].str.lower().str.contains(keyword, na=False)
-        )
-    ]
 
 '''
 if __name__ == '__main__':

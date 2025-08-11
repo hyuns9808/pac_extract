@@ -17,6 +17,11 @@ id_to_provider = {
     "github": "GitHub Configuration",
     "k8s": "Kubernetes"
 }
+severity_unify = {
+    "HIGH": "High",
+    "MEDIUM": "Medium",
+    "LOW": "Low"
+}
 
 def get_terrascan_pac(folder_path=folder_path):
     '''
@@ -43,32 +48,20 @@ def get_terrascan_pac(folder_path=folder_path):
     # Index(['name', 'file', 'policy_type', 'resource_type', 'template_args',       
     #   'severity', 'description', 'reference_id', 'category', 'version', 'id',
     #   'folder_name'],
-    # Tool-ID-Description-IaC-Provider-Severity-Query Document-Related Document
+    # Tool-ID-Title-Description-IaC-Category-Provider-Severity-Query Document-Related Document
     result = pd.DataFrame()
     result["Tool"] = ["Terrascan"] * len(df)
-    result["ID"] = df["reference_id"]
-    result["Description"] = df["description"]
+    result["ID"] = df["id"]
+    result["Title"] = df["description"]
+    result["Description"] = ["NaN"] * len(df)
     result["IaC"] = ["Terraform"] * len(df)
+    result["Category"] =  df["category"]
     result["Provider"] = df["policy_type"].map(id_to_provider)
-    result["Severity"] = df["severity"]
-    result["Query Document"] = "NaN"
-    result["Related Document"] = "NaN"
+    result["Severity"] = df["severity"].map(severity_unify)
+    result["Query Document"] = ["NaN"] * len(df)
+    result["Related Document"] = ["NaN"] * len(df)
     
     return result
-
-def filter_policies(df, partial_id, iac_type, keyword):
-    '''
-    Returns dataframe that consists of partial id, iac type and keyword match
-    '''
-    keyword = keyword.lower()
-    return df[
-        df['Id'].str.contains(partial_id, case=False, na=False) &
-        df['IaC'].str.lower().eq(iac_type.lower()) &
-        (
-            df['Entity'].str.lower().str.contains(keyword, na=False) |
-            df['Policy'].str.lower().str.contains(keyword, na=False)
-        )
-    ]
 
 '''
 if __name__ == '__main__':

@@ -10,7 +10,7 @@ def create_save_dir(is_valid):
     '''
     If integrity check failed, creates empty 'data' dir; if 'data' dir exists, delete all contents and create an empty one.
     Else, integrity check succeded, do nothing
-    Retunrs 'save_dir' path
+    Returns 'save_dir' path
     '''
     project_root = os.getcwd()
     save_dir = os.path.join(project_root, f"data")

@@ -1,11 +1,12 @@
 import os
 import pandas as pd
 
-from setup.setup_parser import parser_setup
-from setup.setup_integrity import data_checker, create_ver_token
-from setup.setup_base import create_save_dir, get_update_tool_list
-from setup.setup_data import get_pac_folder, get_pac_url
-from fetch_pac.parse_tool import get_pac_of_tool
+from init_setup.setup_parser import parser_setup
+from init_setup.setup_integrity import data_checker, create_ver_token
+from init_setup.setup_base import create_save_dir, get_update_tool_list
+from init_setup.setup_data import get_pac_folder, get_pac_url
+from init_setup.setup_save_master import save_dataframe
+from parse_pac.parse_tool import get_pac_of_tool
 
 # 0. Setup argument parser
 parser = parser_setup()
@@ -51,5 +52,7 @@ master_df = pd.DataFrame()
 for tool in full_tool_list:
     master_df = pd.concat([master_df, get_pac_of_tool(tool)], ignore_index=True)
 
-# 7. Generate result
-print(master_df)
+# 7. From master dataframe, save file based on user request
+print(f"Selected user output file format: {args.output}")
+for out in args.output:
+    save_dataframe(master_df, out)

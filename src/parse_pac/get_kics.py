@@ -24,32 +24,20 @@ def get_kics_pac(file_path=file_path):
     # Read CSV as a dataframe
     df = pd.read_csv(file_path)
     # Patch DF to common format
-    # Tool-ID-Description-IaC-Provider-Severity-Query Document-Related Document
+    # Tool-ID-Title-Description-IaC-Category-Provider-Severity-Query Document-Related Document
     result = pd.DataFrame()
     result["Tool"] = ["KICS"] * len(df)
     result["ID"] = df["Query ID"]
-    result["Description"] = df["Query Name"]
+    result["Title"] = df["Query Name"]
+    result["Description"] = ["NaN"] * len(df)
     result["IaC"] = df["Platform "]
+    result["Category"] = df["Category "]
     name_ptn = r"https://docs.kics.io/latest/queries/[^/]+/([^/]+)/[^/]+"
     result["Provider"] = df["Query Details"].str.extract(name_ptn)[0].map(id_to_provider)
     result["Severity"] = df["Severity "]
-    result["Query Document"] = df["Documentation"]
-    result["Related Document"] = df["Query Details"]
+    result["Query Document"] = df["Query Details"]
+    result["Related Document"] = df["Documentation"]
     return result
-
-def filter_policies(df, partial_id, iac_type, keyword):
-    '''
-    Returns dataframe that consists of partial id, iac type and keyword match
-    '''
-    keyword = keyword.lower()
-    return df[
-        df['Id'].str.contains(partial_id, case=False, na=False) &
-        df['IaC'].str.lower().eq(iac_type.lower()) &
-        (
-            df['Entity'].str.lower().str.contains(keyword, na=False) |
-            df['Policy'].str.lower().str.contains(keyword, na=False)
-        )
-    ]
 
 '''
 if __name__ == '__main__':

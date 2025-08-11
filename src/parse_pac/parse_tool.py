@@ -1,7 +1,7 @@
-from .tool_parsers.get_checkov import get_checkov_pac
-from .tool_parsers.get_kics import get_kics_pac
-from .tool_parsers.get_terrascan import get_terrascan_pac
-from .tool_parsers.get_trivy import get_trivy_pac
+from .get_checkov import get_checkov_pac
+from .get_kics import get_kics_pac
+from .get_terrascan import get_terrascan_pac
+from .get_trivy import get_trivy_pac
 
 # Dictionary used for dispatch
 TOOLS = {

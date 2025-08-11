@@ -92,10 +92,12 @@ def get_kics_queries(url):
         # Done
         progress.set_description(steps[7])
         progress.update(1)
-        print(f"\n✅ Saved to {save_dir}")
     finally:
         driver.quit()
         progress.close()
+        print(f"✅ PaC data download from URL complete of tool:  KICS\n")
 
+'''
 if __name__ == '__main__':
     get_kics_queries()
+'''

@@ -134,9 +134,9 @@ def get_pac_folder(
     Fetch ONLY `folder` (its files and subfolders) from the repo and place it at `dest`.
 
     - Uses sparse-checkout so network/data is minimized.
-    - Copies just the requested subtree into `dest` (no .git left behind).
-    - If include_folder_dir=True, you'll get dest/<folder_basename>/... ;
-      otherwise the folder's *contents* are copied directly under dest.
+    - Copy just the requested subtree into `dest` (no .git left behind).
+    - If include_folder_dir=True, get dest/<folder_basename>/... ;
+      otherwise copy folder *contents* directly under dest.
     """
     print(f"Cloning PaC folder of tool:  {tool_name}")
     folder = folder.strip("/")
@@ -185,7 +185,7 @@ def get_pac_folder(
     finally:
         # Remove temporary clone (keeps disk clean)
         shutil.rmtree(temp_root, ignore_errors=True)
-        print(f"PaC folder download complete of tool:  {tool_name}\n")
+        print(f"✅ PaC folder download complete of tool:  {tool_name}\n")
         
 def get_pac_url(
     tool_name: str,
