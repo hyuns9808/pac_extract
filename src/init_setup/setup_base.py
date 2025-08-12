@@ -12,7 +12,7 @@ def dir_init():
     Returns:
     1) project_root: Directory path of root folder
     2) pac_raw_dir: Directory where all raw PaC files(repo, URL) are stored
-    3) pac_db_dir: Directory where all database PaC files(master, per tool etc) are stored
+    3) pac_db_dir: Directory where all database PaC files(master, per tool) are stored
     '''
     project_root = os.getcwd()
     pac_raw_dir = os.path.join(project_root, f"pac_raw")
