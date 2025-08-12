@@ -1,10 +1,11 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-import time
+from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
+from ydata_profiling import ProfileReport
+
 import os
+import io
 import pandas as pd
-import sqlite3
-import json
 
 from init_setup.setup_integrity import data_init, data_checker, create_ver_token
 from init_setup.setup_base import dir_init, dir_update, get_update_tool_list
@@ -12,29 +13,17 @@ from init_setup.setup_data import get_pac_folder, get_pac_url
 from init_setup.setup_save_master import save_dataframe
 from parse_pac.parse_tool import get_pac_of_tool
 
-def download_pac():
-    return
-
-def load_file(file_path):
-    ext = file_path.split(".")[-1]
-    if ext == "csv":
-        return pd.read_csv(file_path)
-    elif ext == "json":
-        with open(file_path) as f:
-            data = json.load(f)
-        return pd.DataFrame(data)
-    elif ext == "sql":
-        conn = sqlite3.connect(file_path)
-        df = pd.read_sql("SELECT * FROM data", conn)
-        conn.close()
-        return df
-    else:
-        return None
-
 def app():
-    st.title("⚗️ PaC_Extract")
+    st.set_page_config(
+        page_title="PaC Extract",
+        page_icon="⚗️"
+    )
+    with st.sidebar:
+        st.markdown("## ⚗️ PaC Extract")
     # Create all base directories
-    project_root, pac_raw_dir, pac_db_dir = dir_init()
+    project_root, pac_raw_dir, pac_db_dir, master_db_dir = dir_init()
+    master_df_csv = os.path.join(master_db_dir, "MASTER_db.csv")
+    master_df = pd.DataFrame()
     with st.sidebar:
         selected = option_menu(
             menu_title="Main Menu",  # required
@@ -45,7 +34,7 @@ def app():
         )
     # Home menu
     if selected == "Home":
-        st.header("Home")
+        st.title("⚗️ PaC Extract")
     # Download menu
     elif selected == "Download PaC Files":
         st.title("📥 Download PaC Files")
@@ -107,7 +96,7 @@ def app():
             st.success("Download process started...")
             
             # Run integrity check
-            is_valid = data_checker(project_root, pac_raw_dir)
+            is_valid = data_checker(project_root, pac_raw_dir) and os.path.exists(master_df_csv)
             # Based on integrity check, update directory content
             dir_update(project_root, pac_raw_dir, is_valid)
             
@@ -118,15 +107,13 @@ def app():
             up_tool_list = get_update_tool_list(is_valid, tools_input, full_tool_list)
             # All tools + Master file
             total_tasks = len(up_tool_list) + 1
-            # Master DF
-            master_df = pd.DataFrame()
             
             # Status section
             if is_valid:
                 st.success("✅ Data integrity check complete — all files are valid!")
             else:
                 st.error("❗ Invalid file composition — redownloading all files...")
-            if db_only:
+            if db_only and is_valid:
                 st.info(
                     f"""
                     **Creating database files for total {len(up_tool_list)} tools...**\n
@@ -158,7 +145,7 @@ def app():
                 tool_raw_path = os.path.join(pac_raw_dir, tool)
                 
                 # First, download RAW PaC files
-                if not db_only:
+                if not db_only or not is_valid:
                     st.info(
                         f"""
                         **Downloading raw PaC files for tool: {tool}**
@@ -206,7 +193,10 @@ def app():
                     """,
                     icon="ℹ️"
             )
-            master_db_dir = os.path.join(pac_db_dir, "master")
+            # REQUIRED: .csv file for master_df
+            master_db_dir = os.path.join(pac_db_dir, "MASTER")
+            if "csv" not in file_types:
+                file_types.append("csv")
             for type in file_types:
                 save_dataframe(master_db_dir, master_df, "MASTER", type)
                 st.success(f"✅ MASTER database file in format - '{type}' saved at: {output_path}\n")
@@ -223,50 +213,100 @@ def app():
                 create_ver_token(pac_raw_dir, version_info)
             
             progress_bar.progress(1.0)
+            st.success(f"✅ All tasks completed! 🎉")
             status_text.markdown("✅ **All tasks completed!** 🎉")
             st.balloons()
     # Search menu
-    elif selected == "Search Data":
-        st.header("Search Data")
-        files = [f for f in os.listdir(DOWNLOAD_DIR) if f.endswith((".csv", ".json", ".sql"))]
-        selected_file = st.selectbox("Select a downloaded file", files)
+    elif selected == "Search PaC":
+        st.title("🔍 PaC Search")
+        st.set_page_config(layout="wide")
+        # Check master_df; if empty, read master db file
+        if master_df.empty:
+            master_df = pd.read_csv(master_df_csv)
+        # Sidebar - Global search input (for filtering rows)
+        search_term = st.text_input("Global Search")
 
-        if selected_file:
-            df = load_file(os.path.join(DOWNLOAD_DIR, selected_file))
-            if df is None:
-                st.error("Could not load file.")
-                return
+        # Filter the dataframe based on search_term across all columns (case insensitive)
+        if search_term:
+            mask = master_df.apply(lambda row: row.astype(str).str.contains(search_term, case=False).any(), axis=1)
+            filtered_df = master_df[mask]
+        else:
+            filtered_df = master_df
 
-            search_term = st.text_input("Enter search term (filters any column)")
+        # Setup AgGrid options
+        gb = GridOptionsBuilder.from_dataframe(filtered_df)
+        gb.configure_pagination(paginationAutoPageSize=False, paginationPageSize=5)  # Pagination with page size 5
+        gb.configure_default_column(editable=True, filter=True, sortable=True, resizable=True)
+        gb.configure_grid_options(domLayout='normal')  # Normal layout to show pagination controls
 
-            if search_term:
-                mask = df.apply(lambda row: row.astype(str).str.contains(search_term, case=False).any(), axis=1)
-                filtered_df = df[mask]
-            else:
-                filtered_df = df
+        grid_options = gb.build()
 
-            st.write(f"Showing {len(filtered_df)} results")
-            st.dataframe(filtered_df)
+        # Display grid with update mode to capture changes
+        grid_response = AgGrid(
+            filtered_df,
+            gridOptions=grid_options,
+            update_mode=GridUpdateMode.MODEL_CHANGED,
+            allow_unsafe_jscode=True,
+            theme="alpine",  # 'streamlit', 'alpine', 'balham', 'material', ...
+            enable_enterprise_modules=False,
+            height=500,
+            fit_columns_on_grid_load=True
+        )
+
+        edited_df = pd.DataFrame(grid_response['data'])
+
+        # Show filtered and edited data count
+        st.markdown(f"**Showing {len(edited_df)} rows (filtered & editable)**")
+
+        # Download buttons for the filtered and edited data
+        def to_csv(df):
+            return df.to_csv(index=False).encode('utf-8')
+
+        def to_excel(df):
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                df.to_excel(writer, index=False, sheet_name='FilteredData')
+            return output.getvalue()
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.download_button("📥 Download CSV", data=to_csv(edited_df), file_name="filtered_data.csv", mime="text/csv")
+        with col2:
+            st.download_button("📥 Download Excel", data=to_excel(edited_df), file_name="filtered_data.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     # Visualize menu
     elif selected == "Visualize Data":
-        st.header("Visualize Data")
-        files = [f for f in os.listdir(DOWNLOAD_DIR) if f.endswith((".csv", ".json", ".sql"))]
-        selected_file = st.selectbox("Select a downloaded file to visualize", files)
+        st.set_page_config(layout="wide")
+        st.title("📊 PaC Data Visualization")
+        # Check master_df; if empty, read master db file
+        if master_df.empty:
+            master_df = pd.read_csv(master_df_csv)
 
-        if selected_file:
-            df = load_file(os.path.join(DOWNLOAD_DIR, selected_file))
-            if df is None or df.empty:
-                st.error("No data available for visualization.")
-                return
+        st.header("📋 Data Profiling Report")
+        profile = ProfileReport(master_df, title="Master Data Profiling Report", explorative=True)
 
-            st.write("### Data Preview")
-            st.dataframe(df.head())
+        # Custom CSS to widen the report container inside the iframe
+        custom_css = """
+        <style>
+        /* Override container width of pandas profiling report */
+        .report-container {
+            max-width: 100% !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        /* Also fix margins to use almost full width */
+        .container {
+            width: 150% !important;
+            max-width: 100% !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        </style>
+        """
 
-            if "value" in df.columns and "tool" in df.columns:
-                chart_data = df.groupby("tool")["value"].sum()
-                st.bar_chart(chart_data)
-            else:
-                st.info("No 'tool' and 'value' columns to plot.")
+        html_report = custom_css + profile.to_html()
+
+        # Show profiling report as HTML component with wide width and fixed height
+        st.components.v1.html(html_report, height=1200, scrolling=True, width=1200)
 
 if __name__ == "__main__":
     app()

@@ -7,12 +7,7 @@ authors = [
 ]
 license = {text = "MIT"}
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "pandas (==2.3.1)",
-    "selenium (==4.34.2)",
-    "tqdm (==4.67.1)"
-]
+requires-python = ">=3.9,<3.9.7 || >3.9.7,<3.13"
 [tool.poetry]
 package-mode = false
 

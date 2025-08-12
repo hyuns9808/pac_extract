@@ -19,7 +19,8 @@ def dir_init():
     os.makedirs(pac_raw_dir, exist_ok=True)
     pac_db_dir = os.path.join(project_root, f"pac_database")
     os.makedirs(pac_db_dir, exist_ok=True)
-    return project_root, pac_raw_dir, pac_db_dir
+    master_db_dir = os.path.join(pac_db_dir, "master")
+    return project_root, pac_raw_dir, pac_db_dir, master_db_dir
 
 
 def dir_update(project_root, pac_raw_dir, is_valid):
