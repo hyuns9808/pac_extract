@@ -35,6 +35,43 @@ def app():
     # Home menu
     if selected == "Home":
         st.title("⚗️ PaC Extract")
+        st.markdown("""
+        ### Lookup PaCs(Policy as Code) of popular open-source tools, straight from the source.
+        ## ✨ Why PaC Extract?
+
+        Traditional IaC scanners are powerful, but each has its own rule format, execution model, and report style.
+        
+        **PaC Extract** acts as a **policy hub**:
+
+        - **Collects & normalizes policies** from popular open-source IaC scanners (e.g., **Checkov**, **KICS**, **Terrascan**, **Trivy**).
+        - **Creates a unified database** to look-up and compare what polices each open-source tool uses.
+        - **Streamlines results** into standardized outputs (csv, **json**, **sql**, **xlsv**).
+
+        ---
+
+        ## 🌟 Features
+
+        - ⚡ **Fast & Lightweight** – Scans large repos in seconds.
+        - 🌍 **Broad IaC Coverage** – Terraform, CloudFormation, Kubernetes, Docker, Helm charts, generic YAML/JSON.
+        - 📚 **Curated PaC Library** – Aggregates rules from open‑source IaC scanners into one framework.
+        - 🧠 **Smart Normalization** – Deduplicates, tags, and versions imported rules for consistency.
+        - 🏗️ **CI/CD Ready** – GitHub Actions, GitLab CI, Jenkins, CircleCI.
+        - 📊 **Rich Reports** – JSON, **SARIF** (Code Scanning), HTML dashboards, or concise CLI output.
+        - 🐍 **Poetry‑Powered** – Reproducible environments & dependency pinning with **Poetry**.
+        
+        ---
+        
+        ### How to Use
+        Use the menu on the left to navigate through the different pages:
+        
+        1. **Home** — Get started here.
+        2. **Visualize Data** — View detailed profiling reports.
+        3. **Analyze Trends** — Perform analysis on the data.
+        
+        ---
+        
+        Feel free to explore and reach out if you have questions or feedback!
+        """)
     # Download menu
     elif selected == "Download PaC Files":
         st.title("📥 Download PaC Files")
@@ -221,92 +258,104 @@ def app():
         st.title("🔍 PaC Search")
         st.set_page_config(layout="wide")
         # Check master_df; if empty, read master db file
-        if master_df.empty:
-            master_df = pd.read_csv(master_df_csv)
-        # Sidebar - Global search input (for filtering rows)
-        search_term = st.text_input("Global Search")
-
-        # Filter the dataframe based on search_term across all columns (case insensitive)
-        if search_term:
-            mask = master_df.apply(lambda row: row.astype(str).str.contains(search_term, case=False).any(), axis=1)
-            filtered_df = master_df[mask]
+        if not os.path.exists(master_df_csv):
+            st.error("""
+                ❗ ERROR: No files found.\n 
+                Go to 'Main Menu'-'Download PaC Files' and click 'Start Download' button to download all files and try again.
+            """)
         else:
-            filtered_df = master_df
+            if master_df.empty:
+                master_df = pd.read_csv(master_df_csv)
+            # Sidebar - Global search input (for filtering rows)
+            search_term = st.text_input("Global Search")
 
-        # Setup AgGrid options
-        gb = GridOptionsBuilder.from_dataframe(filtered_df)
-        gb.configure_pagination(paginationAutoPageSize=False, paginationPageSize=5)  # Pagination with page size 5
-        gb.configure_default_column(editable=True, filter=True, sortable=True, resizable=True)
-        gb.configure_grid_options(domLayout='normal')  # Normal layout to show pagination controls
+            # Filter the dataframe based on search_term across all columns (case insensitive)
+            if search_term:
+                mask = master_df.apply(lambda row: row.astype(str).str.contains(search_term, case=False).any(), axis=1)
+                filtered_df = master_df[mask]
+            else:
+                filtered_df = master_df
 
-        grid_options = gb.build()
+            # Setup AgGrid options
+            gb = GridOptionsBuilder.from_dataframe(filtered_df)
+            gb.configure_pagination(paginationAutoPageSize=False, paginationPageSize=5)  # Pagination with page size 5
+            gb.configure_default_column(editable=True, filter=True, sortable=True, resizable=True)
+            gb.configure_grid_options(domLayout='normal')  # Normal layout to show pagination controls
 
-        # Display grid with update mode to capture changes
-        grid_response = AgGrid(
-            filtered_df,
-            gridOptions=grid_options,
-            update_mode=GridUpdateMode.MODEL_CHANGED,
-            allow_unsafe_jscode=True,
-            theme="alpine",  # 'streamlit', 'alpine', 'balham', 'material', ...
-            enable_enterprise_modules=False,
-            height=500,
-            fit_columns_on_grid_load=True
-        )
+            grid_options = gb.build()
 
-        edited_df = pd.DataFrame(grid_response['data'])
+            # Display grid with update mode to capture changes
+            grid_response = AgGrid(
+                filtered_df,
+                gridOptions=grid_options,
+                update_mode=GridUpdateMode.MODEL_CHANGED,
+                allow_unsafe_jscode=True,
+                theme="alpine",  # 'streamlit', 'alpine', 'balham', 'material', ...
+                enable_enterprise_modules=False,
+                height=500,
+                fit_columns_on_grid_load=True
+            )
 
-        # Show filtered and edited data count
-        st.markdown(f"**Showing {len(edited_df)} rows (filtered & editable)**")
+            edited_df = pd.DataFrame(grid_response['data'])
 
-        # Download buttons for the filtered and edited data
-        def to_csv(df):
-            return df.to_csv(index=False).encode('utf-8')
+            # Show filtered and edited data count
+            st.markdown(f"**Showing {len(edited_df)} rows (filtered & editable)**")
 
-        def to_excel(df):
-            output = io.BytesIO()
-            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                df.to_excel(writer, index=False, sheet_name='FilteredData')
-            return output.getvalue()
+            # Download buttons for the filtered and edited data
+            def to_csv(df):
+                return df.to_csv(index=False).encode('utf-8')
 
-        col1, col2 = st.columns(2)
-        with col1:
-            st.download_button("📥 Download CSV", data=to_csv(edited_df), file_name="filtered_data.csv", mime="text/csv")
-        with col2:
-            st.download_button("📥 Download Excel", data=to_excel(edited_df), file_name="filtered_data.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            def to_excel(df):
+                output = io.BytesIO()
+                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                    df.to_excel(writer, index=False, sheet_name='FilteredData')
+                return output.getvalue()
+
+            col1, col2 = st.columns(2)
+            with col1:
+                st.download_button("📥 Download CSV", data=to_csv(edited_df), file_name="filtered_data.csv", mime="text/csv")
+            with col2:
+                st.download_button("📥 Download Excel", data=to_excel(edited_df), file_name="filtered_data.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     # Visualize menu
     elif selected == "Visualize Data":
-        st.set_page_config(layout="wide")
         st.title("📊 PaC Data Visualization")
-        # Check master_df; if empty, read master db file
-        if master_df.empty:
-            master_df = pd.read_csv(master_df_csv)
+        st.set_page_config(layout="wide")
+        if not os.path.exists(master_df_csv):
+            st.error("""
+                ❗ ERROR: No files found.\n 
+                Go to 'Main Menu'-'Download PaC Files' and click 'Start Download' button to download all files and try again.
+            """)
+        else:
+            # Check master_df; if empty, read master db file
+            if master_df.empty:
+                master_df = pd.read_csv(master_df_csv)
 
-        st.header("📋 Data Profiling Report")
-        profile = ProfileReport(master_df, title="Master Data Profiling Report", explorative=True)
+            st.header("📋 Data Profiling Report")
+            profile = ProfileReport(master_df, title="Master Data Profiling Report", explorative=True)
 
-        # Custom CSS to widen the report container inside the iframe
-        custom_css = """
-        <style>
-        /* Override container width of pandas profiling report */
-        .report-container {
-            max-width: 100% !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-        }
-        /* Also fix margins to use almost full width */
-        .container {
-            width: 150% !important;
-            max-width: 100% !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-        }
-        </style>
-        """
+            # Custom CSS to widen the report container inside the iframe
+            custom_css = """
+            <style>
+            /* Override container width of pandas profiling report */
+            .report-container {
+                max-width: 100% !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+            /* Also fix margins to use almost full width */
+            .container {
+                width: 100% !important;
+                max-width: 100% !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+            </style>
+            """
 
-        html_report = custom_css + profile.to_html()
+            html_report = custom_css + profile.to_html()
 
-        # Show profiling report as HTML component with wide width and fixed height
-        st.components.v1.html(html_report, height=1200, scrolling=True, width=1200)
+            # Show profiling report as HTML component with wide width and fixed height
+            st.components.v1.html(html_report, height=1200, scrolling=True, width=1200)
 
 if __name__ == "__main__":
     app()

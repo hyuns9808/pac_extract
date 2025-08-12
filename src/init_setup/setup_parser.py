@@ -1,5 +1,6 @@
 '''
 File that stores all functions related to creating the argument parser
+Used for CLI version; obsolete in Streamlit version, but left just in case
 '''
 import argparse
 
