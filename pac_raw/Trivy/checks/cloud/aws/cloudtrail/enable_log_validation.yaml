@@ -1,0 +1,36 @@
+cloudformation:
+  good:
+    - |-
+      Resources:
+        GoodExample:
+          Type: AWS::CloudTrail::Trail
+          Properties:
+            EnableLogFileValidation: true
+            IsLogging: true
+            IsMultiRegionTrail: true
+            S3BucketName: CloudtrailBucket
+            S3KeyPrefix: /trailing
+            TrailName: Cloudtrail
+  bad:
+    - |-
+      Resources:
+        BadExample:
+          Type: AWS::CloudTrail::Trail
+          Properties:
+            IsLogging: true
+            IsMultiRegionTrail: false
+            S3BucketName: CloudtrailBucket
+            S3KeyPrefix: /trailing
+            TrailName: Cloudtrail
+terraform:
+  links:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudtrail#enable_log_file_validation
+  good:
+    - |-
+      resource "aws_cloudtrail" "good_example" {
+        enable_log_file_validation = true
+      }
+  bad:
+    - |-
+      resource "aws_cloudtrail" "bad_example" {
+      }

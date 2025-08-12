@@ -1,0 +1,42 @@
+cloudformation:
+  good:
+    - |-
+      Resources:
+        GoodExample:
+          Type: AWS::OpenSearchService::Domain
+          Properties:
+            EncryptionAtRestOptions:
+              Enabled: true
+    - |-
+      Resources:
+        GoodExample:
+          Type: AWS::Elasticsearch::Domain
+          Properties:
+            EncryptionAtRestOptions:
+              Enabled: true
+  bad:
+    - |-
+      Resources:
+        BadExample:
+          Type: AWS::OpenSearchService::Domain
+    - |-
+      Resources:
+        BadExample:
+          Type: AWS::Elasticsearch::Domain
+terraform:
+  links:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticsearch_domain#encrypt_at_rest
+  good:
+    - |-
+      resource "aws_elasticsearch_domain" "good_example" {
+        encrypt_at_rest {
+          enabled = true
+        }
+      }
+  bad:
+    - |-
+      resource "aws_elasticsearch_domain" "bad_example" {
+        encrypt_at_rest {
+          enabled = false
+        }
+      }

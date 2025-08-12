@@ -1,0 +1,15 @@
+{
+    "name": "imdsv1LaunchConfig",
+    "file": "imdsv1LaunchConfig.rego",
+    "policy_type": "aws",
+    "resource_type": "aws_launch_configuration",
+    "template_args": {
+        "prefix": ""
+    },
+    "severity": "HIGH",
+    "description": "Launch configuration uses IMDSv1 which vulnerable to SSRF",
+    "reference_id": "AC-AW-CA-LC-H-0439",
+    "category": "Configuration and Vulnerability Analysis",
+    "id": "AC_AWS_0487",
+    "version": 1
+}

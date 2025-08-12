@@ -1,0 +1,33 @@
+terraform:
+  links:
+    - https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#enabled
+  good:
+    - |-
+      resource "google_container_cluster" "good_example" {
+        name     = "my-gke-cluster"
+        location = "us-central1"
+        network_policy {
+          enabled = true
+        }
+      }
+    - |-
+      resource "google_container_cluster" "good_example" {
+        name             = "my-gke-cluster"
+        location         = "us-central1"
+        enable_autopilot = true
+      }
+    - |-
+      resource "google_container_cluster" "good_example" {
+        name              = "my-gke-cluster"
+        location          = "us-central1"
+        datapath_provider = "ADVANCED_DATAPATH"
+      }
+  bad:
+    - |-
+      resource "google_container_cluster" "bad_example" {
+        name     = "my-gke-cluster"
+        location = "us-central1"
+        network_policy {
+          enabled = false
+        }
+      }

@@ -1,0 +1,15 @@
+{
+    "name": "snsPublicAccess",
+    "file": "snsPublicAccess.rego",
+    "policy_type": "aws",
+    "resource_type": "aws_sns_topic",
+    "template_args": {
+        "prefix": ""
+    },
+    "severity": "HIGH",
+    "description": "Ensure SNS Topic is Publicly Accessible For Subscription",
+    "reference_id": "AWS.SNS.NS.Medium.1044",
+    "category": "Compliance Validation",
+    "version": 2,
+    "id": "AC_AWS_0385"
+}

@@ -1,0 +1,47 @@
+cloudformation:
+  good:
+    - |-
+      Resources:
+        GoodExample:
+          Type: AWS::S3::Bucket
+          Properties:
+            PublicAccessBlockConfiguration:
+              RestrictPublicBuckets: true
+  bad:
+    - |-
+      Resources:
+        BadExample:
+          Type: AWS::S3::Bucket
+terraform:
+  links:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block#restrict_public_buckets¡
+  good:
+    - |-
+      resource "aws_s3_bucket" "good_example" {
+        bucket = "bucket"
+      }
+
+      resource "aws_s3_bucket_public_access_block" "example" {
+        bucket = aws_s3_bucket.good_example.id
+
+        restrict_public_buckets = true
+      }
+  bad:
+    - |-
+      resource "aws_s3_bucket" "bad_example" {
+        bucket = "bucket"
+      }
+
+      resource "aws_s3_bucket_public_access_block" "example" {
+        bucket = aws_s3_bucket.bad_example.id
+      }
+    - |-
+      resource "aws_s3_bucket" "bad_example" {
+        bucket = "bucket"
+      }
+
+      resource "aws_s3_bucket_public_access_block" "example" {
+        bucket = aws_s3_bucket.bad_example.id
+
+        restrict_public_buckets = false
+      }

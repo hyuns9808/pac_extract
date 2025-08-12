@@ -6,40 +6,14 @@ import pandas as pd
 import sqlite3
 import json
 
-project_root = os.getcwd()
-pac_dir_path = os.path.join(project_root, "raw_pac_files")
-data_dir_path = os.path.join(project_root, "database")
-os.makedirs(pac_dir_path, exist_ok=True)
-os.makedirs(data_dir_path, exist_ok=True)
-
-DOWNLOAD_DIR = "data"
+from init_setup.setup_integrity import data_init, data_checker, create_ver_token
+from init_setup.setup_base import dir_init, dir_update, get_update_tool_list
+from init_setup.setup_data import get_pac_folder, get_pac_url
+from init_setup.setup_save_master import save_dataframe
+from parse_pac.parse_tool import get_pac_of_tool
 
 def download_pac():
     return
-
-def fake_download(tool, file_type):
-    file_path = os.path.join(DOWNLOAD_DIR, f"{tool}.{file_type}")
-    if file_type == "csv":
-        df = pd.DataFrame({
-            "id": range(1, 6),
-            "tool": [tool]*5,
-            "value": [10, 20, 30, 40, 50]
-        })
-        df.to_csv(file_path, index=False)
-    elif file_type == "json":
-        data = [{"id": i, "tool": tool, "value": i*10} for i in range(1,6)]
-        with open(file_path, "w") as f:
-            json.dump(data, f)
-    elif file_type == "sql":
-        conn = sqlite3.connect(file_path)
-        df = pd.DataFrame({
-            "id": range(1,6),
-            "tool": [tool]*5,
-            "value": [10, 20, 30, 40, 50]
-        })
-        df.to_sql("data", conn, if_exists="replace", index=False)
-        conn.close()
-    return file_path
 
 def load_file(file_path):
     ext = file_path.split(".")[-1]
@@ -59,6 +33,8 @@ def load_file(file_path):
 
 def app():
     st.title("⚗️ PaC_Extract")
+    # Create all base directories
+    project_root, pac_raw_dir, pac_db_dir = dir_init()
     with st.sidebar:
         selected = option_menu(
             menu_title="Main Menu",  # required
@@ -70,63 +46,121 @@ def app():
     if selected == "Home":
         st.header("Home")
     elif selected == "Download PaC Files":
-        st.header("Download PaC Files")
-        st.markdown("Select which tools to download/update raw PaC files.")
-        # Define all inputs
-        update = st.checkbox("Update all repos", value=True)
-        tools_input = st.multiselect("Select tools to update", ["Checkov", "KICS", "Terrascan", "Trivy"], default=["Checkov"],disabled=update)
-        file_types = st.multiselect("Select file types to save", ["csv", "json", "sql", "xlsv"], default=["csv"])
-
-        if st.button("Start Download"):
-            if not tools_input.strip():
+        st.title("📥 Download PaC Files")
+        st.markdown("Easily select tools and update **Policy as Code** (PaC) files with just a few clicks.")
+        # Get version info and run data integrity check
+        version_info, version, date, full_tool_list, full_tool_info = data_init(project_root)
+        # Print version info
+        st.subheader("📦 PaC_Extract Version Info")
+        # Info box for version/date/tools
+        st.info(
+            f"""
+            **Version:** {version}  
+            **Date:** {date}  
+            **Supported Tools:** {", ".join(full_tool_list)}
+            """,
+            icon="ℹ️"
+        )
+        # Divider
+        st.divider()
+        # Inputs
+        st.subheader("⚙️ Download Settings")
+        update = st.checkbox(
+            "Update all repositories",
+            value=True,
+            help="If selected, all tools will be updated regardless of your tool selection."
+        )
+        tools_input = st.multiselect(
+            "Select tools to update",
+            options=full_tool_list,
+            default=[full_tool_list[0]],
+            disabled=update,
+            help="Choose which tools you want to update. Disabled if 'Update all' is checked."
+        )
+        file_types = st.multiselect(
+            "Select file types to save",
+            options=["csv", "json", "sql", "xlsx"],
+            default=["csv"],
+            help="Choose the output formats for your downloaded PaC files."
+        )
+        # Spacer before button
+        st.markdown("")
+        # Start button
+        st.markdown("### 🚀 Ready?")
+        if st.button("Start Download", use_container_width=True):
+            if update:
+                tools_input = full_tool_list
+            if not update and not tools_input:
                 st.error("Please enter at least one tool.")
                 return
             if not file_types:
                 st.error("Please select at least one file type.")
                 return
-
-            tools = tools_input.strip().split()
-            total_tasks = len(tools) * len(file_types)
+            
+            st.success("Download process started...")
+            # Run integrity check
+            is_valid = data_checker(project_root, pac_raw_dir)
+            # Based on integrity check, update directory content
+            dir_update(project_root, pac_raw_dir, is_valid)
+            
+            # Get user inputs
             progress_bar = st.progress(0)
+            status_text = st.empty()
             task_count = 0
-
-            for tool in tools:
-                for ft in file_types:
-                    task_count += 1
-                    progress_bar.progress(task_count / total_tasks)
-                    st.write(f"Downloading **{tool}** as **{ft}**...")
-                    time.sleep(1)  # simulate download delay
-                    path = fake_download(tool, ft)
-                    st.success(f"Saved to {path}")
-
-            st.balloons()
-    if selected == "Download Files":
-        st.header("Download Files")
-        tools_input = st.text_input("Enter tools to download (space separated)")
-        file_types = st.multiselect("Select file types to save", ["csv", "json", "sql"], default=["csv"])
-
-        if st.button("Start Download"):
-            if not tools_input.strip():
-                st.error("Please enter at least one tool.")
-                return
-            if not file_types:
-                st.error("Please select at least one file type.")
-                return
-
-            tools = tools_input.strip().split()
-            total_tasks = len(tools) * len(file_types)
-            progress_bar = st.progress(0)
-            task_count = 0
-
-            for tool in tools:
-                for ft in file_types:
-                    task_count += 1
-                    progress_bar.progress(task_count / total_tasks)
-                    st.write(f"Downloading **{tool}** as **{ft}**...")
-                    time.sleep(1)  # simulate download delay
-                    path = fake_download(tool, ft)
-                    st.success(f"Saved to {path}")
-
+            up_tool_list = get_update_tool_list(is_valid, tools_input, full_tool_list)
+            total_tasks = len(up_tool_list)
+            
+            # Status section
+            if is_valid:
+                st.success("✅ Data integrity check complete — all files are valid!")
+            else:
+                st.error("❗ Invalid file composition — redownloading all files...")
+            st.info(
+                f"""
+                **Downloading files for total {len(up_tool_list)} tools...**\n
+                **List of tools: {up_tool_list}**
+                """,
+                icon="ℹ️"
+            )
+            
+            # Update all tools based on user input
+            for tool in up_tool_list:
+                if total_tasks > 0:
+                    progress_value = task_count / total_tasks
+                else:
+                    progress_value = 0
+                progress_bar.progress(progress_value)
+                percent = int(progress_value * 100)
+                status_text.markdown(f"**Progress:** {percent}% — Downloading **{tool}**...")
+                path = os.path.join(pac_raw_dir, tool)
+                if full_tool_info[tool]["is_repo"] == "True":
+                    get_pac_folder(
+                        tool_name=tool,
+                        repo_git=full_tool_info[tool]["url"],
+                        folder=full_tool_info[tool]["folder_path"],
+                        dest=path,
+                        ref=full_tool_info[tool]["branch"],
+                    )
+                else:
+                    get_pac_url(
+                        tool_name=tool,
+                        url=full_tool_info[tool]["url"],
+                        dest=path
+                    )
+                st.success(f"✅ Tool: {tool}, Saved at: `{path}`")
+                task_count += 1
+            progress_bar.progress(1.0)
+            if is_valid is False:
+                st.info(
+                    f"""
+                    **Creating version token...**\n
+                    """,
+                    icon="ℹ️"
+                )
+                create_ver_token(pac_raw_dir, version_info)
+            # Create DB files
+            
+            status_text.markdown("✅ **All tasks completed!** 🎉")
             st.balloons()
     elif selected == "Search Data":
         st.header("Search Data")

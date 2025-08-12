@@ -6,19 +6,37 @@ import os
 import shutil
 import sys
 
-def create_save_dir(is_valid):
+def dir_init():
     '''
-    If integrity check failed, creates empty 'data' dir; if 'data' dir exists, delete all contents and create an empty one.
-    Else, integrity check succeded, do nothing
-    Returns 'save_dir' path
+    Create all base directories prior to integrity check
+    Returns:
+    1) project_root: Directory path of root folder
+    2) pac_raw_dir: Directory where all raw PaC files(repo, URL) are stored
+    3) pac_db_dir: Directory where all database PaC files(master, per tool etc) are stored
     '''
     project_root = os.getcwd()
-    save_dir = os.path.join(project_root, f"data")
+    pac_raw_dir = os.path.join(project_root, f"pac_raw")
+    os.makedirs(pac_raw_dir, exist_ok=True)
+    pac_db_dir = os.path.join(project_root, f"pac_database")
+    os.makedirs(pac_db_dir, exist_ok=True)
+    return project_root, pac_raw_dir, pac_db_dir
+
+
+def dir_update(project_root, pac_raw_dir, is_valid):
+    '''
+    If integrity check failed, creates empty 'data' dir; if 'data' dir exists, delete all contents and create an empty one.
+    Also creates 'database_dir'
+    Returns:
+    1) pac_raw_dir: Directory where all raw PaC files(repo, URL) are stored
+    2) pac_db_dir: Directory where all database PaC files(master, per tool etc) are stored
+    '''
+    project_root = os.getcwd()
+    pac_raw_dir = os.path.join(project_root, f"pac_raw")
     if is_valid is False:
-        if os.path.exists(save_dir):
+        if os.path.exists(pac_raw_dir):
             # Remove all contents of the directory
-            for filename in os.listdir(save_dir):
-                file_path = os.path.join(save_dir, filename)
+            for filename in os.listdir(pac_raw_dir):
+                file_path = os.path.join(pac_raw_dir, filename)
                 try:
                     if os.path.isfile(file_path) or os.path.islink(file_path):
                         os.unlink(file_path)  # remove file or symlink
@@ -27,8 +45,8 @@ def create_save_dir(is_valid):
                 except Exception as e:
                     print(f"Failed to delete {file_path}: {e}")
         else:
-            os.makedirs(save_dir)
-    return save_dir
+            os.makedirs(pac_raw_dir)
+    return
 
 def create_up_tool_list(is_valid, usr_tool_list, supported_tool_list):
     '''

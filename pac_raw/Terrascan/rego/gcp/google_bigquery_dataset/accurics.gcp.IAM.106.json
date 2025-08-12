@@ -1,0 +1,13 @@
+{
+    "name": "bqDatasetPubliclyAccessible",
+    "file": "bqDatasetPubliclyAccessible.rego",
+    "policy_type": "gcp",
+    "resource_type": "google_bigquery_dataset",
+    "template_args": null,
+    "severity": "HIGH",
+    "description": "BigQuery datasets may be anonymously or publicly accessible.",
+    "reference_id": "accurics.gcp.IAM.106",
+    "category": "Identity and Access Management",
+    "version": 1,
+    "id": "AC_GCP_0230"
+}

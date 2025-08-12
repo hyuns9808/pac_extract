@@ -1,0 +1,62 @@
+cloudformation:
+  links:
+    - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-docdb-dbcluster.html
+  good:
+    - |-
+      Resources:
+        GoodExample:
+          Type: AWS::DocDB::DBCluster
+          Properties:
+            DBClusterIdentifier: sample-cluster
+            DBClusterParameterGroupName: default.docdb3.6
+            EnableCloudwatchLogsExports:
+              - audit
+              - profiler
+
+        InstanceInstanceExample:
+          Type: AWS::DocDB::DBInstance
+          Properties:
+            DBClusterIdentifier: sample-cluster
+            DBInstanceClass: db.r5.large
+            DBInstanceIdentifier: sample-cluster-instance-0
+  bad:
+    - |-
+      Resources:
+        BadExample:
+          Type: AWS::DocDB::DBCluster
+          Properties:
+            DBClusterIdentifier: sample-cluster
+            DBClusterParameterGroupName: default.docdb3.6
+
+        BadInstanceExample:
+          Type: AWS::DocDB::DBInstance
+          Properties:
+            DBClusterIdentifier: sample-cluster
+            DBInstanceClass: db.r5.large
+            DBInstanceIdentifier: sample-cluster-instance-0
+terraform:
+  links:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/docdb_cluster#enabled_cloudwatch_logs_exports
+  good:
+    - |-
+      resource "aws_docdb_cluster" "good_example" {
+        cluster_identifier              = "my-docdb-cluster"
+        master_username                 = "foo"
+        master_password                 = "mustbeeightchars"
+        enabled_cloudwatch_logs_exports = "audit"
+      }
+    - |-
+      resource "aws_docdb_cluster" "good_example" {
+        cluster_identifier              = "my-docdb-cluster"
+        master_username                 = "foo"
+        master_password                 = "mustbeeightchars"
+        enabled_cloudwatch_logs_exports = "profiler"
+      }
+  bad:
+    - |-
+      resource "aws_docdb_cluster" "bad_example" {
+        cluster_identifier              = "my-docdb-cluster"
+        master_username                 = "foo"
+        master_password                 = "mustbeeightchars"
+        enabled_cloudwatch_logs_exports = "something"
+      }

@@ -1,0 +1,46 @@
+cloudformation:
+  good:
+    - |-
+      Resources:
+        GoodExample:
+          Type: AWS::S3::Bucket
+          Properties:
+            AccessControl: Private
+  bad:
+    - |-
+      Resources:
+        BadExample:
+          Type: AWS::S3::Bucket
+          Properties:
+            AccessControl: AuthenticatedRead
+terraform:
+  links:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
+  good:
+    - |-
+      resource "aws_s3_bucket" "good_example" {
+        acl = "private"
+      }
+    - |-
+      resource "aws_s3_bucket" "good_example" {
+        bucket = "yournamehere"
+      }
+
+      resource "aws_s3_bucket_acl" "example" {
+        bucket = aws_s3_bucket.good_example.id
+        acl    = "private"
+      }
+  bad:
+    - |-
+      resource "aws_s3_bucket" "bad_example" {
+        acl = "public-read"
+      }
+    - |-
+      resource "aws_s3_bucket" "bad_example" {
+        bucket = "yournamehere"
+      }
+
+      resource "aws_s3_bucket_acl" "example" {
+        bucket = aws_s3_bucket.bad_example.id
+        acl    = "authenticated-read"
+      }

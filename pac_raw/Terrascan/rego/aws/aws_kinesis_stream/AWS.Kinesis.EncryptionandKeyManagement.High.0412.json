@@ -1,0 +1,15 @@
+{
+    "name": "kinesisNotEncryptedWithKms",
+    "file": "aws_kinesis_stream.rego",
+    "policy_type": "aws",
+    "resource_type": "aws_kinesis_stream",
+    "template_args": {
+        "prefix": ""
+    },
+    "severity": "HIGH",
+    "description": "Ensure Kinesis Stream is encrypted",
+    "reference_id": "AWS.Kinesis.EncryptionandKeyManagement.High.0412",
+    "category": "Data Protection",
+    "version": 2,
+    "id": "AC_AWS_0157"
+}

@@ -1,0 +1,16 @@
+{
+    "name": "projectWideSshKeysUsed",
+    "file": "metadataDisabled.rego",
+    "policy_type": "gcp",
+    "resource_type": "google_compute_instance",
+    "template_args": {
+        "metaKey": "block-project-ssh-keys",
+        "name": "projectWideSshKeysUsed"
+    },
+    "severity": "HIGH",
+    "description": "Ensure 'Block Project-wide SSH keys' is enabled for VM instances.",
+    "reference_id": "accurics.gcp.NS.126",
+    "category": "Infrastructure Security",
+    "version": 1,
+    "id": "AC_GCP_0039"
+}

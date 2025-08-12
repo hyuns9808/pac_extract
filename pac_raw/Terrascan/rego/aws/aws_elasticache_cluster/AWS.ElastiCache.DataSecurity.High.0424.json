@@ -1,0 +1,17 @@
+{
+    "name": "noMemcachedInElastiCache",
+    "file": "noMemcachedInElastiCache.rego",
+    "policy_type": "aws",
+    "resource_type": "aws_elasticache_cluster",
+    "template_args": {
+        "elasticache_engine": "memcached",
+        "name": "noMemcachedInElastiCache",
+        "prefix": ""
+    },
+    "severity": "HIGH",
+    "description": "ElastiCache for Memcached is not in use in AWS PCI DSS environments",
+    "reference_id": "AWS.ElastiCache.DataSecurity.High.0424",
+    "category": "Compliance Validation",
+    "version": 2,
+    "id": "AC_AWS_0103"
+}

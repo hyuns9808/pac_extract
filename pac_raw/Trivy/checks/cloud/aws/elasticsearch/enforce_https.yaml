@@ -1,0 +1,31 @@
+cloudformation:
+  good:
+    - |-
+      Resources:
+        GoodExample:
+          Type: AWS::Elasticsearch::Domain
+          Properties:
+            DomainEndpointOptions:
+              EnforceHTTPS: true
+  bad:
+    - |-
+      Resources:
+        BadExample:
+          Type: AWS::Elasticsearch::Domain
+terraform:
+  links:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticsearch_domain#enforce_https
+  good:
+    - |-
+      resource "aws_elasticsearch_domain" "good_example" {
+        domain_endpoint_options {
+          enforce_https = true
+        }
+      }
+  bad:
+    - |-
+      resource "aws_elasticsearch_domain" "bad_example" {
+        domain_endpoint_options {
+          enforce_https = false
+        }
+      }

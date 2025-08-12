@@ -1,0 +1,15 @@
+{
+    "name": "rdsIamAuthEnabled",
+    "file": "rdsIamAuthEnabled.rego",
+    "policy_type": "aws",
+    "resource_type": "aws_db_instance",
+    "template_args": {
+        "prefix": ""
+    },
+    "severity": "MEDIUM",
+    "description": "Ensure that your RDS database has IAM Authentication enabled.",
+    "reference_id": "AWS.RDS.DataSecurity.High.0577",
+    "category": "Data Protection",
+    "version": 2,
+    "id": "AC_AWS_0053"
+}

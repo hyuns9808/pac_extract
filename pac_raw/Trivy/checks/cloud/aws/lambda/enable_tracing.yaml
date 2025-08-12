@@ -1,0 +1,57 @@
+cloudformation:
+  good:
+    - |-
+      Resources:
+        GoodExample:
+          Type: AWS::Lambda::Function
+          Properties:
+            Code:
+              S3Bucket: my-bucket
+              S3Key: function.zip
+            Handler: index.handler
+            Runtime: nodejs12.x
+            TracingConfig:
+              Mode: Active
+  bad:
+    - |-
+      Resources:
+        BadExample:
+          Type: AWS::Lambda::Function
+          Properties:
+            Code:
+              S3Bucket: my-bucket
+              S3Key: function.zip
+            Handler: index.handler
+            Runtime: nodejs12.x
+terraform:
+  links:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function#mode
+  good:
+    - |-
+      resource "aws_lambda_function" "good_example" {
+        filename         = "lambda_function_payload.zip"
+        function_name    = "lambda_function_name"
+        role             = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        handler          = "exports.test"
+        source_code_hash = filebase64sha256("lambda_function_payload.zip")
+
+        runtime = "nodejs12.x"
+        tracing_config {
+          mode = "Active"
+        }
+      }
+  bad:
+    - |-
+      resource "aws_lambda_function" "bad_example" {
+        filename         = "lambda_function_payload.zip"
+        function_name    = "lambda_function_name"
+        role             = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        handler          = "exports.test"
+        source_code_hash = filebase64sha256("lambda_function_payload.zip")
+
+        runtime = "nodejs12.x"
+
+        tracing_config {
+          mode = "Passthrough"
+        }
+      }

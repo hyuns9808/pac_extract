@@ -1,0 +1,21 @@
+terraform:
+  links:
+    - https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#enable_private_nodes
+  good:
+    - |-
+      resource "google_container_cluster" "good_example" {
+        name     = "my-gke-cluster"
+        location = "us-central1"
+        private_cluster_config {
+          enable_private_nodes = true
+        }
+      }
+  bad:
+    - |-
+      resource "google_container_cluster" "bad_example" {
+        name     = "my-gke-cluster"
+        location = "us-central1"
+        private_cluster_config {
+          enable_private_nodes = false
+        }
+      }

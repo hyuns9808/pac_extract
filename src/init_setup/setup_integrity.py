@@ -33,13 +33,22 @@ def get_token_data(ver_token_path):
         raise UnicodeDecodeError(f"Cannot read {ver_token_path}: {e}") from e
     return token_info
 
+def data_init(project_root):
+    '''Gets version info from version_info.json'''
+    data_json_path = os.path.join(project_root, "version_info.json")
+    version_info = get_version_data(data_json_path)
+    version = version_info["version"]
+    date = version_info["date"]
+    full_tool_list = list(version_info["tool_info"].keys())
+    full_tool_info = version_info["tool_info"]
+    return version_info, version, date, full_tool_list, full_tool_info
+    
 def data_checker(project_root, data_dir_path):
     '''Checks if 'data' dir is valid'''
-    data_json_path = os.path.join(project_root, "version_info.json")
     ver_token_path = os.path.join(data_dir_path, ".version_token.flag")
     token_pattern = r'Version:\s*([^\n]+)\s+Date:\s*(\d{8})\s+Tool list:\s*(\[[^\]]+\])'
     is_valid = False
-    version_info = get_version_data(data_json_path)
+    version_info, version, date, full_tool_list, full_tool_info = data_init(project_root)
     # 1. Check if 'data' dir exists
     if os.path.exists(data_dir_path):
         # 2. Check if 'version_token.flag' exists and is valid
@@ -48,14 +57,14 @@ def data_checker(project_root, data_dir_path):
             token_info = get_token_data(ver_token_path)
             match = re.search(token_pattern, token_info, re.MULTILINE)
             if match:
-                version = match.group(1).strip()
-                date = match.group(2).strip()
-                tool_list_str = match.group(3).strip()
+                token_version = match.group(1).strip()
+                token_date = match.group(2).strip()
+                token_tool_list_str = match.group(3).strip()
                 # str comparison
-                if version_info["version"] == version and version_info["date"] == date and json.dumps(list(version_info["tool_info"].keys())) == tool_list_str:
+                if version == token_version and date == token_date and json.dumps(full_tool_list) == token_tool_list_str:
                     # 4. Check if all tool directories exist within 'data' dir
                     tool_dir = [f for f in os.listdir(data_dir_path) if os.path.isdir(os.path.join(data_dir_path, f))]
-                    tool_set = set(version_info["tool_info"].keys())
+                    tool_set = set(full_tool_list)
                     if set(tool_dir) == tool_set:
                         is_valid = True
             else:
@@ -64,13 +73,12 @@ def data_checker(project_root, data_dir_path):
     if is_valid is True:
         print("✅ All files are valid.\n")
     else:
-        print("❗ Invalid file composition, redownloading all files...\n")
-    return is_valid, version_info
+        print("❗ Invalid file composition\n")
+    return is_valid
 
-def create_ver_token(version_info):
+def create_ver_token(data_dir_path, version_info):
     '''Creates '.version_token.flag' file based on 'version_info.json' file'''
-    project_root = os.getcwd()
-    ver_token_path = os.path.join(project_root, f"data/.version_token.flag")
+    ver_token_path = os.path.join(data_dir_path, f"version_token.flag")
     line_0 = f"Version: {version_info["version"]}\n"
     line_1 = f"Date: {version_info["date"]}\n"
     line_2 = f"Tool list: {json.dumps(list(version_info["tool_info"].keys()))}"

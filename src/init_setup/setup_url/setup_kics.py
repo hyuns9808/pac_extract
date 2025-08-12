@@ -12,12 +12,12 @@ from tqdm import tqdm
 import os
 import time
 
-def get_kics_queries(url):
+def get_kics_queries(url, dest):
     # Variables
-    project_root = os.getcwd()
-    save_dir = os.path.join(project_root, f"data/KICS")
-    os.makedirs(save_dir,exist_ok=True)
     file_name = "all_queries.csv"
+    save_dir = os.path.join(dest, file_name)
+    # Create dest dir
+    os.makedirs(dest, exist_ok=True)
     # Step descriptions
     steps = [
         "Launching browser",
@@ -85,7 +85,6 @@ def get_kics_queries(url):
         # === Save to file ===
         progress.set_description(steps[6])
         progress.update(1)
-        save_dir = os.path.join(save_dir, file_name)
         with open(save_dir, "w", encoding="utf-8") as f:
             f.write(csv_data)
         

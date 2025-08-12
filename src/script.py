@@ -16,6 +16,8 @@ if args.tools and not args.update:
     
 # 1. Check integrity of 'data' dir to check if all repos need to be updated
 # Also return version_info.json content
+project_root = os.getcwd()
+data_dir_path = os.path.join()
 is_valid, version_info = data_checker()
 version = version_info["version"]
 date = version_info["date"]

@@ -189,9 +189,10 @@ def get_pac_folder(
         
 def get_pac_url(
     tool_name: str,
-    url: str
+    url: str,
+    dest: str
 ):
     """
     Call function per tool to get PaCs from specified URL
     """
-    tool_function[tool_name](url)
+    tool_function[tool_name](url, dest)
