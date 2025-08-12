@@ -1,0 +1,26 @@
+cloudformation:
+  good:
+    - |-
+      Resources:
+        GoodExample:
+          Type: AWS::ElastiCache::SecurityGroup
+          Properties:
+            Description: Some description
+  bad:
+    - |-
+      Resources:
+        BadExample:
+          Type: AWS::ElastiCache::SecurityGroup
+terraform:
+  links:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticache_security_group#description
+  good:
+    - |-
+      resource "aws_elasticache_security_group" "good_example" {
+        description = "something"
+      }
+  bad:
+    - |-
+      resource "aws_elasticache_security_group" "bad_example" {
+        description = ""
+      }

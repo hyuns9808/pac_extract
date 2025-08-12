@@ -1,0 +1,15 @@
+{
+    "name": "kinesisSseNotConfigured",
+    "file": "kinesis_sse_not_configured.rego",
+    "policy_type": "aws",
+    "resource_type": "aws_kinesis_firehose_delivery_stream",
+    "template_args": {
+        "prefix": ""
+    },
+    "severity": "HIGH",
+    "description": "AWS Kinesis Server data at rest has server side encryption (SSE)",
+    "reference_id": "AWS.Kinesis.EncryptionandKeyManagement.High.0411",
+    "category": "Data Protection",
+    "version": 2,
+    "id": "AC_AWS_0156"
+}

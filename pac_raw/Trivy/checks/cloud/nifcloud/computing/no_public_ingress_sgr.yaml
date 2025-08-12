@@ -1,0 +1,20 @@
+terraform:
+  links:
+    - https://registry.terraform.io/providers/nifcloud/nifcloud/latest/docs/resources/security_group_rule#cidr_ip
+  good:
+    - |-
+      resource "nifcloud_security_group_rule" "example" {
+        group_name        = "allowtcp"
+        availability_zone = "east-11"
+      }
+    - |-
+      resource "nifcloud_security_group_rule" "example" {
+        type    = "IN"
+        cidr_ip = "10.0.0.0/16"
+      }
+  bad:
+    - |-
+      resource "nifcloud_security_group_rule" "bad_example" {
+        type    = "IN"
+        cidr_ip = "0.0.0.0/0"
+      }

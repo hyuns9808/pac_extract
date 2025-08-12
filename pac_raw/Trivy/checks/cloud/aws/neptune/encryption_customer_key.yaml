@@ -1,0 +1,27 @@
+cloudformation:
+  good:
+    - |-
+      Resources:
+        GoodCluster:
+          Type: AWS::Neptune::DBCluster
+          Properties:
+            KmsKeyId: something
+            StorageEncrypted: true
+  bad:
+    - |-
+      Resources:
+        BadCluster:
+          Type: AWS::Neptune::DBCluster
+          Properties:
+            StorageEncrypted: false
+terraform:
+  links:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/neptune_cluster#storage_encrypted
+  good:
+    - |-
+      resource "aws_neptune_cluster" "good_example" {
+        kms_key_arn = "test"
+      }
+  bad:
+    - |-
+      resource "aws_neptune_cluster" "bad_example" {}

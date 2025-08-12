@@ -1,0 +1,55 @@
+cloudformation:
+  links:
+    - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-opensearchservice-domain.html
+    - https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticsearch-domain.html
+  good:
+    - |-
+      Resources:
+        GoodExample:
+          Type: AWS::OpenSearchService::Domain
+          Properties:
+            LogPublishingOptions:
+              AUDIT_LOGS:
+                CloudWatchLogsLogGroupArn: arn:aws:logs:us-east-1:123456789012:log-group:/aws/opensearch/domains/opensearch-application-logs
+                Enabled: true
+    - |-
+      Resources:
+        GoodExample:
+          Type: AWS::Elasticsearch::Domain
+          Properties:
+            LogPublishingOptions:
+              AUDIT_LOGS:
+                CloudWatchLogsLogGroupArn: arn:aws:logs:us-east-1:123456789012:log-group:/aws/opensearch/domains/opensearch-application-logs
+                Enabled: true
+  bad:
+    - |-
+      Resources:
+        BadExample:
+          Type: AWS::OpenSearchService::Domain
+    - |-
+      Resources:
+        BadExample:
+          Type: AWS::Elasticsearch::Domain
+terraform:
+  links:
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/elasticsearch_domain#log_type
+  good:
+    - |-
+      resource "aws_elasticsearch_domain" "good_example" {
+        log_publishing_options {
+          cloudwatch_log_group_arn = aws_cloudwatch_log_group.example.arn
+          log_type                 = "AUDIT_LOGS"
+          enabled                  = true
+        }
+      }
+  bad:
+    - |-
+      resource "aws_elasticsearch_domain" "bad_example" {}
+    - |-
+      resource "aws_elasticsearch_domain" "bad_example" {
+        log_publishing_options {
+          cloudwatch_log_group_arn = aws_cloudwatch_log_group.example.arn
+          log_type                 = "AUDIT_LOGS"
+          enabled                  = false
+        }
+      }

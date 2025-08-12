@@ -1,0 +1,15 @@
+terraform:
+  links:
+    - https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository
+  good:
+    - |-
+      resource "github_repository" "good_example" {
+        name       = "example"
+        visibility = "private"
+      }
+  bad:
+    - |-
+      resource "github_repository" "bad_example" {
+        name       = "example"
+        visibility = "public"
+      }

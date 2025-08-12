@@ -1,0 +1,1072 @@
+Tool,ID,Title,Description,IaC,Category,Provider,Severity,Query Document,Related Document
+Trivy,AWS-0175,Enable IAM Access analyzer for IAM policies about all resources in each region.,"AWS IAM Access Analyzer helps you identify the resources in your organization and
+accounts, such as Amazon S3 buckets or IAM roles, that are shared with an external entity.
+This lets you identify unintended access to your resources and data. Access Analyzer
+identifies resources that are shared with external principals by using logic-based reasoning
+to analyze the resource-based policies in your AWS environment. IAM Access Analyzer
+continuously monitors all policies for S3 bucket, IAM roles, KMS(Key Management Service)
+keys, AWS Lambda functions, and Amazon SQS(Simple Queue Service) queues.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html
+Trivy,AWS-0001,API Gateway stages for V1 and V2 should have access logging enabled,"API Gateway stages should have access log settings block configured to track all access to a particular stage. This should be applied to both v1 and v2 gateway stages.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-logging.html
+Trivy,AWS-0190,Ensure that response caching is enabled for your Amazon API Gateway REST APIs.,"A REST API in API Gateway is a collection of resources and methods that are integrated with backend HTTP endpoints, Lambda functions, or other AWS services. You can enable API caching in Amazon API Gateway to cache your endpoint responses. With caching, you can reduce the number of calls made to your endpoint and also improve the latency of requests to your API.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-caching.html
+Trivy,AWS-0002,API Gateway must have cache enabled,"Method cache encryption ensures that any sensitive data in the cache is not vulnerable to compromise in the event of interception
+",Multiple(Rego),NaN,AWS,Medium,NaN,
+Trivy,AWS-0003,API Gateway must have X-Ray tracing enabled,"X-Ray tracing enables end-to-end debugging and analysis of all API Gateway HTTP requests.
+",Multiple(Rego),NaN,AWS,Low,NaN,
+Trivy,AWS-0004,No unauthorized access to API Gateway methods,"API Gateway methods should generally be protected by authorization or api key. OPTION verb calls can be used without authorization
+",Multiple(Rego),NaN,AWS,Low,NaN,
+Trivy,AWS-0005,API Gateway domain name uses outdated SSL/TLS protocols.,"You should not use outdated/insecure TLS versions for encryption. You should be using TLS v1.2+.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-custom-domain-tls-version.html
+Trivy,AWS-0006,"Athena databases and workgroup configurations are created unencrypted at rest by default, they should be encrypted","Data can be read if the Athena Database is compromised. Athena databases and workspace result sets should be encrypted at rests. These databases and query sets are generally derived from data in S3 buckets and should have the same level of at rest protection.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/athena/latest/ug/encryption.html
+Trivy,AWS-0007,Athena workgroups should enforce configuration to prevent client disabling encryption,"Clients can ignore encryption requirements without enforced configuration. Athena workgroup configuration should be enforced to prevent client side changes to disable encryption settings.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/athena/latest/ug/manage-queries-control-costs-with-workgroups.html
+Trivy,AWS-0010,Cloudfront distribution should have Access Logging configured,"You should configure CloudFront Access Logging to create log files that contain detailed information about every user request that CloudFront receives
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/AccessLogs.html
+Trivy,AWS-0011,CloudFront distribution does not have a WAF in front.,"You should configure a Web Application Firewall in front of your CloudFront distribution. This will mitigate many types of attacks on your web application.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/waf/latest/developerguide/cloudfront-features.html
+Trivy,AWS-0012,CloudFront distribution allows unencrypted (HTTP) communications.,"Plain HTTP is unencrypted and human-readable. This means that if a malicious actor was to eavesdrop on your connection, they would be able to see all of your data flowing back and forth.
+You should use HTTPS, which is HTTP over an encrypted (TLS) connection, meaning eavesdroppers cannot read your traffic.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-https-cloudfront-to-s3-origin.html
+Trivy,AWS-0013,CloudFront distribution uses outdated SSL/TLS protocols.,"You should not use outdated/insecure TLS versions for encryption. You should be using TLS v1.2+.
+Note: that setting *minimum_protocol_version = ""TLSv1.2_2021""* is only possible when *cloudfront_default_certificate* is false (eg. you are not using the cloudfront.net domain name).
+If *cloudfront_default_certificate* is true then the Cloudfront API will only allow setting *minimum_protocol_version = ""TLSv1""*, and setting it to any other value will result in a perpetual diff in your *terraform plan*'s.
+The only option when using the cloudfront.net domain name is to ignore this rule.
+",Multiple(Rego),NaN,AWS,High,NaN,"https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html, https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/distribution-web-values-specify.html#DownloadDistValuesGeneral"
+Trivy,AWS-0014,Cloudtrail should be enabled in all regions regardless of where your AWS resources are generally homed,"Activity could be happening in your account in a different region. When creating Cloudtrail in the AWS Management Console the trail is configured by default to be multi-region, this isn't the case with the Terraform resource. Cloudtrail should cover the full AWS account to ensure you can track changes in regions you are not actively operating in.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/receive-cloudtrail-log-files-from-multiple-regions.html
+Trivy,AWS-0016,Cloudtrail log validation should be enabled to prevent tampering of log data,"Illicit activity could be removed from the logs. Log validation should be activated on Cloudtrail logs to prevent the tampering of the underlying data in the S3 bucket. It is feasible that a rogue actor compromising an AWS account might want to modify the log data to remove trace of their actions.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-log-file-validation-intro.html
+Trivy,AWS-0015,CloudTrail should use Customer managed keys to encrypt the logs,"Using AWS managed keys does not allow for fine grained control.  Using Customer managed keys provides comprehensive control over cryptographic keys, enabling management of policies, permissions, and rotation, thus enhancing security and compliance measures for sensitive data and systems.
+",Multiple(Rego),NaN,AWS,High,NaN,"https://docs.aws.amazon.com/awscloudtrail/latest/userguide/encrypting-cloudtrail-log-files-with-aws-kms.html, https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-mgmt"
+Trivy,AWS-0162,CloudTrail logs should be stored in S3 and also sent to CloudWatch Logs,"Realtime log analysis is not available without enabling CloudWatch logging.
+
+CloudTrail is a web service that records AWS API calls made in a given account. The recorded information includes the identity of the API caller, the time of the API call, the source IP address of the API caller, the request parameters, and the response elements returned by the AWS service.
+
+CloudTrail uses Amazon S3 for log file storage and delivery, so log files are stored durably. In addition to capturing CloudTrail logs in a specified Amazon S3 bucket for long-term analysis, you can perform real-time analysis by configuring CloudTrail to send logs to CloudWatch Logs.
+
+For a trail that is enabled in all Regions in an account, CloudTrail sends log files from all those Regions to a CloudWatch Logs log group.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html#send-cloudtrail-events-to-cloudwatch-logs-console
+Trivy,AWS-0161,The S3 Bucket backing Cloudtrail should be private,"CloudTrail logs will be publicly exposed, potentially containing sensitive information. CloudTrail logs a record of every API call made in your account. These log files are stored in an S3 bucket. CIS recommends that the S3 bucket policy, or access control list (ACL), applied to the S3 bucket that CloudTrail logs to prevents public access to the CloudTrail logs. Allowing public access to CloudTrail log content might aid an adversary in identifying weaknesses in the affected account's use or configuration.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/AmazonS3/latest/userguide/configuring-block-public-access-bucket.html
+Trivy,AWS-0163,You should enable bucket access logging on the CloudTrail S3 bucket.,"Amazon S3 bucket access logging generates a log that contains access records for each request made to your S3 bucket. An access log record contains details about the request, such as the request type, the resources specified in the request worked, and the time and date the request was processed.
+CIS recommends that you enable bucket access logging on the CloudTrail S3 bucket.
+By enabling S3 bucket logging on target S3 buckets, you can capture all events that might affect objects in a target bucket. Configuring logs to be placed in a separate bucket enables access to log information, which can be useful in security and incident response workflows.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerLogs.html
+Trivy,AWS-0017,CloudWatch log groups should be encrypted using CMK,"CloudWatch log groups are encrypted by default, however, to get the full benefit of controlling key rotation and other KMS aspects a KMS CMK should be used.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html
+Trivy,AWS-0151,Ensure a log metric filter and alarm exist for CloudTrail configuration changes,"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+CIS recommends that you create a metric filter and alarm for changes to CloudTrail configuration settings. Monitoring these changes helps ensure sustained visibility to activities in the account.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html
+Trivy,AWS-0153,Ensure a log metric filter and alarm exist for disabling or scheduled deletion of customer managed keys,"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+CIS recommends that you create a metric filter and alarm for customer managed keys that have changed state to disabled or scheduled deletion. Data encrypted with disabled or deleted keys is no longer accessible.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html
+Trivy,AWS-0155,Ensure a log metric filter and alarm exist for AWS Config configuration changes,"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+CIS recommends that you create a metric filter and alarm for changes to AWS Config configuration settings. Monitoring these changes helps ensure sustained visibility of configuration items in the account.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html
+Trivy,AWS-0152,Ensure a log metric filter and alarm exist for AWS Management Console authentication failures,"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+CIS recommends that you create a metric filter and alarm for failed console authentication attempts. Monitoring failed console logins might decrease lead time to detect an attempt to brute-force a credential, which might provide an indicator, such as source IP, that you can use in other event correlations.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aws-console-sign-in-events.html
+Trivy,AWS-0150,Ensure a log metric filter and alarm exist for IAM policy changes,"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+CIS recommends that you create a metric filter and alarm for changes made to IAM policies. Monitoring these changes helps ensure that authentication and authorization controls remain intact.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html
+Trivy,AWS-0157,Ensure a log metric filter and alarm exist for changes to Network Access Control Lists (NACL),"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+NACLs are used as a stateless packet filter to control ingress and egress traffic for subnets in a VPC.
+CIS recommends that you create a metric filter and alarm for changes to NACLs. Monitoring these changes helps ensure that AWS resources and services aren't unintentionally exposed.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html
+Trivy,AWS-0158,Ensure a log metric filter and alarm exist for changes to network gateways,"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+Network gateways are required to send and receive traffic to a destination outside a VPC.
+CIS recommends that you create a metric filter and alarm for changes to network gateways. Monitoring these changes helps ensure that all ingress and egress traffic traverses the VPC border via a controlled path.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html
+Trivy,AWS-0148,Ensure a log metric filter and alarm exist for AWS Management Console sign-in without MFA,"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+CIS recommends that you create a metric filter and alarm console logins that  aren't protected by MFA. Monitoring for single-factor console logins increases visibility into accounts that aren't protected by MFA.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://aws.amazon.com/iam/features/mfa/
+Trivy,AWS-0174,Ensure a log metric filter and alarm exist for organisation changes,"Monitoring AWS Organizations changes can help you prevent any unwanted, accidental or
+intentional modifications that may lead to unauthorized access or other security breaches.
+This monitoring technique helps you to ensure that any unexpected changes performed
+within your AWS Organizations can be investigated and any unwanted changes can be
+rolled back.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/organizations/latest/userguide/orgs_security_incident-response.html
+Trivy,AWS-0149,Ensure a log metric filter and alarm exist for usage of root user,"You can do real-time monitoring of API calls directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+CIS recommends that you create a metric filter and alarm for root user login attempts. Monitoring for root user logins provides visibility into the use of a fully privileged account and an opportunity to reduce the use of it.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://aws.amazon.com/iam/features/mfa/
+Trivy,AWS-0159,Ensure a log metric filter and alarm exist for route table changes,"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+Routing tables route network traffic between subnets and to network gateways.
+CIS recommends that you create a metric filter and alarm for changes to route tables. Monitoring these changes helps ensure that all VPC traffic flows through an expected path.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html
+Trivy,AWS-0154,Ensure a log metric filter and alarm exist for S3 bucket policy changes,"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+CIS recommends that you create a metric filter and alarm for changes to S3 bucket policies. Monitoring these changes might reduce time to detect and correct permissive policies on sensitive S3 buckets.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html
+Trivy,AWS-0156,Ensure a log metric filter and alarm exist for security group changes,"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+Security groups are a stateful packet filter that controls ingress and egress traffic in a VPC.
+CIS recommends that you create a metric filter and alarm for changes to security groups. Monitoring these changes helps ensure that resources and services aren't unintentionally exposed.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html
+Trivy,AWS-0147,Ensure a log metric filter and alarm exist for unauthorized API calls,"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms. You can have more than one VPC in an account, and you can create a peer connection between two VPCs, enabling network traffic to route between VPCs.
+CIS recommends that you create a metric filter and alarm for changes to VPCs. Monitoring these changes helps ensure that authentication and authorization controls remain intact.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html
+Trivy,AWS-0160,Ensure a log metric filter and alarm exist for VPC changes,"You can do real-time monitoring of API calls by directing CloudTrail logs to CloudWatch Logs and establishing corresponding metric filters and alarms.
+You can have more than one VPC in an account, and you can create a peer connection between two VPCs, enabling network traffic to route between VPCs.
+CIS recommends that you create a metric filter and alarm for changes to VPCs. Monitoring these changes helps ensure that authentication and authorization controls remain intact.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html
+Trivy,AWS-0018,CodeBuild Project artifacts encryption should not be disabled,"All artifacts produced by your CodeBuild project pipeline should always be encrypted
+",Multiple(Rego),NaN,AWS,High,NaN,"https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-codebuild-project-artifacts.html, https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-codebuild-project.html"
+Trivy,AWS-0019,Config configuration aggregator should be using all regions for source,"Sources that aren't covered by the aggregator are not include in the configuration. The configuration aggregator should be configured with all_regions for the source.
+This will help limit the risk of any unmonitored configuration in regions that are thought to be unused.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/config/latest/developerguide/aggregate-data.html
+Trivy,AWS-0020,DocumentDB logs export should be enabled,"Document DB does not have auditing by default. To ensure that you are able to accurately audit the usage of your DocumentDB cluster you should enable export logs.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/documentdb/latest/developerguide/event-auditing.html
+Trivy,AWS-0021,DocumentDB storage must be encrypted,"Unencrypted sensitive data is vulnerable to compromise. Encryption of the underlying storage used by DocumentDB ensures that if their is compromise of the disks, the data is still protected.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/documentdb/latest/developerguide/encryption-at-rest.html
+Trivy,AWS-0022,DocumentDB encryption should use Customer Managed Keys,"Using AWS managed keys does not allow for fine grained control. Encryption using AWS keys provides protection for your DocumentDB underlying storage. To increase control of the encryption and manage factors like rotation use customer managed keys.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/documentdb/latest/developerguide/security.encryption.ssl.public-key.html
+Trivy,AWS-0023,DAX Cluster should always encrypt data at rest,"Data can be freely read if compromised. Amazon DynamoDB Accelerator (DAX) encryption at rest provides an additional layer of data protection by helping secure your data from unauthorized access to the underlying storage.
+",Multiple(Rego),NaN,AWS,High,NaN,"https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DAXEncryptionAtRest.html, https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-dax-cluster.html"
+Trivy,AWS-0024,Point in time recovery should be enabled to protect DynamoDB table,"DynamoDB tables should be protected against accidentally or malicious write/delete actions by ensuring that there is adequate protection.
+By enabling point-in-time-recovery you can restore to a known point in the event of loss of data.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/PointInTimeRecovery.html
+Trivy,AWS-0025,DynamoDB tables should use at rest encryption with a Customer Managed Key,"Using AWS managed keys does not allow for fine grained control. DynamoDB tables are encrypted by default using AWS managed encryption keys. To increase control of the encryption and control the management of factors like key rotation, use a Customer Managed Key.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/EncryptionAtRest.html
+Trivy,AWS-0099,Missing description for security group.,"Security groups should include a description for auditing purposes.
+
+Simplifies auditing, debugging, and managing security groups.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://www.cloudconformity.com/knowledge-base/aws/EC2/security-group-rules-description.html
+Trivy,AWS-0124,Missing description for security group rule.,"Security group rules should include a description for auditing purposes.
+
+Simplifies auditing, debugging, and managing security groups.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://www.cloudconformity.com/knowledge-base/aws/EC2/security-group-rules-description.html
+Trivy,AWS-0008,Launch configuration with unencrypted block device.,"Block devices should be encrypted to ensure sensitive data is held securely at rest.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/RootDeviceStorage.html
+Trivy,AWS-0130,aws_instance should activate session tokens for Instance Metadata Service.,"IMDS v2 (Instance Metadata Service) introduced session authentication tokens which improve security when talking to IMDS.
+
+By default <code>aws_instance</code> resource sets IMDS session auth tokens to be optional.
+
+To fully protect IMDS you need to enable session tokens by using <code>metadata_options</code> block and its <code>http_tokens</code> variable set to <code>required</code>.
+",Multiple(Rego),NaN,AWS,High,NaN,https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service
+Trivy,AWS-0129,User data for EC2 instances must not contain sensitive AWS keys,"EC2 instance data is used to pass start up information into the EC2 instance. This userdata must not contain access key credentials. Instead use an IAM Instance Profile assigned to the instance to grant access to other AWS Services.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html
+Trivy,AWS-0131,Instance with unencrypted block device.,"Block devices should be encrypted to ensure sensitive data is held securely at rest.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/RootDeviceStorage.html
+Trivy,AWS-0026,EBS volumes must be encrypted,"By enabling encryption on EBS volumes you protect the volume, the disk I/O and any derived snapshots from compromise if intercepted.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html
+Trivy,AWS-0027,EBS volume encryption should use Customer Managed Keys,"Encryption using AWS keys provides protection for your EBS volume. To increase control of the encryption and manage factors like rotation use customer managed keys.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html
+Trivy,AWS-0028,aws_instance should activate session tokens for Instance Metadata Service.,"IMDS v2 (Instance Metadata Service) introduced session authentication tokens which improve security when talking to IMDS.
+
+By default <code>aws_instance</code> resource sets IMDS session auth tokens to be optional.
+
+To fully protect IMDS you need to enable session tokens by using <code>metadata_options</code> block and its <code>http_tokens</code> variable set to <code>required</code>.
+",Multiple(Rego),NaN,AWS,High,NaN,https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service
+Trivy,AWS-0101,AWS best practice to not use the default VPC for workflows,"Default VPC does not have a lot of the critical security features that standard VPC comes with, new resources should not be created in the default VPC and it should not be present in the Terraform.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/vpc/latest/userguide/default-vpc.html
+Trivy,AWS-0102,An Network ACL rule allows ALL ports.,"Ensure access to specific required ports is allowed, and nothing else.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html
+Trivy,AWS-0104,A security group rule should not allow unrestricted egress to any IP address.,"Opening up ports to connect out to the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that are explicitly required where possible.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/whitepapers/latest/building-scalable-secure-multi-vpc-network-infrastructure/centralized-egress-to-internet.html
+Trivy,AWS-0105,Network ACLs should not allow unrestricted ingress to SSH or RDP from any IP address.,"The Network Access Control List (NACL) function provide stateless filtering of ingress and
+egress network traffic to AWS resources. It is recommended that no NACL allows
+unrestricted ingress access to remote server administration ports, such as SSH to port 22
+and RDP to port 3389.
+",Multiple(Rego),NaN,AWS,Medium,NaN,"https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html, https://docs.aws.amazon.com/securityhub/latest/userguide/ec2-controls.html#ec2-21"
+Trivy,AWS-0107,Security groups should not allow unrestricted ingress to SSH or RDP from any IP address.,"Security groups provide stateful filtering of ingress and egress network traffic to AWS
+resources. It is recommended that no security group allows unrestricted ingress access to
+remote server administration ports, such as SSH to port 22 and RDP to port 3389.
+",Multiple(Rego),NaN,AWS,High,NaN,"https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/security-group-rules-reference.html, https://docs.aws.amazon.com/securityhub/latest/userguide/ec2-controls.html#ec2-13, https://docs.aws.amazon.com/securityhub/latest/userguide/ec2-controls.html#ec2-14"
+Trivy,AWS-0009,Launch configuration should not have a public IP address.,"You should limit the provision of public IP addresses for resources. Resources should not be exposed on the public internet, but should have access limited to consumers required for the function of your application.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html
+Trivy,AWS-0164,Instances in a subnet should not receive a public IP address by default.,"You should limit the provision of public IP addresses for resources. Resources should not be exposed on the public internet, but should have access limited to consumers required for the function of your application.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html#concepts-public-addresses
+Trivy,AWS-0029,User data for EC2 instances must not contain sensitive AWS keys,"EC2 instance data is used to pass start up information into the EC2 instance. This userdata must not contain access key credentials. Instead use an IAM Instance Profile assigned to the instance to grant access to other AWS Services.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html
+Trivy,AWS-0122,Ensure all data stored in the launch configuration EBS is securely encrypted,"When creating Launch Configurations, user data can be used for the initial configuration of the instance. User data must not contain any sensitive data.
+",Multiple(Rego),NaN,AWS,High,NaN,
+Trivy,AWS-0178,"VPC Flow Logs is a feature that enables you to capture information about the IP traffic going to and from network interfaces in your VPC. After you've created a flow log, you can view and retrieve its data in Amazon CloudWatch Logs. It is recommended that VPC Flow Logs be enabled for packet ""Rejects"" for VPCs.","VPC Flow Logs provide visibility into network traffic that traverses the VPC and can be used to detect anomalous traffic or insight during security workflows.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/RootDeviceStorage.html
+Trivy,AWS-0173,Default security group should restrict all traffic,"Configuring all VPC default security groups to restrict all traffic will encourage least
+
+privilege security group development and mindful placement of AWS resources into
+
+security groups which will in-turn reduce the exposure of those resources.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/default-custom-security-groups.html
+Trivy,AWS-0344,AWS AMI data source should specify owners,"AWS AMI data source should specify owners to avoid using unverified AMIs.
+The owners field helps ensure you're using AMIs from known and trusted sources.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami
+Trivy,AWS-0030,ECR repository has image scans disabled.,"Repository image scans should be enabled to ensure vulnerable software can be discovered and remediated as soon as possible.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-scanning.html
+Trivy,AWS-0031,ECR images tags shouldn't be mutable.,"ECR images should be set to IMMUTABLE to prevent code injection through image mutation.
+This can be done by setting <code>image_tag_mutability</code> to <code>IMMUTABLE</code>
+",Multiple(Rego),NaN,AWS,High,NaN,https://sysdig.com/blog/toctou-tag-mutability/
+Trivy,AWS-0032,ECR repository policy must block public access,"Allowing public access to the ECR repository risks leaking sensitive of abusable information
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonECR/latest/public/public-repository-policies.html
+Trivy,AWS-0033,ECR Repository should use customer managed keys to allow more control,"Images in the ECR repository are encrypted by default using AWS managed encryption keys. To increase control of the encryption and control the management of factors like key rotation, use a Customer Managed Key.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/AmazonECR/latest/userguide/encryption-at-rest.html
+Trivy,AWS-0034,ECS clusters should have container insights enabled,"Cloudwatch Container Insights provide more metrics and logs for container based applications and micro services.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html
+Trivy,AWS-0035,ECS Task Definitions with EFS volumes should use in-transit encryption,"ECS task definitions that have volumes using EFS configuration should explicitly enable in transit encryption to prevent the risk of data loss due to interception.
+",Multiple(Rego),NaN,AWS,High,NaN,"https://docs.aws.amazon.com/AmazonECS/latest/userguide/efs-volumes.html, https://docs.aws.amazon.com/efs/latest/ug/encryption-in-transit.html"
+Trivy,AWS-0036,Task definition defines sensitive environment variable(s).,"You should not make secrets available to a user in plaintext in any scenario. Secrets can instead be pulled from a secure secret storage system by the service requiring them.
+",Multiple(Rego),NaN,AWS,Critical,NaN,"https://docs.aws.amazon.com/systems-manager/latest/userguide/integration-ps-secretsmanager.html, https://www.vaultproject.io/"
+Trivy,AWS-0037,EFS Encryption has not been enabled,"If your organization is subject to corporate or regulatory policies that require encryption of data and metadata at rest, we recommend creating a file system that is encrypted at rest, and mounting your file system using encryption of data in transit.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/efs/latest/ug/encryption.html
+Trivy,AWS-0038,EKS Clusters should have cluster control plane logging turned on,"By default cluster control plane logging is not turned on. Logging is available for audit, api, authenticator, controllerManager and scheduler. All logging should be turned on for cluster control plane.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html
+Trivy,AWS-0039,EKS should have the encryption of secrets enabled,"EKS cluster resources should have the encryption_config block set with protection of the secrets resource.
+",Multiple(Rego),NaN,AWS,High,NaN,https://aws.amazon.com/about-aws/whats-new/2020/03/amazon-eks-adds-envelope-encryption-for-secrets-with-aws-kms/
+Trivy,AWS-0040,EKS Clusters should have the public access disabled,"EKS clusters are available publicly by default, this should be explicitly disabled in the vpc_config of the EKS cluster resource.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html
+Trivy,AWS-0041,EKS cluster should not have open CIDR range for public access,"EKS Clusters have public access cidrs set to 0.0.0.0/0 by default which is wide open to the internet. This should be explicitly set to a more specific private CIDR range
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/eks/latest/userguide/create-public-private-vpc.html
+Trivy,AWS-0049,Missing description for security group/security group rule.,"Security groups and security group rules should include a description for auditing purposes.
+Simplifies auditing, debugging, and managing security groups.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/SecurityGroups.Creating.html
+Trivy,AWS-0045,Elasticache Replication Group stores unencrypted data at-rest.,"Data stored within an Elasticache replication node should be encrypted to ensure sensitive data is kept private.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/at-rest-encryption.html
+Trivy,AWS-0050,Redis cluster should have backup retention turned on,"Redis clusters should have a snapshot retention time to ensure that they are backed up and can be restored if required.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-automatic.html
+Trivy,AWS-0051,Elasticache Replication Group uses unencrypted traffic.,"Traffic flowing between Elasticache replication nodes should be encrypted to ensure sensitive data is kept private.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html
+Trivy,AWS-0048,Elasticsearch domain isn't encrypted at rest.,"You should ensure your Elasticsearch data is encrypted at rest to help prevent sensitive information from being read by unauthorised users.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/encryption-at-rest.html
+Trivy,AWS-0042,Domain logging should be enabled for Elastic Search domains,"Amazon ES exposes four Elasticsearch logs through Amazon CloudWatch Logs: error logs, search slow logs, index slow logs, and audit logs.
+Search slow logs, index slow logs, and error logs are useful for troubleshooting performance and stability issues.
+Audit logs track user activity for compliance purposes.
+All the logs are disabled by default.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-createdomain-configure-slow-logs.html
+Trivy,AWS-0043,Elasticsearch domain uses plaintext traffic for node to node communication.,"Traffic flowing between Elasticsearch nodes should be encrypted to ensure sensitive data is kept private.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/ntn.html
+Trivy,AWS-0046,Elasticsearch doesn't enforce HTTPS traffic.,"Plain HTTP is unencrypted and human-readable. This means that if a malicious actor was to eavesdrop on your connection, they would be able to see all of your data flowing back and forth.
+You should use HTTPS, which is HTTP over an encrypted (TLS) connection, meaning eavesdroppers cannot read your traffic.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-data-protection.html
+Trivy,AWS-0126,Elasticsearch domain endpoint is using outdated TLS policy.,"You should not use outdated/insecure TLS versions for encryption. You should be using TLS v1.2+.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-data-protection.html
+Trivy,AWS-0053,Load balancer is exposed to the internet.,"There are many scenarios in which you would want to expose a load balancer to the wider internet, but this check exists as a warning to prevent accidental exposure of internal assets. You should ensure that this resource should be exposed publicly.
+",Multiple(Rego),NaN,AWS,High,NaN,
+Trivy,AWS-0052,Load balancers should drop invalid headers,"Passing unknown or invalid headers through to the target poses a potential risk of compromise.
+By setting drop_invalid_header_fields to true, anything that does not conform to well known, defined headers will be removed by the load balancer.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/elasticloadbalancing/latest/application/application-load-balancers.html
+Trivy,AWS-0054,Use of plain HTTP.,"Plain HTTP is unencrypted and human-readable. This means that if a malicious actor was to eavesdrop on your connection, they would be able to see all of your data flowing back and forth.
+You should use HTTPS, which is HTTP over an encrypted (TLS) connection, meaning eavesdroppers cannot read your traffic.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://www.cloudflare.com/en-gb/learning/ssl/why-is-http-not-secure/
+Trivy,AWS-0047,An outdated SSL policy is in use by a load balancer.,"You should not use outdated/insecure TLS versions for encryption. You should be using TLS v1.2+.
+",Multiple(Rego),NaN,AWS,Critical,NaN,
+Trivy,AWS-0137,Enable at-rest encryption for EMR clusters.,"Data stored within an EMR cluster should be encrypted to ensure sensitive data is kept private.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist_800-171.html
+Trivy,AWS-0138,Enable in-transit encryption for EMR clusters.,"Data stored within an EMR cluster should be encrypted to ensure sensitive data is kept private.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist_800-171.html
+Trivy,AWS-0139,Enable local-disk encryption for EMR clusters.,"Data stored within an EMR instances should be encrypted to ensure sensitive data is kept private.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/config/latest/developerguide/operational-best-practices-for-nist_800-171.html
+Trivy,AWS-0144,Credentials which are no longer used should be disabled.,"CIS recommends that you remove or deactivate all credentials that have been unused in 90 days or more. Disabling or removing unnecessary credentials reduces the window of opportunity for credentials associated with a compromised or abandoned account to be used.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://console.aws.amazon.com/iam/
+Trivy,AWS-0166,Disabling or removing unnecessary credentials will reduce the window of opportunity for credentials associated with a compromised or abandoned account to be used.,"AWS IAM users can access AWS resources using different types of credentials, such as passwords or access keys. It is recommended that all credentials that have been unused in45 or greater days be deactivated or removed.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://console.aws.amazon.com/iam/
+Trivy,AWS-0123,IAM groups should have MFA enforcement activated.,"IAM groups should be protected with multi factor authentication to add safe guards to password compromise.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html#password-policy-details
+Trivy,AWS-0165,"The ""root"" account has unrestricted access to all resources in the AWS account. It is highly recommended that this account have hardware MFA enabled.","Hardware MFA adds an extra layer of protection on top of a user name and password. With MFA enabled, when a user signs in to an AWS website, they're prompted for their user name and password and for an authentication code from their AWS MFA device.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa_enable_physical.html
+Trivy,AWS-0142,"The ""root"" account has unrestricted access to all resources in the AWS account. It is highly recommended that this account have MFA enabled.","MFA adds an extra layer of protection on top of a user name and password. With MFA enabled, when a user signs in to an AWS website, they're prompted for their user name and password and for an authentication code from their AWS MFA device.
+
+When you use virtual MFA for the root user, CIS recommends that the device used is not a personal device. Instead, use a dedicated mobile device (tablet or phone) that you manage to keep charged and secured independent of any individual personal devices. This lessens the risks of losing access to the MFA due to device loss, device trade-in, or if the individual owning the device is no longer employed at the company.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-cis-controls.html#securityhub-cis-controls-1.14
+Trivy,AWS-0145,IAM Users should have MFA enforcement activated.,"IAM user accounts should be protected with multi factor authentication to add safe guards to password compromise.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://console.aws.amazon.com/iam/
+Trivy,AWS-0342,IAM Pass Role Filtering,Ensures any IAM pass role attached to roles are flagged and warned.,Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_passrole.html
+Trivy,AWS-0140,"The ""root"" account has unrestricted access to all resources in the AWS account. It is highly recommended that the use of this account be avoided.","The root user has unrestricted access to all services and resources in an AWS account. We highly recommend that you avoid using the root user for daily tasks. Minimizing the use of the root user and adopting the principle of least privilege for access management reduce the risk of accidental changes and unintended disclosure of highly privileged credentials.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
+Trivy,AWS-0345,Disallow unrestricted S3 IAM Policies,Ensure that the creation of the unrestricted S3 IAM policies is disallowed.,Multiple(Rego),NaN,AWS,High,NaN,
+Trivy,AWS-0167,No user should have more than one active access key.,"Multiple active access keys widens the scope for compromise.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://console.aws.amazon.com/iam/
+Trivy,AWS-0056,IAM Password policy should prevent password reuse.,"IAM account password policies should prevent the reuse of passwords.
+
+The account password policy should be set to prevent using any of the last five used passwords.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html#password-policy-details
+Trivy,AWS-0057,IAM policy should avoid use of wildcards and instead apply the principle of least privilege,"You should use the principle of least privilege when defining your IAM policies. This means you should specify each exact permission required without using wildcards, as this could cause the granting of access to certain undesired actions, resources and principals.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
+Trivy,AWS-0141,The root user has complete access to all services and resources in an AWS account. AWS Access Keys provide programmatic access to a given account.,"CIS recommends that all access keys be associated with the root user be removed. Removing access keys associated with the root user limits vectors that the account can be compromised by. Removing the root user access keys also encourages the creation and use of role-based accounts that are least privileged.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
+Trivy,AWS-0143,IAM policies should not be granted directly to users.,"CIS recommends that you apply IAM policies directly to groups and roles but not users. Assigning privileges at the group or role level reduces the complexity of access management as the number of users grow. Reducing access management complexity might in turn reduce opportunity for a principal to inadvertently receive or retain excessive privileges.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://console.aws.amazon.com/iam/
+Trivy,AWS-0168,Delete expired TLS certificates,"Removing expired SSL/TLS certificates eliminates the risk that an invalid certificate will be
+
+deployed accidentally to a resource such as AWS Elastic Load Balancer (ELB), which can
+
+damage the credibility of the application/website behind the ELB. As a best practice, it is
+
+recommended to delete expired certificates.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://console.aws.amazon.com/iam/
+Trivy,AWS-0058,IAM Password policy should have requirement for at least one lowercase character.,"IAM account password policies should ensure that passwords content including at least one lowercase character.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html#password-policy-details
+Trivy,AWS-0059,IAM Password policy should have requirement for at least one number in the password.,"IAM account password policies should ensure that passwords content including at least one number.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html#password-policy-details
+Trivy,AWS-0169,Missing IAM Role to allow authorized users to manage incidents with AWS Support.,"By implementing least privilege for access control, an IAM Role will require an appropriate
+IAM Policy to allow Support Center Access in order to manage Incidents with AWS Support.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://console.aws.amazon.com/iam/
+Trivy,AWS-0060,IAM Password policy should have requirement for at least one symbol in the password.,"IAM account password policies should ensure that passwords content including a symbol.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html#password-policy-details
+Trivy,AWS-0061,IAM Password policy should have requirement for at least one uppercase character.,",
+
+IAM account password policies should ensure that passwords content including at least one uppercase character.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html#password-policy-details
+Trivy,AWS-0146,Access keys should be rotated at least every 90 days,"Regularly rotating your IAM credentials helps prevent a compromised set of IAM access keys from accessing components in your AWS account.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/automatically-rotate-iam-user-access-keys-at-scale-with-aws-organizations-and-aws-secrets-manager.html
+Trivy,AWS-0062,IAM Password policy should have expiry less than or equal to 90 days.,"IAM account password policies should have a maximum age specified.
+
+The account password policy should be set to expire passwords after 90 days or less.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html#password-policy-details
+Trivy,AWS-0063,IAM Password policy should have minimum password length of 14 or more characters.,"IAM account password policies should ensure that passwords have a minimum length.
+
+The account password policy should be set to enforce minimum password length of at least 14 characters.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_passwords_account-policy.html#password-policy-details
+Trivy,AWS-0346,Reduce unnecessary unauthorized access or information disclosure of S3 buckets.,Unnecessary access to S3 buckets can lead to unauthorized access or information disclosure.,Multiple(Rego),NaN,AWS,High,NaN,https://www.aquasec.com/blog/shadow-roles-aws-defaults-lead-to-service-takeover/
+Trivy,AWS-0064,Kinesis stream is unencrypted.,"Kinesis streams should be encrypted to ensure sensitive data is kept private. Additionally, non-default KMS keys should be used so granularity of access control can be ensured.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/streams/latest/dev/server-side-encryption.html
+Trivy,AWS-0065,A KMS key is not configured to auto-rotate.,"You should configure your KMS keys to auto rotate to maintain security and defend against compromise.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html
+Trivy,AWS-0066,Lambda functions should have X-Ray tracing enabled,"X-Ray tracing enables end-to-end debugging and analysis of all function activity. This will allow for identifying bottlenecks, slow downs and timeouts.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/lambda/latest/dg/services-xray.html
+Trivy,AWS-0067,Ensure that lambda function permission has a source arn specified,"When the principal is an AWS service, the ARN of the specific resource within that service to grant permission to.
+Without this, any resource from principal will be granted permission – even if that resource is from another account.
+For S3, this should be the ARN of the S3 Bucket. For CloudWatch Events, this should be the ARN of the CloudWatch Events Rule. For API Gateway, this should be the ARN of the API
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-permission.html
+Trivy,AWS-0070,MQ Broker should have audit logging enabled,"Logging should be enabled to allow tracing of issues and activity to be investigated more fully. Logs provide additional information and context which is often invalauble during investigation
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/amazon-mq/latest/developer-guide/configure-logging-monitoring-activemq.html
+Trivy,AWS-0071,MQ Broker should have general logging enabled,"Logging should be enabled to allow tracing of issues and activity to be investigated more fully. Logs provide additional information and context which is often invalauble during investigation
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/amazon-mq/latest/developer-guide/configure-logging-monitoring-activemq.html
+Trivy,AWS-0072,Ensure MQ Broker is not publicly exposed,"Public access of the MQ broker should be disabled and only allow routes to applications that require access.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/amazon-mq/latest/developer-guide/using-amazon-mq-securely.html#prefer-brokers-without-public-accessibility
+Trivy,AWS-0179,A MSK cluster allows unencrypted data at rest.,"Encryption should be forced for Kafka clusters, including at rest. This ensures sensitive data is kept private.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/msk/latest/developerguide/msk-encryption.html
+Trivy,AWS-0073,A MSK cluster allows unencrypted data in transit.,"Encryption should be forced for Kafka clusters, including for communication between nodes. This ensure sensitive data is kept private.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/msk/latest/developerguide/msk-encryption.html
+Trivy,AWS-0074,Ensure MSK Cluster logging is enabled,"Managed streaming for Kafka can log to Cloud Watch, Kinesis Firehose and S3, at least one of these locations should be logged to
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/msk/latest/developerguide/msk-logging.html
+Trivy,AWS-0075,Neptune logs export should be enabled,"Neptune does not have auditing by default. To ensure that you are able to accurately audit the usage of your Neptune instance you should enable export logs.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/neptune/latest/userguide/auditing.html
+Trivy,AWS-0076,Neptune storage must be encrypted at rest,"Encryption of Neptune storage ensures that if their is compromise of the disks, the data is still protected.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/neptune/latest/userguide/encrypt.html
+Trivy,AWS-0128,Neptune encryption should use Customer Managed Keys,"Encryption using AWS keys provides protection for your Neptune underlying storage. To increase control of the encryption and manage factors like rotation use customer managed keys.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/neptune/latest/userguide/encrypt.html
+Trivy,AWS-0180,RDS Publicly Accessible,Ensures RDS instances and RDS Cluster instances are not launched into the public cloud.,Multiple(Rego),NaN,AWS,High,NaN,http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.html
+Trivy,AWS-0343,RDS Cluster Deletion Protection Disabled,Ensure deletion protection is enabled for RDS clusters.,Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/config/latest/developerguide/rds-cluster-deletion-protection-enabled.html
+Trivy,AWS-0177,RDS Deletion Protection Disabled,Ensure deletion protection is enabled for RDS database instances.,Multiple(Rego),NaN,AWS,Medium,NaN,https://aws.amazon.com/about-aws/whats-new/2018/09/amazon-rds-now-provides-database-deletion-protection/
+Trivy,AWS-0176,RDS IAM Database Authentication Disabled,Ensure IAM Database Authentication is enabled for RDS database instances to manage database access,Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/neptune/latest/userguide/iam-auth.html
+Trivy,AWS-0133,Enable Performance Insights to detect potential problems,"Enabling Performance insights allows for greater depth in monitoring data.
+For example, information about active sessions could help diagose a compromise or assist in the investigation
+",Multiple(Rego),NaN,AWS,Low,NaN,https://aws.amazon.com/rds/performance-insights/
+Trivy,AWS-0079,There is no encryption specified or encryption is disabled on the RDS Cluster.,"Encryption should be enabled for an RDS Aurora cluster.
+When enabling encryption by setting the kms_key_id, the storage_encrypted must also be set to true.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.Encryption.html
+Trivy,AWS-0080,RDS encryption has not been enabled at a DB Instance level.,"Encryption should be enabled for an RDS Database instances.
+When enabling encryption by setting the kms_key_id.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.Encryption.html
+Trivy,AWS-0078,Performance Insights encryption should use Customer Managed Keys,"Amazon RDS uses the AWS managed key for your new DB instance. For complete control over KMS keys, including establishing and maintaining their key policies, IAM policies, and grants, enabling and disabling them, and rotating their cryptographic material, use a customer managed keys.
+The encryption key specified in `performance_insights_kms_key_id` references a KMS ARN
+",Multiple(Rego),NaN,AWS,Low,NaN,"https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PerfInsights.access-control.html#USER_PerfInsights.access-control.cmk-policy, https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-mgmt"
+Trivy,AWS-0077,RDS Cluster and RDS instance should have backup retention longer than default 1 day,"RDS backup retention for clusters defaults to 1 day, this may not be enough to identify and respond to an issue. Backup retention periods should be set to a period that is a balance on cost and limiting risk.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html#USER_WorkingWithAutomatedBackups.BackupRetention
+Trivy,AWS-0083,Missing description for security group/security group rule.,"Security groups and security group rules should include a description for auditing purposes.
+Simplifies auditing, debugging, and managing security groups.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://www.cloudconformity.com/knowledge-base/aws/EC2/security-group-rules-description.html
+Trivy,AWS-0084,Redshift clusters should use at rest encryption,"Redshift clusters that contain sensitive data or are subject to regulation should be encrypted at rest to prevent data leakage should the infrastructure be compromised.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-db-encryption.html
+Trivy,AWS-0085,AWS Classic resource usage.,"AWS Classic resources run in a shared environment with infrastructure owned by other AWS customers. You should run
+resources in a VPC instead.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-classic-platform.html
+Trivy,AWS-0127,Redshift cluster should be deployed into a specific VPC,"Redshift clusters that are created without subnet details will be created in EC2 classic mode, meaning that they will be outside of a known VPC and running in tenant.
+In order to benefit from the additional security features achieved with using an owned VPC, the subnet should be set.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/redshift/latest/mgmt/managing-clusters-vpc.html
+Trivy,AWS-0086,S3 Access block should block public ACL,"S3 buckets should block public ACLs on buckets and any objects they contain. By blocking, PUTs with fail if the object has any public ACL a.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html
+Trivy,AWS-0087,S3 Access block should block public policy,"S3 bucket policy should have block public policy to prevent users from putting a policy that enable public access.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonS3/latest/dev-retired/access-control-block-public-access.html
+Trivy,AWS-0320,S3 DNS Compliant Bucket Names,Ensures that S3 buckets have DNS complaint bucket names.,Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/AmazonS3/latest/dev/transfer-acceleration.html
+Trivy,AWS-0088,Unencrypted S3 bucket.,"S3 Buckets should be encrypted to protect the data that is stored within them if access is compromised.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-encryption.html
+Trivy,AWS-0089,S3 Bucket Logging,Ensures S3 bucket logging is enabled for S3 buckets,Multiple(Rego),NaN,AWS,Low,NaN,"https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerLogs.html, https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-server-access-logging.html"
+Trivy,AWS-0172,"S3 object-level API operations such as GetObject, DeleteObject, and PutObject are called data events. By default, CloudTrail trails don't log data events and so it is recommended to enable Object-level logging for S3 buckets.","Enabling object-level logging will help you meet data compliance requirements within your organization, perform comprehensive security analysis, monitor specific patterns of user behavior in your AWS account or take immediate actions on any object-level API activity within your S3 Buckets using Amazon CloudWatch Events.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-cloudtrail-logging-for-s3.html
+Trivy,AWS-0171,"S3 object-level API operations such as GetObject, DeleteObject, and PutObject are called data events. By default, CloudTrail trails don't log data events and so it is recommended to enable Object-level logging for S3 buckets.","Enabling object-level logging will help you meet data compliance requirements within your organization, perform comprehensive security analysis, monitor specific patterns of user behavior in your AWS account or take immediate actions on any object-level API activity within your S3 Buckets using Amazon CloudWatch Events.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-cloudtrail-logging-for-s3.html
+Trivy,AWS-0090,S3 Data should be versioned,"Versioning in Amazon S3 is a means of keeping multiple variants of an object in the same bucket.
+
+You can use the S3 Versioning feature to preserve, retrieve, and restore every version of every object stored in your buckets.
+
+With versioning you can recover more easily from both unintended user actions and application failures.
+
+When you enable versioning, also keep in mind the potential costs of storing noncurrent versions of objects. To help manage those costs, consider setting up an S3 Lifecycle configuration.
+",Multiple(Rego),NaN,AWS,Medium,NaN,"https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html, https://aws.amazon.com/blogs/storage/reduce-storage-costs-with-fewer-noncurrent-versions-using-amazon-s3-lifecycle/"
+Trivy,AWS-0132,S3 encryption should use Customer Managed Keys,"Encryption using AWS keys provides protection for your S3 buckets. To gain greater control over encryption, such as key rotation, access policies, and auditability, use customer managed keys (CMKs) with SSE-KMS.
+Note that SSE-KMS is not supported for S3 server access logging destination buckets; in such cases, use SSE-S3 instead.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-encryption.html
+Trivy,AWS-0091,S3 Access Block should Ignore Public ACL,"S3 buckets should ignore public ACLs on buckets and any objects they contain. By ignoring rather than blocking, PUT calls with public ACLs will still be applied but the ACL will be ignored.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html
+Trivy,AWS-0092,S3 Buckets not publicly accessible through ACL.,"Buckets should not have ACLs that allow public access
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonS3/latest/userguide/acl-overview.html
+Trivy,AWS-0093,S3 Access block should restrict public bucket to limit access,"S3 buckets should restrict public policies for the bucket. By enabling, the restrict_public_buckets, only the bucket owner and AWS Services can access if it has a public policy.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AmazonS3/latest/dev-retired/access-control-block-public-access.html
+Trivy,AWS-0170,Buckets should have MFA deletion protection enabled.,"Adding MFA delete to an S3 bucket, requires additional authentication when you change the version state of your bucket or you delete an object version, adding another layer of security in the event your security credentials are compromised or unauthorized access is obtained.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/AmazonS3/latest/userguide/MultiFactorAuthenticationDelete.html
+Trivy,AWS-0094,S3 buckets should each define an aws_s3_bucket_public_access_block,"The ""block public access"" settings in S3 override individual policies that apply to a given bucket, meaning that all public access can be controlled in one central types for that bucket. It is therefore good practice to define these settings for each bucket in order to clearly define the public access that can be allowed for it.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html
+Trivy,AWS-0112,SAM API domain name uses outdated SSL/TLS protocols.,"You should not use outdated/insecure TLS versions for encryption. You should be using TLS v1.2+.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-api-domainconfiguration.html#sam-api-domainconfiguration-securitypolicy
+Trivy,AWS-0113,SAM API stages for V1 and V2 should have access logging enabled,"API Gateway stages should have access log settings block configured to track all access to a particular stage. This should be applied to both v1 and v2 gateway stages.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-api.html#sam-api-accesslogsetting
+Trivy,AWS-0110,SAM API must have data cache enabled,"Method cache encryption ensures that any sensitive data in the cache is not vulnerable to compromise in the event of interception
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-apigateway-stage-methodsetting.html#cfn-apigateway-stage-methodsetting-cachedataencrypted
+Trivy,AWS-0111,SAM API must have X-Ray tracing enabled,"X-Ray tracing enables end-to-end debugging and analysis of all API Gateway HTTP requests.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-api.html#sam-api-tracingenabled
+Trivy,AWS-0125,SAM Function must have X-Ray tracing enabled,"X-Ray tracing enables end-to-end debugging and analysis of the function.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-tracing
+Trivy,AWS-0116,SAM HTTP API stages for V1 and V2 should have access logging enabled,"API Gateway stages should have access log settings block configured to track all access to a particular stage. This should be applied to both v1 and v2 gateway stages.
+",Multiple(Rego),NaN,AWS,Medium,NaN,https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-httpapi.html#sam-httpapi-accesslogsettings
+Trivy,AWS-0119,SAM State machine must have logging enabled,"Logging enables end-to-end debugging and analysis of all state machine activities.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-statemachine.html#sam-statemachine-logging
+Trivy,AWS-0117,SAM State machine must have X-Ray tracing enabled,"X-Ray tracing enables end-to-end debugging and analysis of all state machine activities.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-statemachine.html#sam-statemachine-tracing
+Trivy,AWS-0121,SAM Simple table must have server side encryption enabled.,"Encryption should be enabled at all available levels to ensure that data is protected if compromised.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-simpletable.html#sam-simpletable-ssespecification
+Trivy,AWS-0114,Function policies should avoid use of wildcards and instead apply the principle of least privilege,"You should use the principle of least privilege when defining your IAM policies. This means you should specify each exact permission required without using wildcards, as this could cause the granting of access to certain undesired actions, resources and principals.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-policies
+Trivy,AWS-0120,State machine policies should avoid use of wildcards and instead apply the principle of least privilege,"You should use the principle of least privilege when defining your IAM policies.
+This means you should specify each exact permission required without using wildcards, as this could cause the granting of access to certain undesired actions, resources and principals.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-statemachine.html#sam-statemachine-policies
+Trivy,AWS-0095,Unencrypted SNS topic.,"Topics should be encrypted to protect their contents.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/sns/latest/dg/sns-server-side-encryption.html
+Trivy,AWS-0136,SNS topic not encrypted with CMK.,"Topics should be encrypted with customer managed KMS keys and not default AWS managed keys, in order to allow granular key management.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/sns/latest/dg/sns-server-side-encryption.html
+Trivy,AWS-0096,Unencrypted SQS queue.,"Queues should be encrypted to protect queue contents.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-server-side-encryption.html
+Trivy,AWS-0097,AWS SQS policy document has wildcard action statement.,"SQS Policy actions should always be restricted to a specific set.
+This ensures that the queue itself cannot be modified or deleted, and prevents possible future additions to queue actions to be implicitly allowed.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-security-best-practices.html
+Trivy,AWS-0135,SQS queue should be encrypted with a CMK.,"Queues should be encrypted with customer managed KMS keys and not default AWS managed keys, in order to allow granular control over access to specific queues.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-server-side-encryption.html
+Trivy,AWS-0134,Secrets should not be exfiltrated using Terraform HTTP data blocks,"The data.http block can be used to send secret data outside of the organisation.
+",Multiple(Rego),NaN,AWS,Critical,NaN,https://sprocketfox.io/xssfox/2022/02/09/terraformsupply/
+Trivy,AWS-0098,Secrets Manager should use customer managed keys,"Secrets Manager encrypts secrets by default using a default key created by AWS. To ensure control and granularity of secret encryption, CMK's should be used explicitly.
+",Multiple(Rego),NaN,AWS,Low,NaN,https://docs.aws.amazon.com/kms/latest/developerguide/services-secrets-manager.html#asm-encrypt
+Trivy,AWS-0109,Root and user volumes on Workspaces should be encrypted,"Workspace volumes for both user and root should be encrypted to protect the data stored on them.
+",Multiple(Rego),NaN,AWS,High,NaN,https://docs.aws.amazon.com/workspaces/latest/adminguide/encrypt-workspaces.html
+Trivy,AZU-0002,Web App has registration with AD enabled,"Registering the identity used by an App with AD allows it to interact with other services without using username and password
+",Multiple(Rego),NaN,Azure,Low,NaN,
+Trivy,AZU-0003,App Service authentication is activated,"Enabling authentication ensures that all communications in the application are authenticated. The auth_settings block needs to be filled out with the appropriate auth backend settings
+",Multiple(Rego),NaN,Azure,Medium,NaN,
+Trivy,AZU-0005,Web App uses the latest HTTP version,"Use the latest version of HTTP to ensure you are benefiting from security fixes
+",Multiple(Rego),NaN,Azure,Low,NaN,
+Trivy,AZU-0004,Ensure the Function App can only be accessed via HTTPS. The default is false.,"By default, clients can connect to function endpoints by using both HTTP or HTTPS. You should redirect HTTP to HTTPs because HTTPS uses the SSL/TLS protocol to provide a secure connection, which is both encrypted and authenticated.
+",Multiple(Rego),NaN,Azure,Critical,NaN,"https://docs.microsoft.com/en-us/azure/app-service/configure-ssl-bindings#enforce-https, https://docs.microsoft.com/en-us/azure/azure-functions/security-concepts"
+Trivy,AZU-0001,Web App accepts incoming client certificate,"The TLS mutual authentication technique in enterprise environments ensures the authenticity of clients to the server. If incoming client certificates are enabled only an authenticated client with valid certificates can access the app.
+",Multiple(Rego),NaN,Azure,Low,NaN,
+Trivy,AZU-0006,Web App uses latest TLS version,"Use a more recent TLS/SSL policy for the App Service
+",Multiple(Rego),NaN,Azure,High,NaN,
+Trivy,AZU-0030,Roles limited to the required actions,"The permissions granted to a role should be kept to the minimum required to be able to do the task. Wildcard permissions must not be used.
+",Multiple(Rego),NaN,Azure,Medium,NaN,
+Trivy,AZU-0039,Password authentication should be disabled on Azure virtual machines,"Access to virtual machines should be authenticated using SSH keys. Removing the option of password authentication enforces more secure methods while removing the risks inherent with passwords.
+",Multiple(Rego),NaN,Azure,High,NaN,
+Trivy,AZU-0038,Enable disk encryption on managed disk,"Manage disks should be encrypted at rest. When specifying the <code>encryption_settings</code> block, the enabled attribute should be set to <code>true</code>.
+",Multiple(Rego),NaN,Azure,High,NaN,https://docs.microsoft.com/en-us/azure/virtual-machines/linux/disk-encryption
+Trivy,AZU-0037,Ensure that no sensitive credentials are exposed in VM custom_data,"When creating Azure Virtual Machines, custom_data is used to pass start up information into the EC2 instance. This custom_dat must not contain access key credentials.
+",Multiple(Rego),NaN,Azure,Medium,NaN,
+Trivy,AZU-0043,Ensure AKS cluster has Network Policy configured,"The Kubernetes object type NetworkPolicy should be defined to have opportunity allow or block traffic to pods, as in a Kubernetes cluster configured with default settings, all pods can discover and communicate with each other without any restrictions.
+",Multiple(Rego),NaN,Azure,High,NaN,https://kubernetes.io/docs/concepts/services-networking/network-policies
+Trivy,AZU-0041,Ensure AKS has an API Server Authorized IP Ranges enabled,"The API server is the central way to interact with and manage a cluster. To improve cluster security and minimize attacks, the API server should only be accessible from a limited set of IP address ranges.
+",Multiple(Rego),NaN,Azure,Critical,NaN,https://docs.microsoft.com/en-us/azure/aks/api-server-authorized-ip-ranges
+Trivy,AZU-0040,Ensure AKS logging to Azure Monitoring is Configured,"Ensure AKS logging to Azure Monitoring is configured for containers to monitor the performance of workloads.
+",Multiple(Rego),NaN,Azure,Medium,NaN,https://docs.microsoft.com/en-us/azure/azure-monitor/insights/container-insights-onboard
+Trivy,AZU-0042,Ensure RBAC is enabled on AKS clusters,"Using Kubernetes role-based access control (RBAC), you can grant users, groups, and service accounts access to only the resources they need.
+",Multiple(Rego),NaN,Azure,High,NaN,https://docs.microsoft.com/en-us/azure/aks/concepts-identity
+Trivy,AZU-0028,No threat detections are set,"SQL Server can alert for security issues including SQL Injection, vulnerabilities, access anomalies and data exfiltration. Ensure none of these are disabled to benefit from the best protection
+",Multiple(Rego),NaN,Azure,Medium,NaN,
+Trivy,AZU-0027,Auditing should be enabled on Azure SQL Databases,"Auditing helps you maintain regulatory compliance, understand database activity, and gain insight into discrepancies and anomalies that could indicate business concerns or suspected security violations.
+",Multiple(Rego),NaN,Azure,Medium,NaN,https://docs.microsoft.com/en-us/azure/azure-sql/database/auditing-overview
+Trivy,AZU-0020,SSL should be enforced on database connections where applicable,"SSL connections should be enforced were available to ensure secure transfer and reduce the risk of compromising data in flight.
+",Multiple(Rego),NaN,Azure,Medium,NaN,
+Trivy,AZU-0022,Ensure databases are not publicly accessible,"Database resources should not publicly available. You should limit all access to the minimum that is required for your application to function.
+",Multiple(Rego),NaN,Azure,Medium,NaN,
+Trivy,AZU-0029,Ensure database firewalls do not permit public access,"Azure services can be allowed access through the firewall using a start and end IP address of 0.0.0.0. No other end ip address should be combined with a start of 0.0.0.0
+",Multiple(Rego),NaN,Azure,High,NaN,https://docs.microsoft.com/en-us/rest/api/sql/2021-02-01-preview/firewall-rules/create-or-update
+Trivy,AZU-0021,Ensure server parameter 'connection_throttling' is set to 'ON' for PostgreSQL Database Server,"Postgresql can generate logs for connection throttling to improve visibility for audit and configuration issue resolution.
+",Multiple(Rego),NaN,Azure,Medium,NaN,https://docs.microsoft.com/en-us/azure/postgresql/concepts-server-logs#configure-logging
+Trivy,AZU-0024,Ensure server parameter 'log_checkpoints' is set to 'ON' for PostgreSQL Database Server,"Postgresql can generate logs for checkpoints to improve visibility for audit and configuration issue resolution.
+",Multiple(Rego),NaN,Azure,Medium,NaN,https://docs.microsoft.com/en-us/azure/postgresql/concepts-server-logs#configure-logging
+Trivy,AZU-0019,Ensure server parameter 'log_connections' is set to 'ON' for PostgreSQL Database Server,"Postgresql can generate logs for successful connections to improve visibility for audit and configuration issue resolution.
+",Multiple(Rego),NaN,Azure,Medium,NaN,https://docs.microsoft.com/en-us/azure/postgresql/concepts-server-logs#configure-logging
+Trivy,AZU-0025,Database auditing retention period should be longer than 90 days,"When Auditing is configured for a SQL database, if the retention period is not set, the retention will be unlimited.
+
+If the retention period is to be explicitly set, it should be set for no less than 90 days.
+",Multiple(Rego),NaN,Azure,Medium,NaN,https://docs.microsoft.com/en-us/azure/azure-sql/database/auditing-overview
+Trivy,AZU-0026,Databases should have the minimum TLS set for connections,"You should not use outdated/insecure TLS versions for encryption. You should be using TLS v1.2+.
+",Multiple(Rego),NaN,Azure,Medium,NaN,
+Trivy,AZU-0018,At least one email address is set for threat alerts,"SQL Server sends alerts for threat detection via email, if there are no email addresses set then mitigation will be delayed.
+",Multiple(Rego),NaN,Azure,Medium,NaN,
+Trivy,AZU-0023,Security threat alerts go to subscription owners and co-administrators,"Subscription owners should be notified when there are security alerts. By ensuring the administrators of the account have been notified they can quickly assist in any required remediation
+",Multiple(Rego),NaN,Azure,Low,NaN,
+Trivy,AZU-0035,"Data Factory should have public access disabled, the default is enabled.","Data Factory has public access set to true by default.
+
+Disabling public network access is applicable only to the self-hosted integration runtime, not to Azure Integration Runtime and SQL Server Integration Services (SSIS) Integration Runtime.
+",Multiple(Rego),NaN,Azure,Critical,NaN,https://docs.microsoft.com/en-us/azure/data-factory/data-movement-security-considerations#hybrid-scenarios
+Trivy,AZU-0036,Unencrypted data lake storage.,"Datalake storage encryption defaults to Enabled, it shouldn't be overridden to Disabled.
+",Multiple(Rego),NaN,Azure,High,NaN,https://docs.microsoft.com/en-us/azure/data-lake-store/data-lake-store-security-overview
+Trivy,AZU-0015,Key vault Secret should have a content type set,"Content Type is an optional Key Vault Secret behavior and is not enabled by default.
+
+Clients may specify the content type of a secret to assist in interpreting the secret data when it's retrieved. The maximum length of this field is 255 characters. There are no pre-defined values. The suggested usage is as a hint for interpreting the secret data.
+",Multiple(Rego),NaN,Azure,Low,NaN,https://docs.microsoft.com/en-us/azure/key-vault/secrets/about-secrets
+Trivy,AZU-0014,Ensure that the expiration date is set on all keys,"Expiration Date is an optional Key Vault Key behavior and is not set by default.
+
+Set when the resource will be become inactive.
+",Multiple(Rego),NaN,Azure,Medium,NaN,https://docs.microsoft.com/en-us/powershell/module/az.keyvault/update-azkeyvaultkey?view=azps-5.8.0#example-1--modify-a-key-to-enable-it--and-set-the-expiration-date-and-tags
+Trivy,AZU-0017,Key Vault Secret should have an expiration date set,"Expiration Date is an optional Key Vault Secret behavior and is not set by default.
+
+Set when the resource will be become inactive.
+",Multiple(Rego),NaN,Azure,Low,NaN,https://docs.microsoft.com/en-us/azure/key-vault/secrets/about-secrets
+Trivy,AZU-0016,Key vault should have purge protection enabled,"Purge protection is an optional Key Vault behavior and is not enabled by default.
+
+Purge protection can only be enabled once soft-delete is enabled. It can be turned on via CLI or PowerShell.
+",Multiple(Rego),NaN,Azure,Medium,NaN,https://docs.microsoft.com/en-us/azure/key-vault/general/soft-delete-overview#purge-protection
+Trivy,AZU-0013,Key vault should have the network acl block specified,"Network ACLs allow you to reduce your exposure to risk by limiting what can access your key vault.
+
+The default action of the Network ACL should be set to deny for when IPs are not matched. Azure services can be allowed to bypass.
+",Multiple(Rego),NaN,Azure,Critical,NaN,https://docs.microsoft.com/en-us/azure/key-vault/general/network-security
+Trivy,AZU-0031,Ensure the activity retention log is set to at least a year,"The average time to detect a breach is up to 210 days, to ensure that all the information required for an effective investigation is available, the retention period should allow for delayed starts to investigating.
+",Multiple(Rego),NaN,Azure,Medium,NaN,https://docs.microsoft.com/en-us/azure/azure-monitor/essentials/platform-logs-overview
+Trivy,AZU-0033,Ensure log profile captures all activities,"Log profiles should capture all categories to ensure that all events are logged
+",Multiple(Rego),NaN,Azure,Medium,NaN,"https://docs.microsoft.com/en-us/azure/azure-monitor/essentials/activity-log, https://docs.microsoft.com/en-us/cli/azure/monitor/log-profiles?view=azure-cli-latest#az_monitor_log_profiles_create-required-parameters"
+Trivy,AZU-0032,Ensure activitys are captured for all locations,"Log profiles should capture all regions to ensure that all events are logged
+",Multiple(Rego),NaN,Azure,Medium,NaN,https://docs.microsoft.com/en-us/cli/azure/monitor/log-profiles?view=azure-cli-latest#az_monitor_log_profiles_create-required-parameters
+Trivy,AZU-0048,A security group should not allow unrestricted ingress to the RDP port from any IP address.,"RDP access can be configured on either the network security group or in the network security group rule.
+RDP access should not be permitted from the internet (*, 0.0.0.0, /0, internet, any). Consider using the Azure Bastion Service.
+",Multiple(Rego),NaN,Azure,Critical,NaN,https://docs.microsoft.com/en-us/azure/bastion/tutorial-create-host-portal
+Trivy,AZU-0051,A security rule should not allow unrestricted egress to any IP address.,"Opening up ports to connect out to the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that are explicitly required where possible.
+",Multiple(Rego),NaN,Azure,Critical,NaN,https://docs.microsoft.com/en-us/azure/security/fundamentals/network-best-practices
+Trivy,AZU-0047,A security group rule should not allow unrestricted ingress from any IP address.,"Opening up ports to allow connections from the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that are explicitly required where possible.
+",Multiple(Rego),NaN,Azure,Critical,NaN,https://docs.microsoft.com/en-us/azure/security/fundamentals/network-best-practices
+Trivy,AZU-0049,Retention policy for flow logs should be enabled and set to greater than 90 days,"Flow logs are the source of truth for all network activity in your cloud environment.
+
+To enable analysis in security event that was detected late, you need to have the logs available.
+
+Setting an retention policy will help ensure as much information is available for review.
+",Multiple(Rego),NaN,Azure,Low,NaN,https://docs.microsoft.com/en-us/azure/network-watcher/network-watcher-monitoring-overview
+Trivy,AZU-0050,Security group should not allow unrestricted ingress to SSH port from any IP address.,"SSH access can be configured on either the network security group or in the network security group rule.
+SSH access should not be permitted from the internet (*, 0.0.0.0, /0, internet, any)
+",Multiple(Rego),NaN,Azure,Critical,NaN,
+Trivy,AZU-0044,Send notification emails for high severity alerts,"It is recommended that at least one valid contact is configured for the security center.
+
+Microsoft will notify the security contact directly in the event of a security incident using email and require alerting to be turned on.
+",Multiple(Rego),NaN,Azure,Medium,NaN,https://azure.microsoft.com/en-us/services/security-center/
+Trivy,AZU-0045,Enable the standard security center subscription tier,"To benefit from Azure Defender you should use the Standard subscription tier.
+
+Enabling Azure Defender extends the capabilities of the free mode to workloads running in private and other public clouds, providing unified security management and threat protection across your hybrid cloud workloads.
+",Multiple(Rego),NaN,Azure,Low,NaN,https://docs.microsoft.com/en-us/azure/security-center/security-center-pricing
+Trivy,AZU-0046,The required contact details should be set for security center,"It is recommended that at least one valid contact is configured for the security center.
+
+Microsoft will notify the security contact directly in the event of a security incident and will look to use a telephone number in cases where a prompt response is required.
+",Multiple(Rego),NaN,Azure,Low,NaN,https://azure.microsoft.com/en-us/services/security-center/
+Trivy,AZU-0010,Trusted Microsoft Services should have bypass access to Storage accounts,"Some Microsoft services that interact with storage accounts operate from networks that can't be granted access through network rules.
+To help this type of service work as intended, allow the set of trusted Microsoft services to bypass the network rules
+",Multiple(Rego),NaN,Azure,High,NaN,https://docs.microsoft.com/en-us/azure/storage/common/storage-network-security#trusted-microsoft-services
+Trivy,AZU-0012,The default action on Storage account network rules should be set to deny,"The default_action for network rules should come into effect when no other rules are matched.
+The default action should be set to Deny.
+",Multiple(Rego),NaN,Azure,Critical,NaN,https://docs.microsoft.com/en-us/azure/firewall/rule-processing
+Trivy,AZU-0008,Storage accounts should be configured to only accept transfers that are over secure connections,"You can configure your storage account to accept requests from secure connections only by setting the Secure transfer required property for the storage account.
+When you require secure transfer, any requests originating from an insecure connection are rejected.
+Microsoft recommends that you always require secure transfer for all of your storage accounts.
+",Multiple(Rego),NaN,Azure,High,NaN,https://docs.microsoft.com/en-us/azure/storage/common/storage-require-secure-transfer
+Trivy,AZU-0007,Storage containers in blob storage mode should not have public access,"Storage container public access should be off. It can be configured for blobs only, containers and blobs or off entirely. The default is off, with no public access.
+Explicitly overriding publicAccess to anything other than off should be avoided.
+",Multiple(Rego),NaN,Azure,High,NaN,https://docs.microsoft.com/en-us/azure/storage/blobs/anonymous-read-access-configure?tabs=portal#set-the-public-access-level-for-a-container
+Trivy,AZU-0009,"When using Queue Services for a storage account, logging should be enabled.","Storage Analytics logs detailed information about successful and failed requests to a storage service.
+This information can be used to monitor individual requests and to diagnose issues with a storage service.
+Requests are logged on a best-effort basis.
+",Multiple(Rego),NaN,Azure,Medium,NaN,https://docs.microsoft.com/en-us/azure/storage/common/storage-analytics-logging?tabs=dotnet
+Trivy,AZU-0011,The minimum TLS version for Storage Accounts should be TLS1_2,"Azure Storage currently supports three versions of the TLS protocol: 1.0, 1.1, and 1.2.
+Azure Storage uses TLS 1.2 on public HTTPS endpoints, but TLS 1.0 and TLS 1.1 are still supported for backward compatibility.
+This check will warn if the minimum TLS is not set to TLS1_2.
+",Multiple(Rego),NaN,Azure,Critical,NaN,https://docs.microsoft.com/en-us/azure/storage/common/transport-layer-security-configure-minimum-version
+Trivy,AZU-0034,"Synapse Workspace should have managed virtual network enabled, the default is disabled.","Synapse Workspace does not have managed virtual network enabled by default.
+
+When you create your Azure Synapse workspace, you can choose to associate it to a Microsoft Azure Virtual Network. The Virtual Network associated with your workspace is managed by Azure Synapse. This Virtual Network is called a Managed workspace Virtual Network.
+
+Managed private endpoints are private endpoints created in a Managed Virtual Network associated with your Azure Synapse workspace. Managed private endpoints establish a private link to Azure resources. You can only use private links in a workspace that has a Managed workspace Virtual Network.
+",Multiple(Rego),NaN,Azure,Medium,NaN,"https://docs.microsoft.com/en-us/azure/synapse-analytics/security/synapse-workspace-managed-private-endpoints, https://docs.microsoft.com/en-us/azure/synapse-analytics/security/synapse-workspace-managed-vnet"
+Trivy,CLDSTK-0001,No sensitive data stored in user_data,"When creating instances, user data can be used during the initial configuration. User data must not contain sensitive information
+",Multiple(Rego),NaN,CloudStack,High,NaN,
+Trivy,DIG-0008,Kubernetes clusters should be auto-upgraded to ensure that they always contain the latest security patches.,NaN,Multiple(Rego),NaN,DigitalOcean,Critical,NaN,https://docs.digitalocean.com/products/kubernetes/resources/best-practices/
+Trivy,DIG-0002,The load balancer forwarding rule is using an insecure protocol as an entrypoint,"Plain HTTP is unencrypted and human-readable. This means that if a malicious actor was to eavesdrop on your connection, they would be able to see all of your data flowing back and forth.
+You should use HTTPS, which is HTTP over an encrypted (TLS) connection, meaning eavesdroppers cannot read your traffic.
+",Multiple(Rego),NaN,DigitalOcean,Critical,NaN,https://docs.digitalocean.com/products/networking/load-balancers/
+Trivy,DIG-0005,The Kubernetes cluster does not enable surge upgrades,"While upgrading your cluster, workloads will temporarily be moved to new nodes. A small cost will follow, but as a bonus, you won't experience downtime.
+",Multiple(Rego),NaN,DigitalOcean,Medium,NaN,https://docs.digitalocean.com/products/kubernetes/how-to/upgrade-cluster/#surge-upgrades
+Trivy,DIG-0003,A firewall rule should not allow unrestricted egress to any IP address.,"Opening up ports to connect out to the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that are explicitly required where possible.
+",Multiple(Rego),NaN,DigitalOcean,Critical,NaN,https://docs.digitalocean.com/products/networking/firewalls/how-to/configure-rules/
+Trivy,DIG-0001,A firewall rule should not allow unrestricted ingress from any IP address.,"Opening up ports to allow connections from the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that are explicitly required where possible.
+",Multiple(Rego),NaN,DigitalOcean,Critical,NaN,https://docs.digitalocean.com/products/networking/firewalls/how-to/configure-rules/
+Trivy,DIG-0004,"SSH Keys are the preferred way to connect to your droplet, no keys are supplied","When working with a server, you’ll likely spend most of your time in a terminal session connected to your server through SSH. A more secure alternative to password-based logins, SSH keys use encryption to provide a secure way of logging into your server and are recommended for all users.
+",Multiple(Rego),NaN,DigitalOcean,High,NaN,https://www.digitalocean.com/community/tutorials/understanding-the-ssh-encryption-and-connection-process
+Trivy,DIG-0006,Spaces bucket or bucket object has public read acl set,"Space bucket and bucket object permissions should be set to deny public access unless explicitly required.
+",Multiple(Rego),NaN,DigitalOcean,Critical,NaN,https://docs.digitalocean.com/reference/api/spaces-api/#access-control-lists-acls
+Trivy,DIG-0009,Force destroy is enabled on Spaces bucket which is dangerous,"Enabling force destroy on a Spaces bucket means that the bucket can be deleted without the additional check that it is empty. This risks important data being accidentally deleted by a bucket removal process.
+",Multiple(Rego),NaN,DigitalOcean,Medium,NaN,
+Trivy,DIG-0007,Spaces buckets should have versioning enabled,"Versioning is a means of keeping multiple variants of an object in the same bucket. You can use the Spaces (S3) Versioning feature to preserve, retrieve, and restore every version of every object stored in your buckets. With versioning you can recover more easily from both unintended user actions and application failures.
+",Multiple(Rego),NaN,DigitalOcean,Medium,NaN,https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html
+Trivy,GIT-0002,Ensure plaintext value is not used for GitHub Action Environment Secret.,"For the purposes of security, the contents of the plaintext_value field have been marked as sensitive to Terraform, but this does not hide it from state files. State should be treated as sensitive always.
+",Multiple(Rego),NaN,GitHub,High,NaN,"https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_environment_secret, https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions"
+Trivy,GIT-0004,GitHub branch protection does not require signed commits.,"GitHub branch protection should be set to require signed commits.
+
+You can do this by setting the <code>require_signed_commits</code> attribute to 'true'.
+",Multiple(Rego),NaN,GitHub,High,NaN,"https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch_protection#require_signed_commits, https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification, https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches#require-signed-commits"
+Trivy,GIT-0003,GitHub repository has vulnerability alerts disabled.,"GitHub repository should be set to use vulnerability alerts.
+
+You can do this by setting the <code>vulnerability_alerts</code> attribute to 'true'.
+",Multiple(Rego),NaN,GitHub,High,NaN,https://docs.github.com/en/code-security/supply-chain-security/managing-vulnerabilities-in-your-projects-dependencies/about-alerts-for-vulnerable-dependencies
+Trivy,GIT-0001,GitHub repository shouldn't be public.,"GitHub repository should be set to be private.
+
+You can do this by either setting <code>private</code> attribute to 'true' or <code>visibility</code> attribute to 'internal' or 'private'.
+",Multiple(Rego),NaN,GitHub,Critical,NaN,"https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-repository-visibility, https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-repository-visibility#about-internal-repositories"
+Trivy,GCP-0046,BigQuery datasets should only be accessible within the organisation,"Using 'allAuthenticatedUsers' provides any GCP user - even those outside of your organisation - access to your BigQuery dataset.
+",Multiple(Rego),NaN,Google Cloud Platform,Critical,NaN,
+Trivy,GCP-0072,Google Compute Network Using Firewall Rule that Allows All Ports,"Firewall rules should not be wide open to all ports. Lock down rules to only required ports.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall#allow
+Trivy,GCP-0073,Disable Default Firewall Rules,"Ensures that Google Cloud's default firewall rules are disabled, as they may be overly permissive and pose security risks.
+The default network comes with pre-populated firewall rules that allow broad access and should be replaced with more restrictive custom rules.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,"https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall, https://cloud.google.com/firewall/docs/firewalls#more_rules_default_vpc"
+Trivy,GCP-0074,Google Compute Network Using Firewall Rule that Allows Large Port Range,"Firewall rules allowing broad port ranges can be risky. Ensure rules are as specific as possible.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall#allow
+Trivy,GCP-0034,Disks should be encrypted with customer managed encryption keys,"Using unmanaged keys makes rotation and general management difficult.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,
+Trivy,GCP-0037,The encryption key used to encrypt a compute disk has been specified in plaintext.,"Sensitive values such as raw encryption keys should not be included in your Terraform code, and should be stored securely by a secrets manager.
+",Multiple(Rego),NaN,Google Cloud Platform,Critical,NaN,https://cloud.google.com/compute/docs/disks/customer-supplied-encryption
+Trivy,GCP-0045,Instances should have Shielded VM integrity monitoring enabled,"Integrity monitoring helps you understand and make decisions about the state of your VM instances.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://cloud.google.com/security/shielded-cloud/shielded-vm#integrity-monitoring
+Trivy,GCP-0067,Instances should have Shielded VM secure boot enabled,"Secure boot helps ensure that the system only runs authentic software.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://cloud.google.com/security/shielded-cloud/shielded-vm#secure-boot
+Trivy,GCP-0041,Instances should have Shielded VM VTPM enabled,"The virtual TPM provides numerous security measures to your VM.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://cloud.google.com/blog/products/identity-security/virtual-trusted-platform-module-for-shielded-vms-security-in-plaintext
+Trivy,GCP-0076,Google Compute Subnetwork Logging Disabled,"Flow logs for subnets should be enabled to capture network traffic details for security analysis.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,"https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork, https://cloud.google.com/architecture/best-practices-vpc-design#tailor-logging"
+Trivy,GCP-0075,Google Compute Subnetwork with Private Google Access Disabled,"Private Google Access allows instances in a subnet to reach Google APIs and services via internal IP, which should be enabled for private networks.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,"https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork#private_ip_google_access, https://cloud.google.com/architecture/best-practices-vpc-design#limit-access"
+Trivy,GCP-0029,VPC flow logs should be enabled for all subnetworks,"VPC flow logs record information about all traffic, which is a vital tool in reviewing anomalous traffic.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,
+Trivy,GCP-0044,Instances should not use the default service account,"The default service account has full project access. Instances should instead be assigned the minimal access they need.
+",Multiple(Rego),NaN,Google Cloud Platform,Critical,NaN,
+Trivy,GCP-0043,Instances should not have IP forwarding enabled,"Disabling IP forwarding ensures the instance can only receive packets addressed to the instance and can only send packets with a source address of the instance.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,
+Trivy,GCP-0070,RDP Access Is Not Restricted,"Firewall rules should restrict RDP (TCP/3389) access to specific IP ranges. Open RDP access can be a security risk.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
+Trivy,GCP-0036,Instances should not override the project setting for OS Login,"OS Login automatically revokes the relevant SSH keys when an IAM user has their access revoked.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,
+Trivy,GCP-0030,Disable project-wide SSH keys for all instances,"Use of project-wide SSH keys means that a compromise of any one of these key pairs can result in all instances being compromised. It is recommended to use instance-level keys.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,
+Trivy,GCP-0035,A firewall rule should not allow unrestricted egress to any IP address.,"Opening up ports to connect out to the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that are explicitly required where possible.
+",Multiple(Rego),NaN,Google Cloud Platform,Critical,NaN,https://cloud.google.com/vpc/docs/using-firewalls
+Trivy,GCP-0027,A firewall rule should not allow unrestricted ingress from any IP address.,"Opening up ports to allow connections from the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that are explicitly required where possible.
+",Multiple(Rego),NaN,Google Cloud Platform,Critical,NaN,https://cloud.google.com/vpc/docs/using-firewalls
+Trivy,GCP-0031,Instances should not have public IP addresses,"Instances should not be publicly exposed to the internet
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://cloud.google.com/compute/docs/ip-addresses#externaladdresses
+Trivy,GCP-0032,Disable serial port connectivity for all instances,"When serial port access is enabled, the access is not governed by network security rules meaning the port can be exposed publicly.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,
+Trivy,GCP-0042,OS Login should be enabled at project level,"OS Login automatically revokes the relevant SSH keys when an IAM user has their access revoked.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,
+Trivy,GCP-0071,SSH Access Is Not Restricted,"Firewall rules should restrict SSH (TCP/22) access to specific IPs. Open SSH can be a security risk.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall
+Trivy,GCP-0039,SSL policies should enforce secure versions of TLS,"TLS versions prior to 1.2 are outdated and insecure. You should use 1.2 as aminimum version.
+",Multiple(Rego),NaN,Google Cloud Platform,Critical,NaN,
+Trivy,GCP-0033,VM disks should be encrypted with Customer Supplied Encryption Keys,"Using unmanaged keys makes rotation and general management difficult.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,
+Trivy,GCP-0013,Cloud DNS should use DNSSEC,"DNSSEC authenticates DNS responses, preventing MITM attacks and impersonation.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,
+Trivy,GCP-0012,Zone signing should not use RSA SHA1,"RSA SHA1 is a weaker algorithm than SHA2-based algorithms such as RSA SHA256/512
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,
+Trivy,GCP-0063,Kubernetes should have 'Automatic repair' enabled,"Automatic repair will monitor nodes and attempt repair when a node fails multiple subsequent health checks
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,
+Trivy,GCP-0058,Kubernetes should have 'Automatic upgrade' enabled,"Automatic updates keep nodes updated with the latest cluster master version.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,
+Trivy,GCP-0049,Clusters should have IP aliasing enabled,"IP aliasing allows the reuse of public IPs internally, removing the need for a NAT gateway.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,
+Trivy,GCP-0061,Master authorized networks should be configured on GKE clusters,"Enabling authorized networks means you can restrict master access to a fixed set of CIDR ranges
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,
+Trivy,GCP-0056,Network Policy should be enabled on GKE clusters,"Enabling a network policy allows the segregation of network traffic by namespace
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,
+Trivy,GCP-0059,Clusters should be set to private,"Enabling private nodes on a cluster ensures the nodes are only available internally as they will only be assigned internal addresses.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,
+Trivy,GCP-0060,Stackdriver Logging should be enabled,"StackDriver logging provides a useful interface to all of stdout/stderr for each container and should be enabled for moitoring, debugging, etc.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,
+Trivy,GCP-0052,Stackdriver Monitoring should be enabled,"StackDriver monitoring aggregates logs, events, and metrics from your Kubernetes environment on GKE to help you understand your application's behavior in production.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,
+Trivy,GCP-0048,Legacy metadata endpoints enabled.,"The Compute Engine instance metadata server exposes legacy v0.1 and v1beta1 endpoints, which do not enforce metadata query headers.
+
+This is a feature in the v1 APIs that makes it more difficult for a potential attacker to retrieve instance metadata.
+
+Unless specifically required, we recommend you disable these legacy APIs.
+
+When setting the <code>metadata</code> block, the default value for <code>disable-legacy-endpoints</code> is set to true, they should not be explicitly enabled.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#protect_node_metadata_default_for_112
+Trivy,GCP-0057,Node metadata value disables metadata concealment.,"In provider versions prior to 4:
+The attribute <code>workload_metadata_config.node_metadata</code> configures how node metadata is exposed to workloads. It should be set to <code>SECURE</code> to limit metadata exposure, or <code>GKE_METADATA_SERVER</code> if Workload Identity is enabled.
+
+Starting with provider version 4:
+The attribute <code>node_metadata</code> has been removed. Instead, <code>workload_metadata_configuration.mode</code> controls node metadata exposure. When Workload Identity is enabled, it should be set to <code>GKE_METADATA</code> to prevent unnecessary exposure of the metadata API to workloads.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata#create-concealed
+Trivy,GCP-0054,Ensure Container-Optimized OS (cos) is used for Kubernetes Engine Clusters Node image,"GKE supports several OS image types but COS is the recommended OS image to use on cluster nodes for enhanced security
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,
+Trivy,GCP-0055,Shielded GKE nodes not enabled.,"CIS GKE Benchmark Recommendation: 6.5.5. Ensure Shielded GKE Nodes are Enabled
+
+Shielded GKE Nodes provide strong, verifiable node identity and integrity to increase the security of GKE nodes and should be enabled on all GKE clusters.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#shielded_nodes
+Trivy,GCP-0064,Legacy client authentication methods utilized.,"It is recommended to use Service Accounts and OAuth as authentication methods for accessing the master in the container cluster.
+
+Basic authentication should be disabled by explicitly unsetting the <code>username</code> and <code>password</code> on the <code>master_auth</code> block.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#restrict_authn_methods
+Trivy,GCP-0053,GKE Control Plane should not be publicly accessible,"The GKE control plane is exposed to the public internet by default.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,
+Trivy,GCP-0051,Clusters should be configured with Labels,"Labels make it easier to manage assets and differentiate between clusters and environments, allowing the mapping of computational resources to the wider organisational structure.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,
+Trivy,GCP-0062,Legacy ABAC permissions are enabled.,"You should disable Attribute-Based Access Control (ABAC), and instead use Role-Based Access Control (RBAC) in GKE.
+
+RBAC has significant security advantages and is now stable in Kubernetes, so it’s time to disable ABAC.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#leave_abac_disabled_default_for_110
+Trivy,GCP-0050,Checks for service account defined for GKE nodes,"You should create and use a minimally privileged service account to run your GKE cluster instead of using the Compute Engine default service account.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa
+Trivy,GCP-0079,IAM Audit Not Properly Configured,"IAM Audit Logging should be configured for all services and the appropriate log types to track changes and accesses.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,"https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_project_iam#google_project_iam_audit_config, https://cloud.google.com/blog/products/management-tools/best-practices-for-working-with-google-cloud-audit-logging, https://cloud.google.com/logging/docs/audit"
+Trivy,GCP-0068,A configuration for an external workload identity pool provider should have conditions set,"In GitHub Actions, one can authenticate to Google Cloud by setting values for workload_identity_provider and service_account and requesting a short-lived OIDC token which is then used to execute commands as that Service Account. If you don't specify a condition in the workload identity provider pool configuration, then any GitHub Action can assume this role and act as that Service Account.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://www.revblock.dev/exploiting-misconfigured-google-cloud-service-accounts-from-github-actions/
+Trivy,GCP-0010,Default network should not be created at project level,"The default network which is provided for a project contains multiple insecure firewall rules which allow ingress to the project's infrastructure. Creation of this network should therefore be disabled.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,
+Trivy,GCP-0004,Roles should not be assigned to default service accounts,"Default service accounts should not be used - consider creating specialised service accounts for individual purposes.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,
+Trivy,GCP-0005,Users should not be granted service account access at the folder level,"Users with service account access at folder level can impersonate any service account. Instead, they should be given access to particular service accounts as required.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://cloud.google.com/iam/docs/impersonating-service-accounts
+Trivy,GCP-0008,Roles should not be assigned to default service accounts,"Default service accounts should not be used - consider creating specialised service accounts for individual purposes.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,
+Trivy,GCP-0009,Users should not be granted service account access at the organization level,"Users with service account access at organization level can impersonate any service account. Instead, they should be given access to particular service accounts as required.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://cloud.google.com/iam/docs/impersonating-service-accounts
+Trivy,GCP-0069,Not Proper Email Account In Use,"Service accounts and user accounts used in IAM bindings should follow organization email policies (e.g., no personal emails).
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_project_iam#google_project_iam_binding
+Trivy,GCP-0007,Service accounts should not have roles assigned with excessive privileges,"Service accounts should have a minimal set of permissions assigned in order to do their job. They should never have excessive access as if compromised, an attacker can escalate privileges and take over the entire account.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://cloud.google.com/iam/docs/understanding-roles
+Trivy,GCP-0006,Roles should not be assigned to default service accounts,"Default service accounts should not be used - consider creating specialised service accounts for individual purposes.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,
+Trivy,GCP-0011,Users should not be granted service account access at the project level,"Users with service account access at project level can impersonate any service account. Instead, they should be given access to particular service accounts as required.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://cloud.google.com/iam/docs/impersonating-service-accounts
+Trivy,GCP-0003,IAM granted directly to user.,"Permissions should not be directly granted to users, you identify roles that contain the appropriate permissions, and then grant those roles to the user.
+
+Granting permissions to users quickly become unwieldy and complex to make large scale changes to remove access to a particular resource.
+
+Permissions should be granted on roles, groups, services accounts instead.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,"https://cloud.google.com/iam/docs/overview#permissions, https://cloud.google.com/resource-manager/reference/rest/v1/projects/setIamPolicy"
+Trivy,GCP-0065,KMS keys should be rotated at least every 90 days,"Keys should be rotated on a regular basis to limit exposure if a given key should become compromised.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,
+Trivy,GCP-0024,Enable automated backups to recover from data-loss,"Automated backups are not enabled by default. Backups are an easy way to restore data in a corruption or data-loss scenario.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://cloud.google.com/sql/docs/mysql/backup-recovery/backups
+Trivy,GCP-0014,Temporary file logging should be enabled for all temporary files.,"Temporary files are not logged by default. To log all temporary files, a value of `0` should set in the `log_temp_files` flag - as all files greater in size than the number of bytes set in this flag will be logged.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://postgresqlco.nf/doc/en/param/log_temp_files/
+Trivy,GCP-0015,SSL connections to a SQL database instance should be enforced.,"In-transit data should be encrypted so that if traffic is intercepted data will not be exposed in plaintext to attackers.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://cloud.google.com/sql/docs/mysql/configure-ssl-instance
+Trivy,GCP-0026,Disable local_infile setting in MySQL,"Arbitrary files can be read from the system using LOAD_DATA unless this setting is disabled.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://dev.mysql.com/doc/refman/8.0/en/load-data-local-security.html
+Trivy,GCP-0023,Contained database authentication should be disabled,"Users with ALTER permissions on users can grant access to a contained database without the knowledge of an administrator
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/contained-database-authentication-server-configuration-option?view=sql-server-ver15
+Trivy,GCP-0019,Cross-database ownership chaining should be disabled,"Cross-database ownership chaining, also known as cross-database chaining, is a security feature of SQL Server that allows users of databases access to other databases besides the one they are currently using.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/cross-db-ownership-chaining-server-configuration-option?view=sql-server-ver15
+Trivy,GCP-0017,Ensure that Cloud SQL Database Instances are not publicly exposed,"Database instances should be configured so that they are not available over the public internet, but to internal compute resources which access them.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://www.cloudconformity.com/knowledge-base/gcp/CloudSQL/publicly-accessible-cloud-sql-instances.html
+Trivy,GCP-0025,Ensure that logging of checkpoints is enabled.,"Logging checkpoints provides useful diagnostic data, which can identify performance issues in an application and potential DoS vectors.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://www.postgresql.org/docs/13/runtime-config-logging.html#GUC-LOG-CHECKPOINTS
+Trivy,GCP-0016,Ensure that logging of connections is enabled.,"Logging connections provides useful diagnostic data such as session length, which can identify performance issues in an application and potential DoS vectors.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://www.postgresql.org/docs/13/runtime-config-logging.html#GUC-LOG-CONNECTIONS
+Trivy,GCP-0022,Ensure that logging of disconnections is enabled.,"Logging disconnections provides useful diagnostic data such as session length, which can identify performance issues in an application and potential DoS vectors.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://www.postgresql.org/docs/13/runtime-config-logging.html#GUC-LOG-DISCONNECTIONS
+Trivy,GCP-0018,Ensure that Postgres errors are logged,"Setting the minimum log severity too high will cause errors not to be logged
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,"https://postgresqlco.nf/doc/en/param/log_min_messages/, https://www.postgresql.org/docs/13/runtime-config-logging.html#GUC-LOG-MIN-MESSAGES"
+Trivy,GCP-0020,Ensure that logging of lock waits is enabled.,"Lock waits are often an indication of poor performance and often an indicator of a potential denial of service vulnerability, therefore occurrences should be logged for analysis.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://www.postgresql.org/docs/13/runtime-config-logging.html#GUC-LOG-LOCK-WAITS
+Trivy,GCP-0021,Ensure that logging of long statements is disabled.,"Logging of statements which could contain sensitive data is not advised, therefore this setting should preclude all statements from being logged.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,https://www.postgresql.org/docs/13/runtime-config-logging.html#GUC-LOG-MIN-DURATION-STATEMENT
+Trivy,GCP-0066,Cloud Storage buckets should be encrypted with a customer-managed key.,"Using unmanaged keys makes rotation and general management difficult.
+",Multiple(Rego),NaN,Google Cloud Platform,Low,NaN,https://cloud.google.com/storage/docs/encryption/customer-managed-keys
+Trivy,GCP-0077,Cloud Storage Bucket Logging Not Enabled,"Cloud Storage bucket access logs should be enabled for audit purposes.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket#log_bucket
+Trivy,GCP-0078,Cloud Storage Bucket Versioning Disabled,"Object versioning in Cloud Storage is recommended to protect against accidental or malicious deletions.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket#enabled
+Trivy,GCP-0002,Ensure that Cloud Storage buckets have uniform bucket-level access enabled,"When you enable uniform bucket-level access on a bucket, Access Control Lists (ACLs) are disabled, and only bucket-level Identity and Access Management (IAM) permissions grant access to that bucket and the objects it contains. You revoke all access granted by object ACLs and the ability to administrate permissions using bucket ACLs.
+",Multiple(Rego),NaN,Google Cloud Platform,Medium,NaN,"https://cloud.google.com/storage/docs/uniform-bucket-level-access, https://jbrojbrojbro.medium.com/you-make-the-rules-with-authentication-controls-for-cloud-storage-53c32543747b"
+Trivy,GCP-0001,Ensure that Cloud Storage bucket is not anonymously or publicly accessible.,"Using 'allUsers' or 'allAuthenticatedUsers' as members in an IAM member/binding causes data to be exposed outside of the organisation.
+",Multiple(Rego),NaN,Google Cloud Platform,High,NaN,https://jbrojbrojbro.medium.com/you-make-the-rules-with-authentication-controls-for-cloud-storage-53c32543747b
+Trivy,KUBE-0002,A network policy should not allow unrestricted egress to any IP address.,You should not expose infrastructure to the public internet except where explicitly required,Multiple(Rego),NaN,Kubernetes,High,NaN,
+Trivy,KUBE-0001,A network policy should not allow unrestricted ingress from any IP address.,"Opening up ports to allow connections from the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that are explicitly required where possible.
+",Multiple(Rego),NaN,Kubernetes,High,NaN,
+Trivy,NIF-0002,Missing description for security group.,"Security groups should include a description for auditing purposes.
+
+Simplifies auditing, debugging, and managing security groups.
+",Multiple(Rego),NaN,Nifcloud,Low,NaN,https://pfs.nifcloud.com/help/fw/change.htm
+Trivy,NIF-0003,Missing description for security group rule.,"Security group rules should include a description for auditing purposes.
+
+Simplifies auditing, debugging, and managing security groups.
+",Multiple(Rego),NaN,Nifcloud,Low,NaN,https://pfs.nifcloud.com/help/fw/rule_new.htm
+Trivy,NIF-0004,Missing security group for instance.,"Need to add a security group to your instance.
+",Multiple(Rego),NaN,Nifcloud,Critical,NaN,https://pfs.nifcloud.com/help/server/change_fw.htm
+Trivy,NIF-0005,The instance has common private network,"When handling sensitive data between servers, please consider using a private LAN to isolate the private side network from the shared network.
+",Multiple(Rego),NaN,Nifcloud,Low,NaN,https://pfs.nifcloud.com/service/plan.htm
+Trivy,NIF-0001,A security group rule should not allow unrestricted ingress from any IP address.,"Opening up ports to allow connections from the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that are explicitly required where possible.
+
+When publishing web applications, use a load balancer instead of publishing directly to instances.
+",Multiple(Rego),NaN,Nifcloud,Critical,NaN,https://pfs.nifcloud.com/help/fw/rule_new.htm
+Trivy,NIF-0007,Delete verified record,"Removing verified record of TXT auth the risk that
+
+If the authentication record remains, anyone can register the zone
+",Multiple(Rego),NaN,Nifcloud,Critical,NaN,https://pfs.nifcloud.com/guide/dns/zone_new.htm
+Trivy,NIF-0015,Missing description for nas security group.,"NAS security groups should include a description for auditing purposes.
+
+Simplifies auditing, debugging, and managing nas security groups.
+",Multiple(Rego),NaN,Nifcloud,Low,NaN,https://pfs.nifcloud.com/help/nas/fw_new.htm
+Trivy,NIF-0013,The nas instance has common private network,"When handling sensitive data between servers, please consider using a private LAN to isolate the private side network from the shared network.
+",Multiple(Rego),NaN,Nifcloud,Low,NaN,https://pfs.nifcloud.com/service/plan.htm
+Trivy,NIF-0014,A security group rule should not allow unrestricted ingress from any IP address.,"Opening up ports to allow connections from the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that are explicitly required where possible.
+",Multiple(Rego),NaN,Nifcloud,Critical,NaN,https://pfs.nifcloud.com/api/nas/AuthorizeNASSecurityGroupIngress.htm
+Trivy,NIF-0016,Missing security group for router.,"Need to add a security group to your router.
+",Multiple(Rego),NaN,Nifcloud,Critical,NaN,https://pfs.nifcloud.com/help/router/change.htm
+Trivy,NIF-0018,Missing security group for vpnGateway.,"Need to add a security group to your vpnGateway.
+",Multiple(Rego),NaN,Nifcloud,Critical,NaN,https://pfs.nifcloud.com/help/vpngw/change.htm
+Trivy,NIF-0021,Use of plain HTTP.,"Plain HTTP is unencrypted and human-readable. This means that if a malicious actor was to eavesdrop on your connection, they would be able to see all of your data flowing back and forth.
+
+You should use HTTPS, which is HTTP over an encrypted (TLS) connection, meaning eavesdroppers cannot read your traffic.
+",Multiple(Rego),NaN,Nifcloud,Critical,NaN,https://www.cloudflare.com/en-gb/learning/ssl/why-is-http-not-secure/
+Trivy,NIF-0019,The elb has common private network,"When handling sensitive data between servers, please consider using a private LAN to isolate the private side network from the shared network.
+",Multiple(Rego),NaN,Nifcloud,Low,NaN,https://pfs.nifcloud.com/service/plan.htm
+Trivy,NIF-0017,The router has common private network,"When handling sensitive data between servers, please consider using a private LAN to isolate the private side network from the shared network.
+",Multiple(Rego),NaN,Nifcloud,Low,NaN,https://pfs.nifcloud.com/service/plan.htm
+Trivy,NIF-0020,An outdated SSL policy is in use by a load balancer.,"You should not use outdated/insecure TLS versions for encryption. You should be using TLS v1.2+.
+",Multiple(Rego),NaN,Nifcloud,Critical,NaN,https://pfs.nifcloud.com/service/lb_l4.htm
+Trivy,NIF-0012,Missing description for db security group.,"DB security groups should include a description for auditing purposes.
+
+Simplifies auditing, debugging, and managing db security groups.
+",Multiple(Rego),NaN,Nifcloud,Low,NaN,https://pfs.nifcloud.com/help/rdb/fw_new.htm
+Trivy,NIF-0010,The db instance has common private network,"When handling sensitive data between servers, please consider using a private LAN to isolate the private side network from the shared network.
+",Multiple(Rego),NaN,Nifcloud,Low,NaN,https://pfs.nifcloud.com/service/plan.htm
+Trivy,NIF-0008,A database resource is marked as publicly accessible.,"Database resources should not publicly available. You should limit all access to the minimum that is required for your application to function.
+",Multiple(Rego),NaN,Nifcloud,Critical,NaN,https://pfs.nifcloud.com/guide/rdb/server_new.htm
+Trivy,NIF-0011,A security group rule should not allow unrestricted ingress traffic from any IP address.,"Opening up ports to allow connections from the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that are explicitly required where possible.
+",Multiple(Rego),NaN,Nifcloud,Critical,NaN,https://pfs.nifcloud.com/api/rdb/AuthorizeDBSecurityGroupIngress.htm
+Trivy,NIF-0009,RDB instance should have backup retention longer than 1 day,"Backup retention periods should be set to a period that is a balance on cost and limiting risk.
+",Multiple(Rego),NaN,Nifcloud,Medium,NaN,https://pfs.nifcloud.com/spec/rdb/snapshot_backup.htm
+Trivy,NIF-0006,Delete expired SSL certificates,"Removing expired SSL/TLS certificates eliminates the risk that an invalid certificate will be
+
+deployed accidentally to a resource such as NIFCLOUD Load Balancer(L4LB), which candamage the
+
+credibility of the application/website behind the L4LB. As a best practice, it is
+
+recommended to delete expired certificates.
+",Multiple(Rego),NaN,Nifcloud,Low,NaN,https://pfs.nifcloud.com/help/ssl/del.htm
+Trivy,OPNSTK-0001,No plaintext password for compute instance,"Assigning a password to the compute instance using plaintext could lead to compromise; it would be preferable to use key-pairs as a login mechanism
+",Multiple(Rego),NaN,OpenStack,Medium,NaN,
+Trivy,OPNSTK-0002,A firewall rule allows traffic from/to the public internet,"Opening up ports to the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that explicitly require it where possible.
+",Multiple(Rego),NaN,OpenStack,Medium,NaN,
+Trivy,OPNSTK-0005,Missing description for security group.,"Security groups should include a description for auditing purposes. Simplifies auditing, debugging, and managing security groups.
+",Multiple(Rego),NaN,OpenStack,Medium,NaN,
+Trivy,OPNSTK-0004,A security group rule allows egress traffic to multiple public addresses,"Opening up ports to the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that explicitly require it where possible.
+",Multiple(Rego),NaN,OpenStack,Medium,NaN,
+Trivy,OPNSTK-0003,A security group rule allows ingress traffic from multiple public addresses,"Opening up ports to the public internet is generally to be avoided. You should restrict access to IP addresses or ranges that explicitly require it where possible.
+",Multiple(Rego),NaN,OpenStack,Medium,NaN,
+Trivy,OCI-0001,Compute instance requests an IP reservation from a public pool,"Compute instance requests an IP reservation from a public pool
+
+The compute instance has the ability to be reached from outside, you might want to sonder the use of a non public IP.
+",Multiple(Rego),NaN,Oracle Cloud Infrastructure,Critical,NaN,
+Trivy,DS-0005,ADD instead of COPY,"You should use COPY instead of ADD unless you want to extract a tar file. Note that an ADD command will extract a tar file, which adds the risk of Zip-based vulnerabilities. Accordingly, it is advised to use a COPY command, which does not extract tar files.",Multiple(Rego),NaN,Docker,Low,NaN,https://docs.docker.com/engine/reference/builder/#add
+Trivy,DS-0029,'apt-get' missing '--no-install-recommends','apt-get' install should use '--no-install-recommends' to minimize image size.,Multiple(Rego),NaN,Docker,High,NaN,https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+Trivy,DS-0021,'apt-get' missing '-y' to avoid manual input,'apt-get' calls should use the flag '-y' to avoid manual user input.,Multiple(Rego),NaN,Docker,High,NaN,https://docs.docker.com/engine/reference/builder/#run
+Trivy,DS-0006,COPY '--from' referring to the current image,"COPY '--from' should not mention the current FROM alias, since it is impossible to copy from itself.",Multiple(Rego),NaN,Docker,Critical,NaN,https://docs.docker.com/develop/develop-images/multistage-build/
+Trivy,DS-0011,COPY with more than two arguments not ending with slash,"When a COPY command has more than two arguments, the last one should end with a slash.",Multiple(Rego),NaN,Docker,Critical,NaN,https://docs.docker.com/engine/reference/builder/#copy
+Trivy,DS-0001,':latest' tag used,When using a 'FROM' statement you should use a specific tag to avoid uncontrolled behavior when the image is updated.,Multiple(Rego),NaN,Docker,Medium,NaN,
+Trivy,DS-0031,Secrets passed via `build-args` or envs or copied secret files,Passing secrets via `build-args` or envs or copying secret files can leak them out,Multiple(Rego),NaN,Docker,Critical,NaN,https://docs.docker.com/build/building/secrets/
+Trivy,DS-0022,Deprecated MAINTAINER used,MAINTAINER has been deprecated since Docker 1.13.0.,Multiple(Rego),NaN,Docker,High,NaN,https://docs.docker.com/engine/deprecated/#maintainer-in-dockerfile
+Trivy,DS-0025,'apk add' is missing '--no-cache',You should use 'apk add' with '--no-cache' to clean package cached data and reduce image size.,Multiple(Rego),NaN,Docker,High,NaN,https://github.com/gliderlabs/docker-alpine/blob/master/docs/usage.md#disabling-cache
+Trivy,DS-0019,'dnf clean all' missing,Cached package data should be cleaned after installation to reduce image size.,Multiple(Rego),NaN,Docker,High,NaN,https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+Trivy,DS-0027,'microdnf clean all' missing,Cached package data should be cleaned after installation to reduce image size.,Multiple(Rego),NaN,Docker,High,NaN,https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+Trivy,DS-0020,'zypper clean' missing,The layer and image size should be reduced by deleting unneeded caches after running zypper.,Multiple(Rego),NaN,Docker,High,NaN,https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
+Trivy,DS-0016,Multiple CMD instructions listed,There can only be one CMD instruction in a Dockerfile. If you list more than one CMD then only the last CMD will take effect.,Multiple(Rego),NaN,Docker,High,NaN,https://docs.docker.com/engine/reference/builder/#cmd
+Trivy,DS-0007,Multiple ENTRYPOINT instructions listed,There can only be one ENTRYPOINT instruction in a Dockerfile. Only the last ENTRYPOINT instruction in the Dockerfile will have an effect.,Multiple(Rego),NaN,Docker,Critical,NaN,https://docs.docker.com/engine/reference/builder/#entrypoint
+Trivy,DS-0023,Multiple HEALTHCHECK defined,Providing more than one HEALTHCHECK instruction per stage is confusing and error-prone.,Multiple(Rego),NaN,Docker,Medium,NaN,https://docs.docker.com/engine/reference/builder/#healthcheck
+Trivy,DS-0026,No HEALTHCHECK defined,You should add HEALTHCHECK instruction in your docker container images to perform the health check on running containers.,Multiple(Rego),NaN,Docker,Low,NaN,https://blog.aquasec.com/docker-security-best-practices
+Trivy,DS-0004,Port 22 exposed,Exposing port 22 might allow users to SSH into the container.,Multiple(Rego),NaN,Docker,Medium,NaN,
+Trivy,DS-0030,WORKDIR should not be mounted on system dirs,WORKDIR should not be mounted on system directories to avoid container breakouts,Multiple(Rego),NaN,Docker,High,NaN,https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#workdir
+Trivy,DS-0002,Image user should not be 'root',"Running containers with 'root' user can lead to a container escape situation. It is a best practice to run containers as non-root users, which can be done by adding a 'USER' statement to the Dockerfile.",Multiple(Rego),NaN,Docker,High,NaN,https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+Trivy,DS-0024,'apt-get dist-upgrade' used,'apt-get dist-upgrade' upgrades a major version so it doesn't make more sense in Dockerfile.,Multiple(Rego),NaN,Docker,High,NaN,
+Trivy,DS-0013,'RUN cd ...' to change directory,"Use WORKDIR instead of proliferating instructions like 'RUN cd … && do-something', which are hard to read, troubleshoot, and maintain.",Multiple(Rego),NaN,Docker,Medium,NaN,https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#workdir
+Trivy,DS-0010,RUN using 'sudo',"Avoid using 'RUN' with 'sudo' commands, as it can lead to unpredictable behavior.",Multiple(Rego),NaN,Docker,Critical,NaN,https://docs.docker.com/engine/reference/builder/#run
+Trivy,DS-0014,RUN using 'wget' and 'curl',Avoid using both 'wget' and 'curl' since these tools have the same effect.,Multiple(Rego),NaN,Docker,Low,NaN,https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
+Trivy,DS-0012,Duplicate aliases defined in different FROMs,Different FROMs can't have the same alias defined.,Multiple(Rego),NaN,Docker,Critical,NaN,https://docs.docker.com/develop/develop-images/multistage-build/
+Trivy,DS-0008,Exposed port out of range,UNIX ports outside the range 0-65535 are exposed.,Multiple(Rego),NaN,Docker,Critical,NaN,https://docs.docker.com/engine/reference/builder/#expose
+Trivy,DS-0017,'RUN <package-manager> update' instruction alone,The instruction 'RUN <package-manager> update' should always be followed by '<package-manager> install' in the same RUN statement.,Multiple(Rego),NaN,Docker,High,NaN,https://docs.docker.com/develop/develop-images/instructions/#run
+Trivy,DS-0009,WORKDIR path not absolute,"For clarity and reliability, you should always use absolute paths for your WORKDIR.",Multiple(Rego),NaN,Docker,High,NaN,https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#workdir
+Trivy,DS-0015,'yum clean all' missing,You should use 'yum clean all' after using a 'yum install' command to clean package cached data and reduce image size.,Multiple(Rego),NaN,Docker,High,NaN,https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
+Trivy,KSV-0024,Access to host ports,"According to pod security standard 'Host Ports', hostPorts should be disallowed, or at minimum restricted to a known list.",Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+Trivy,KSV-0051,Do not allow role binding creation and association with privileged role/clusterrole,Check whether role permits creating role bindings and associating to privileged role/clusterrole,Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0052,Do not allow role to create ClusterRoleBindings and association with privileged role,Check whether role permits creating role ClusterRoleBindings and association with privileged cluster role,Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0048,Manage Kubernetes workloads and pods,"Depending on the policies enforced by the admission controller, this permission ranges from the ability to steal compute (crypto) by running workloads or allowing for creating workloads that escape to the node as root and escalation to cluster-admin.",Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0055,Do not allow users in a rolebinding to add other users to their rolebindings,Check whether role permits allowing users in a rolebinding to add other users to their rolebindings,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0122,Anonymous user access binding,Binding to anonymous user to any clusterrole or role is a security risk.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://blog.aquasec.com/kubernetes-exposed-one-yaml-away-from-disaster
+Trivy,KSV-0044,No wildcard verb and resource roles,Check whether role permits wildcard verb on wildcard resource,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0045,No wildcard verb roles,Check whether role permits wildcard verb on specific resources,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KCV-0061,Ensure that the admin config  file ownership is set to root:root,Ensure that the admin config  file ownership is set to root:root.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0060,Ensure that the admin config file permissions are set to 600 or more restrictive,Ensure that the admin config file has permissions of 600 or more restrictive.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0011,Ensure that the admission control plugin AlwaysAdmit is not set,Do not allow all requests.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0012,Ensure that the admission control plugin AlwaysPullImages is set,Always pull images.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0001,Ensure that the --anonymous-auth argument is set to false,Disable anonymous requests to the API server.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0020,Ensure that the --audit-log-maxage argument is set to 30 or as appropriate,Retain the logs for at least 30 days or as appropriate.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0021,Ensure that the --audit-log-maxbackup argument is set to 10 or as appropriate,Retain 10 or an appropriate number of old log files.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0022,Ensure that the --audit-log-maxsize argument is set to 100 or as appropriate,Rotate log files on reaching 100 MB or as appropriate.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0019,Ensure that the --audit-log-path argument is set,Enable auditing on the Kubernetes API Server and set the desired audit log path.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0007,Ensure that the --authorization-mode argument is not set to AlwaysAllow,Do not always authorize all requests.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0008,Ensure that the --authorization-mode argument includes Node,Restrict kubelet nodes to reading only objects associated with them.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0009,Ensure that the --authorization-mode argument includes RBAC,Turn on Role Based Access Control.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0028,Ensure that the --client-ca-file argument is set as appropriate,Setup TLS connection on the API server.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0003,Ensure that the --DenyServiceExternalIPs is not set,This admission controller rejects all net-new usage of the Service field externalIPs.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0030,Ensure that the --encryption-provider-config argument is set as appropriate,Encrypt etcd key-value store.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0029,Ensure that the --etcd-cafile argument is set as appropriate,etcd should be configured to make use of TLS encryption for client connections.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0026,Ensure that the --etcd-certfile and --etcd-keyfile arguments are set as appropriate,etcd should be configured to make use of TLS encryption for client connections.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0010,Ensure that the admission control plugin EventRateLimit is set,Limit the rate at which the API server accepts requests.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0006,Ensure that the --kubelet-certificate-authority argument is set as appropriate,Verify kubelet's certificate before establishing connection.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0005,Ensure that the --kubelet-client-certificate and --kubelet-client-key arguments are set as appropriate,Enable certificate based kubelet authentication.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0004,Ensure that the --kubelet-https argument is set to true,Use https for kubelet connections.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0068,Ensure that the Kubernetes PKI certificate file permission is set to 600,Ensure that the Kubernetes PKI certificate file permission is set to 600.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0066,Ensure that the Kubernetes PKI directory and file file ownership is set to root:root,Ensure that the Kubernetes PKI directory and file file ownership is set to root:root.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0067,Ensure that the Kubernetes PKI key file permission is set to 600,Ensure that the Kubernetes PKI key file permission is set to 600.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0015,Ensure that the admission control plugin NamespaceLifecycle is set,Reject creating objects in a namespace that is undergoing termination.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0016,Ensure that the admission control plugin NodeRestriction is set,Limit the Node and Pod objects that a kubelet could modify.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0049,Ensure that the API server pod specification file ownership is set to root:root,Ensure that the API server pod specification file ownership is set to root:root.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0048,Ensure that the API server pod specification file permissions are set to 600 or more restrictive,Ensure that the API server pod specification file has permissions of 600 or more restrictive.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0018,Ensure that the --profiling argument is set to false,"Disable profiling, if not needed.",Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0017,Ensure that the --secure-port argument is not set to 0,Do not disable the secure port.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0013,Ensure that the admission control plugin SecurityContextDeny is set if PodSecurityPolicy is not used,The SecurityContextDeny admission controller can be used to deny pods which make use of some SecurityContext fields which could allow for privilege escalation in the cluster. This should be used where PodSecurityPolicy is not in place within the cluster.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0025,Ensure that the --service-account-key-file argument is set as appropriate,Explicitly set a service account public key file for service accounts on the apiserver.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0024,Ensure that the --service-account-lookup argument is set to true,Validate service account before validating token.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0014,Ensure that the admission control plugin ServiceAccount is set,Automate service accounts management.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0027,Ensure that the --tls-cert-file and --tls-private-key-file arguments are set as appropriate,Setup TLS connection on the API server.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0002,Ensure that the --token-auth-file parameter is not set,Do not use token based authentication.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KSV-0002,Runtime/Default AppArmor profile not set,"According to pod security standard 'AppArmor', the AppArmor key must be set to the runtime/default profile or to be undefined.",Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+Trivy,KSV-0054,Do not allow attaching to shell on pods,Check whether role permits attaching to shell on pods,Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-01011,system:authenticate group access binding,Binding to system:authenticate group to any clusterrole or role is a security risk.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://orca.security/resources/blog/sys-all-google-kubernetes-engine-risk/
+Trivy,KSV-0001,Can elevate its own privileges,"A program inside the container can elevate its own privileges and run as root, which might give the program control over the container and node.",Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+Trivy,KSV-0003,Default capabilities: some containers do not drop all,The container should drop all default capabilities and add only those that are needed for its execution.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubesec.io/basics/containers-securitycontext-capabilities-drop-index-all/
+Trivy,KSV-0004,Default capabilities: some containers do not drop any,Security best practices require containers to run with minimal required capabilities.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubesec.io/basics/containers-securitycontext-capabilities-drop-index-all/
+Trivy,KSV-0111,User with admin access,Either cluster-admin or those granted powerful permissions.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KCV-0057,Ensure that the container network interface file ownership is set to root:root,Ensure that the container network interface file ownership is set to root:root.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0056,Ensure that the container network interface file permissions are set to 600 or more restrictive,Ensure that the container network interface file has permissions of 600 or more restrictive.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KSV-0109,ConfigMap with secrets,Storing secrets in configMaps is unsafe,Multiple(Rego),NaN,Kubernetes,High,NaN,
+Trivy,KSV-01010,ConfigMap with sensitive content,Storing sensitive content such as usernames and email addresses in configMaps is unsafe,Multiple(Rego),NaN,Kubernetes,Medium,NaN,
+Trivy,KCV-0039,Ensure that the --bind-address argument is set to 127.0.0.1,Do not bind the scheduler service to non-loopback insecure addresses.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0065,Ensure that the controller-manager config  file ownership is set to root:root,Ensure that the controller-manager config  file ownership is set to root:root.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0064,Ensure that the controller-manager config file permissions are set to 600 or more restrictive,Ensure that the controller-manager config file has permissions of 600 or more restrictive.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0050,Ensure that the controller manager pod specification file permissions are set to 600 or more restrictive,Ensure that the controller manager pod specification file has permissions of 600 or more restrictive.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0034,Ensure that the --profiling argument is set to false,"Disable profiling, if not needed.",Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0037,Ensure that the --root-ca-file argument is set as appropriate,Allow pods to verify the API server's serving certificate before establishing connections.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0038,Ensure that the RotateKubeletServerCertificate argument is set to true,Enable kubelet server certificate rotation on controller-manager.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0036,Ensure that the --service-account-private-key-file argument is set as appropriate,Explicitly set a service account private key file for service accounts on the controller manager.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0033,Ensure that the --terminated-pod-gc-threshold argument is set as appropriate,"Activate garbage collector on pod termination, as appropriate.",Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0051,Ensure that the controller manager pod specification file ownership is set to root:root,Ensure that the controller manager pod specification file ownership is set to root:root.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0035,Ensure that the --use-service-account-credentials argument is set to true,Use individual service account credentials for each controller.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KSV-0011,CPU not limited,Enforcing CPU limits prevents DoS via resource exhaustion.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://cloud.google.com/blog/products/containers-kubernetes/kubernetes-best-practices-resource-requests-and-limits
+Trivy,KSV-0015,CPU requests not specified,"When containers have resource requests specified, the scheduler can make better decisions about which nodes to place pods on, and how to deal with resource contention.",Multiple(Rego),NaN,Kubernetes,Low,NaN,https://cloud.google.com/blog/products/containers-kubernetes/kubernetes-best-practices-resource-requests-and-limits
+Trivy,KSV-0110,Workloads in the default namespace,Checks whether a workload is running in the default namespace.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+Trivy,KSV-0118,Default security context configured,"Security context controls the allocation of security parameters for the pod/container/volume, ensuring the appropriate level of protection. Relying on default security context may expose vulnerabilities to potential attacks that rely on privileged access.",Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+Trivy,KSV-0042,Delete pod logs,"Used to cover attacker’s tracks, but most clusters ship logs quickly off-cluster.",Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0106,Container capabilities must only include NET_BIND_SERVICE,"Containers must drop ALL capabilities, and are only permitted to add back the NET_BIND_SERVICE capability.",Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+Trivy,KCV-0044,Ensure that the --auto-tls argument is not set to true,Do not use self-signed certificates for TLS.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0042,Ensure that the --cert-file and --key-file arguments are set as appropriate,Configure TLS encryption for the etcd service.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0043,Ensure that the --client-cert-auth argument is set to true,Enable client authentication on etcd service.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0059,Ensure that the etcd data directory ownership is set to etcd:etcd,Ensure that the etcd data directory ownership is set to etcd:etcd.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0058,Ensure that the etcd data directory permissions are set to 700 or more restrictive,Ensure that the etcd data directory has permissions of 700 or more restrictive.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0047,Ensure that the --peer-auto-tls argument is not set to true,Do not use self-signed certificates for TLS.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0045,Ensure that the --peer-cert-file and --peer-key-file arguments are set as appropriate,etcd should be configured to make use of TLS encryption for peer connections.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0046,Ensure that the --peer-client-cert-auth argument is set to true,etcd should be configured for peer authentication.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0055,Ensure that the etcd pod specification file ownership is set to root:root,Ensure that the etcd pod specification file ownership is set to root:root.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0054,Ensure that the etcd pod specification file permissions are set to 600 or more restrictive,Ensure that the etcd pod specification file has permissions of 600 or more restrictive.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KSV-0014,Root file system is not read-only,"An immutable root file system prevents applications from writing to their local disk. This can limit intrusions, as attackers will not be able to tamper with the file system or write foreign executables to disk.",Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubesec.io/basics/containers-securitycontext-readonlyrootfilesystem-true/
+Trivy,KSV-0053,Exec into Pods,The ability to exec into a container with privileged access to the host or with an attached SA with higher RBAC permissions is a common escalation path to cluster-admin.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0023,hostPath volumes mounted,"According to pod security standard 'HostPath Volumes', HostPath volumes must be forbidden.",Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+Trivy,KSV-0008,Access to host IPC namespace,Sharing the host’s IPC namespace allows container processes to communicate with processes on the host.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+Trivy,KSV-0009,Access to host network,Sharing the host’s network namespace permits processes in the pod to communicate with processes bound to the host’s loopback adapter.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+Trivy,KSV-0010,Access to host PID,"Sharing the host’s PID namespace allows visibility on host processes, potentially leaking information such as environment variables and configuration.",Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+Trivy,KSV-0043,Do not allow impersonation of privileged groups,Check whether role permits impersonating privileged groups,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KCV-0093,Ensure ingress-nginx annotations are secure,Check for insecure annotations in ingress-nginx configurations.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,"https://github.com/kubernetes/kubernetes/issues/131008, https://github.com/kubernetes/kubernetes/issues/131007, https://github.com/kubernetes/kubernetes/issues/131006"
+Trivy,KCV-0079,Ensure that the --anonymous-auth argument is set to false,Disable anonymous requests to the Kubelet server.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0080,Ensure that the --authorization-mode argument is not set to AlwaysAllow,Do not allow all requests. Enable explicit authorization.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0076,Ensure that the client certificate authorities file ownership is set to root:root,Ensure that the certificate authorities file ownership is set to root:root.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0075,Ensure that the certificate authorities file permissions are set to 600 or more restrictive,Ensure that the certificate authorities file has permissions of 600 or more restrictive.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0081,Ensure that the --client-ca-file argument is set as appropriate,Enable Kubelet authentication using certificates.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0074,Ensure that the --kubeconfig kubelet.conf file ownership is set to root:root,Ensure that the kubelet.conf file ownership is set to root:root.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0073,Ensure that the --kubeconfig kubelet.conf file permissions are set to 600 or more restrictive,Ensure that the kubelet.conf file has permissions of 600 or more restrictive.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0078,If the kubelet config.yaml configuration file is being used validate file ownership is set to root:root ,"Ensure that if the kubelet refers to a configuration file with the --config argument, that file is owned by root:root.",Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0077,If the kubelet config.yaml configuration file is being used validate permissions set to 600 or more restrictive,"Ensure that if the kubelet refers to a configuration file with the --config argument, that file has permissions of 600 or more restrictive.",Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0087,Ensure that the --event-qps argument is set to 0 or a level which ensures appropriate event capture,Security relevant information should be captured. The --event-qps flag on the Kubelet can be used to limit the rate at which events are gathered,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0086,Ensure that the --hostname-override argument is not set,Do not override node hostnames.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0070,Ensure that the kubelet service file ownership is set to root:root,Ensure that the kubelet service file ownership is set to root:root.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0069,Ensure that the kubelet service file permissions are set to 600 or more restrictive,Ensure that the kubelet service file has permissions of 600 or more restrictive.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0084,Ensure that the --make-iptables-util-chains argument is set to true,Allow Kubelet to manage iptables.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0092,Ensure that the Kubelet only makes use of Strong Cryptographic Ciphers,Ensure that the Kubelet is configured to only use strong cryptographic ciphers.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0083,Ensure that the --protect-kernel-defaults is set to true,Protect tuned kernel parameters from overriding kubelet default kernel parameter values.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0072,if proxy kubeconfig file exists ensure ownership is set to root:root,"If kube-proxy is running, ensure that the file ownership of its kubeconfig file is set to root:root.",Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0071,If proxy kubeconfig file exists ensure permissions are set to 600 or more restrictive,"If kube-proxy is running, and if it is using a file-based kubeconfig file, ensure that the proxy kubeconfig file has permissions of 600 or more restrictive.",Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0082,Verify that the --read-only-port argument is set to 0,Disable the read-only port.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0090,Ensure that the --rotate-certificates argument is not set to false,Enable kubelet client certificate rotation.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0091,Verify that the RotateKubeletServerCertificate argument is set to true,Enable kubelet server certificate rotation.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0085,Ensure that the --streaming-connection-idle-timeout argument is not set to 0,Do not disable timeouts on streaming connections.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0088,Ensure that the --tls-cert-file argument are set as appropriate,Setup TLS connection on the Kubelets.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0089,Ensure that the --tls-key-file argument are set as appropriate,Setup TLS connection on the Kubelets.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KSV-0121,Kubernetes resource with disallowed volumes mounted,HostPath present many security risks and as a security practice it is better to avoid critical host paths mounts.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+Trivy,KSV-0007,Manages /etc/hosts,Managing /etc/hosts aliases can prevent the container engine from modifying the file after a pod’s containers have already been started.,Multiple(Rego),NaN,Kubernetes,Low,NaN,
+Trivy,KSV-0046,Manage all resources,"Full control of the cluster resources, and therefore also root on all nodes where workloads can run and has access to all pods, secrets, and data.",Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0112,Manage all resources at the namespace,"Full control of the resources within a namespace.  In some cluster configurations, this is excessive. In others, this is normal (a gitops deployment operator like flux)",Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0049,Manage configmaps,Some workloads leverage configmaps to store sensitive data or configuration parameters that affect runtime behavior that can be modified by an attacker or combined with another issue to potentially lead to compromise.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0115,Manage EKS IAM Auth ConfigMap,Ability to add AWS IAM to RBAC bindings via special EKS configmap.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0056,Manage Kubernetes networking,The ability to control which pods get service traffic directed to them allows for interception attacks. Controlling network policy allows for bypassing lateral movement restrictions.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0050,Manage Kubernetes RBAC resources,An effective level of access equivalent to cluster-admin should not be provided.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0113,Manage namespace secrets,Viewing secrets at the namespace scope can lead to escalation if another service account in that namespace has a higher privileged rolebinding or clusterrolebinding bound.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0041,Manage secrets,Viewing secrets at the cluster-scope is akin to cluster-admin in most clusters as there are typically at least one service accounts (their token stored in a secret) bound to cluster-admin directly or a role/clusterrole that gives similar permissions.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0114,Manage webhookconfigurations,Webhooks can silently intercept or actively mutate/block resources as they are being created or updated. This includes secrets and pod specs.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0123,system:masters group access binding,Binding to system:masters group to any clusterrole or role is a security risk.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,https://www.aquasec.com/blog/kubernetes-authorization/
+Trivy,KSV-0018,Memory not limited,Enforcing memory limits prevents DoS via resource exhaustion.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubesec.io/basics/containers-resources-limits-memory/
+Trivy,KSV-0016,Memory requests not specified,"When containers have memory requests specified, the scheduler can make better decisions about which nodes to place pods on, and how to deal with resource contention.",Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubesec.io/basics/containers-resources-limits-memory/
+Trivy,KSV-0006,hostPath volume mounted with docker.sock,Mounting docker.sock from the host can give the container full root access to the host.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubesec.io/basics/spec-volumes-hostpath-path-var-run-docker-sock/
+Trivy,KSV-0119,NET_RAW capability added,"The NET_RAW capability grants attackers the ability to eavesdrop on network traffic or generate IP traffic with falsified source addresses, posing serious security risks.",Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/
+Trivy,KSV-0028,Non-core volume types used.,"According to pod security standard 'Volume types', non-core volume types must not be used.",Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+Trivy,KSV-0027,Non-default /proc masks set,"According to pod security standard '/proc Mount Type', the default /proc masks are set up to reduce attack surface, and should be required.",Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+Trivy,KSV-0107,The deprecated 'apiVersion' and 'kind' should not be used,The specified 'apiVersion' and 'kind' are deprecated and are planned to be removed,Multiple(Rego),NaN,Kubernetes,Low,NaN,
+Trivy,KSV-0017,Privileged,Privileged containers share namespaces with the host system and do not offer any security. They should be used exclusively for system containers that require high privileges.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+Trivy,KSV-0117,Prevent binding to privileged ports,The ports which are lower than 1024 receive and transmit various sensitive and privileged data. Allowing containers to use them can bring serious implications.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,"https://kubernetes.io/docs/concepts/security/pod-security-standards/, https://www.stigviewer.com/stig/kubernetes/2022-12-02/finding/V-242414"
+Trivy,KSV-0047,Do not allow privilege escalation from node proxy,Check whether role permits privilege escalation from node proxy,Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/concepts/security/rbac-good-practices/
+Trivy,KSV-0036,Protecting Pod service account tokens,ensure that Pod specifications disable the secret token being mounted by setting automountServiceAccountToken: false,Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/reference/access-authn-authz/service-accounts-admin/#serviceaccount-admission-controller
+Trivy,KSV-0037,User resources should not be placed in kube-system namespace,ensure that user resources are not placed in kube-system namespace,Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/reference/setup-tools/kubeadm/implementation-details/
+Trivy,KSV-0124,Gatekeeper repo reference is ambiguously open-ended,"A Gatekeeper policy that references image repositories for prefix-matching is using open-ended and ambiguous pattern, and can potentially match unintended repositories.",Multiple(Rego),NaN,Kubernetes,High,NaN,
+Trivy,KSV-0012,Runs as root user,Force the running image to run as a non-root user to ensure least privileges.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+Trivy,KSV-0116,Runs with a root primary or supplementary GID,"According to pod security standard 'Non-root groups', containers should be forbidden from running with a root primary or supplementary GID.",Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubesec.io/basics/containers-securitycontext-runasuser/
+Trivy,KSV-0105,Containers must not set runAsUser to 0,Containers should be forbidden from running with a root UID.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+Trivy,KSV-0021,Runs with GID <= 10000,Force the container to run with group ID > 10000 to avoid conflicts with the host’s user table.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubesec.io/basics/containers-securitycontext-runasuser/
+Trivy,KSV-0020,Runs with UID <= 10000,Force the container to run with user ID > 10000 to avoid conflicts with the host’s user table.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubesec.io/basics/containers-securitycontext-runasuser/
+Trivy,KSV-0030,Runtime/Default Seccomp profile not set,"According to pod security standard 'Seccomp', the RuntimeDefault seccomp profile must be required, or allow specific additional profiles.",Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted
+Trivy,KCV-0041,Ensure that the --bind-address argument is set to 127.0.0.1,Do not bind the scheduler service to non-loopback insecure addresses.,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0063,Ensure that the scheduler config  file ownership is set to root:root,Ensure that the scheduler config  file ownership is set to root:root.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0062,Ensure that the scheduler config file permissions are set to 600 or more restrictive,Ensure that the scheduler config file has permissions of 600 or more restrictive.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0053,Ensure that the scheduler pod specification file ownership is set to root:root,Ensure that the scheduler pod specification file ownership is set to root:root.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0052,Ensure that the scheduler pod specification file permissions are set to 600 or more restrictive,Ensure that the scheduler pod specification file has permissions of 600 or more restrictive.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KCV-0040,Ensure that the --profiling argument is set to false,"Disable profiling, if not needed.",Multiple(Rego),NaN,Kubernetes,Low,NaN,https://www.cisecurity.org/benchmark/kubernetes
+Trivy,KSV-0104,Seccomp policies disabled,A program inside the container can bypass Seccomp protection policies.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+Trivy,KSV-0038,Selector usage in network policies,ensure that network policies selectors are applied to pods or namespaces to restricted ingress and egress traffic within the pod network,Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/tasks/administer-cluster/declare-network-policy/
+Trivy,KSV-0025,SELinux custom options set,"According to pod security standard 'SElinux', setting custom SELinux options should be disallowed.",Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+Trivy,KSV-0108,Service with External IP,Services with external IP addresses allows direct access from the internet and might expose risk for CVE-2020-8554,Multiple(Rego),NaN,Kubernetes,High,NaN,
+Trivy,KSV-0022,Specific capabilities added,"According to pod security standard 'Capabilities', capabilities beyond the default set must not be added.",Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+Trivy,KSV-0005,SYS_ADMIN capability added,SYS_ADMIN gives the processes running inside the container privileges that are equivalent to root.,Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubesec.io/basics/containers-securitycontext-capabilities-add-index-sys-admin/
+Trivy,KSV-0120,SYS_MODULE capability added,"The SYS_MODULE capability grants attackers the ability to install and remove kernel modules, posing serious security risks.",Multiple(Rego),NaN,Kubernetes,High,NaN,https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+Trivy,KSV-0102,Tiller Is Deployed,Check if Helm Tiller component is deployed.,Multiple(Rego),NaN,Kubernetes,Critical,NaN,
+Trivy,KSV-0026,Unsafe sysctl options set,"Sysctls can disable security mechanisms or affect all containers on a host, and should be disallowed except for an allowed 'safe' subset. A sysctl is considered safe if it is namespaced in the container or the Pod, and it is isolated from other Pods or processes on the same Node.",Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline
+Trivy,KSV-0013,"Image tag "":latest"" used","It is best to avoid using the ':latest' image tag when deploying containers in production. Doing so makes it hard to track which version of the image is running, and hard to roll back the version.",Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/configuration/overview/#container-images
+Trivy,KSV-0032,All container images must start with the *.azurecr.io domain,Containers should only use images from trusted registries.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,
+Trivy,KSV-0035,All container images must start with an ECR domain,Container images from non-ECR registries should be forbidden.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,
+Trivy,KSV-0033,All container images must start with a GCR domain,Containers should only use images from trusted GCR registries.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,
+Trivy,KSV-0034,Container images from public registries used,Container images must not start with an empty prefix or a defined public registry domain.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,
+Trivy,KSV-0125,Restrict container images to trusted registries,Ensure that all containers use images only from trusted registry domains.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,"https://cloud.google.com/container-registry/docs/overview#registries, https://docs.aws.amazon.com/general/latest/gr/ecr.html"
+Trivy,KSV-0039,limit range usage,Ensure that a LimitRange policy is configured to limit resource usage for namespaces or nodes,Multiple(Rego),NaN,Kubernetes,Low,NaN,"https://kubernetes.io/docs/concepts/policy/limit-range/, https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/memory-default-namespace/, https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/memory-constraint-namespace/"
+Trivy,KSV-0040,resource quota usage,Ensure that a ResourceQuota policy is configured to limit aggregate resource usage within a namespace,Multiple(Rego),NaN,Kubernetes,Low,NaN,https://kubernetes.io/docs/tasks/administer-cluster/manage-resources/quota-memory-cpu-namespace/
+Trivy,KSV-0103,Access to host process,Windows pods offer the ability to run HostProcess containers which enable privileged access to the Windows node.,Multiple(Rego),NaN,Kubernetes,Medium,NaN,https://kubernetes.io/docs/concepts/security/pod-security-standards/#baseline

@@ -1,0 +1,20 @@
+cloudformation:
+  good:
+    - |-
+      Resources:
+        GoodExample:
+          Type: AWS::Serverless::Api
+          Properties:
+            AccessLogSetting:
+              DestinationArn: gateway-logging
+              Format: json
+            Name: Good SAM API example
+            StageName: Prod
+  bad:
+    - |-
+      Resources:
+        BadExample:
+          Type: AWS::Serverless::Api
+          Properties:
+            Name: Bad SAM API example
+            StageName: Prod

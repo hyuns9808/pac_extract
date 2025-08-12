@@ -1,0 +1,15 @@
+{
+    "name": "storageNotEncrypted",
+    "file": "storageNotEncrypted.rego",
+    "policy_type": "aws",
+    "resource_type": "aws_rds_cluster",
+    "template_args": {
+        "prefix": ""
+    },
+    "severity": "HIGH",
+    "description": "Encrypt Amazon RDS instances and snapshots at rest, by enabling the encryption option for your Amazon RDS DB instance",
+    "reference_id": "AWS.RDS.EncryptionandKeyManagement.High.0414",
+    "category": "Data Protection",
+    "version": 2,
+    "id": "AC_AWS_0186"
+}

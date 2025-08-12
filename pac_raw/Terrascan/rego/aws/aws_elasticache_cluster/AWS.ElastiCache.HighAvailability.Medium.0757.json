@@ -1,0 +1,13 @@
+{
+    "name": "elastiCacheMultiAZ",
+    "file": "elastiCacheMultiAZ.rego",
+    "policy_type": "aws",
+    "resource_type": "aws_elasticache_cluster",
+    "template_args": null,
+    "severity": "MEDIUM",
+    "description": "AWS ElastiCache Multi-AZ",
+    "reference_id": "AWS.ElastiCache.HighAvailability.Medium.0757",
+    "category": "Resilience",
+    "version": 1,
+    "id": "AC_AWS_0104"
+}
