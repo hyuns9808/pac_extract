@@ -1,0 +1,28 @@
+[project]
+name = "pac-extract"
+version = "1.0.0"
+description = "Program that extracts PaC(Policy as Code) files from the most popular open-source IaC(Infrastructure as Code) scanning tools. Used to guide DevOps engineers on which policies are standardized and how they are written."
+authors = [
+    {name = "Calvin(Hyunsoo) Yang | 양현수"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+[tool.poetry]
+package-mode = false
+
+
+[tool.poetry.dependencies]
+pandas = "2.3.1"
+pyyaml = "6.0.2"
+selenium = "4.34.2"
+streamlit = "1.48.0"
+streamlit-option-menu = "0.4.0"
+streamlit-aggrid = "1.1.7"
+tqdm = "4.67.1"
+ydata-profiling = "4.8.3"
+setuptools = "80.9.0"
+xlsxwriter = "3.2.5"
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

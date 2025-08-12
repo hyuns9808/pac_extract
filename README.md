@@ -1,82 +1,386 @@
-# PaC_Extract
+# ⚗️ PaC_Extract
 
-<h1 align="center" style="border-bottom: none;">⚗️ PaC_Extract</h1>
-<h3 align="center">Fully automated PaC(Policy as Code) extraction from open-source IaC(Infrastructure as Code) tools</h3>
+> A blazing‑fast, developer‑friendly **Policy‑as‑Code (PaC)** file extraction tool for **Terraform**.  
+> Collects policies from **open‑source IaC scanners** directly from the source and creates a single unified database via **Pandas**.  
+> **Poetry‑powered** for clean dependency management and reproducible builds.
 
-**PaC_Extract** automates the tiresome process of locating relevant PaC(Policy as Code) files from popular open-source IaC(Infrastructure as Code) tools. Although most open-source IaC scanning tools provide information regarding policies they use to scan IaC files, there is no combined document or process to collect such information.
+<p align="center">
+  <img src="docs/assets/banner.png" alt="PaC-Scanner banner" width="720"/>
+</p>
 
-**PaC_Extract** directly pools all relevant PaCs from the following 4 popular open-source IaC scanning tools:
-1. [Regula](https://github.com/fugue/regula)
-2. [Terrascan](https://github.com/tenable/terrascan)
-3. [Checkov](https://github.com/bridgecrewio/checkov)
-4. [tfsec](https://github.com/aquasecurity/tfsec)
+<p align="center">
+  <a href="https://github.com/yourorg/pac-scanner/actions">
+    <img alt="CI" src="https://img.shields.io/github/actions/workflow/status/yourorg/pac-scanner/ci.yml?label=CI"/>
+  </a>
+  <a href="https://pypi.org/project/pac-scanner/">
+    <img alt="PyPI" src="https://img.shields.io/pypi/v/pac-scanner.svg"/>
+  </a>
+  <img alt="Python" src="https://img.shields.io/pypi/pyversions/pac-scanner.svg"/>
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-informational.svg"/>
+  <a href="https://python-poetry.org/">
+    <img alt="Poetry" src="https://img.shields.io/badge/deps-managed%20by%20Poetry-60b?logo=poetry"/>
+  </a>
+  <a href="https://hub.docker.com/r/yourorg/pac-scanner">
+    <img alt="Docker pulls" src="https://img.shields.io/docker/pulls/yourorg/pac-scanner.svg"/>
+  </a>
+</p>
 
-This allows anyone planning to create a database for PaC files to gather insight into what PaCs popular open-source IaC tools use!
+---
 
-## How does it work?
+## 📚 Table of Contents
 
-**PaC_Extract** operates in the following order:
-1. Downloads repositories provided by all four open-source tools. 
-2. Locates PaC files within the open-source tools and parses them via RegEx defined per tool.
-3. All parsed PaCs are saved as .xlsx files per tool.
+- [Why PaC_Scanner?](#-why-pac-scanner)
+- [Features](#-features)
+- [Quick Start](#-quick-start)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Configuration](#-configuration)
+- [Writing Policies](#-writing-policies)
+- [Policy Sources (Open‑Source Collectors)](#-policy-sources-open-source-collectors)
+- [Reports](#-reports)
+- [CI/CD](#-cicd)
+- [Development](#-development)
+- [Roadmap](#-roadmap)
+- [FAQ](#-faq)
+- [License](#-license)
+- [Credits](#-credits)
 
-## Requirements
+---
 
-**PaC_Extract** requires the following conditions:
+## ✨ Why PaC_Scanner?
 
-- A computer with at least 100MB of free storage space
-- The following Python packages:
-    - requests
-    - xlsxwriter
-    - pathlib (if using Python version lower than 3.4+)
+Traditional IaC scanners are powerful, but each has its own rule format, execution model, and report style. **PaC‑Scanner** acts as a **policy hub**:
 
-## Highlights
+- **Collects & normalizes policies** from popular open-source IaC scanners (e.g., **Checkov**, **tfsec**, **Terrascan**, **kube‑score**).
+- **Unifies evaluation** through a single, consistent engine (OPA/Rego, JSON logic, and YAML checks).
+- **Streamlines results** into standardized outputs (CLI, **JSON**, **SARIF**, **HTML**).
 
-- Searches all PaCs of four open-source IaC scanning tools related to user input
-- Saves them in separate excel(.xlsx) files per tool
-- Saves the following properties per PaC of **Regula**:
-    - **RuleID**: Identification code assigned per PaC
-    - **Title**: Brief description of what the PaC checks
-    - **File Location**: PaC file location from the downloaded repository of Regula
-    - **{search_String} Specified**: Whether there is a specific PaC folder related to the user's input string
-    - **Severity**: How severe the issue detected by the PaC is regarding security or infrastructure integrity
-    - **Summary**: Detailed description of what the PaC checks
-- Saves the following properties per PaC of **Terrascan**:
-    - **JSON ID**: JSON identification code assigned per PaC
-    - **Rego ID**: Rego identification code assigned per PaC
-    - **Category**: Assigned Terrascan internal category of PaC
-    - **File Location**: PaC file location from the downloaded repository of Terrascan
-    - **{search_String} Specified**: Whether there is a specific PaC folder related to the user's input string
-    - **Severity**: How severe the issue detected by the PaC is regarding security or infrastructure integrity
-    - **Description**: Detailed description of what the PaC checks
-- Saves the following properties per PaC of **Checkov**:
-    - **Code**: Identification code assigned per PaC
-    - **Resource**: Assigned Checkov internal resource(similar to category) of PaC
-    - **Description**: Detailed description of what the PaC checks
-    - **File Name**: Name of corresponding PaC file
-    - **Link**: Link to Checkov GitHub docs that describes the corresponding PaC
-- Saves the following properties per PaC of **tfsec**:
-    - **Rule Code**: Identification code assigned per PaC
-    - **Severity**: How severe the issue detected by the PaC is regarding security or infrastructure integrity
-    - **Title**: Brief description of what the PaC checks
-    - **Explanation**: Detailed Explanation of what the PaC checks
-    - **Possible Impact**: Potential impact of issues caused by problem detected by PaC
-    - **Suggested Resolution**: tfsec's suggested solution to problem detected by PaC
-    - **Insecure Example**: Code snippet of insecure case corresponding to PaC
-    - **Secure Example**: Code snippet of secure case corresponding to PaC
-    - **Policy**: Link to tfsec GitHub docs that describe the policy of the corresponding PaC
-    - **Links**: Links to tfsec GitHub docs or any external links that describes the corresponding PaC and its issues
+---
 
-## Creator
+## 🌟 Features
 
-<div align="center" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100vh; width: 100%;">
-    <img src="https://github.com/hyuns9808.png?size=300" alt="Majestic cat I found" title="Majestic Cat" style="max-width: 100%; height: auto;">
-    <p>Fun fact: This majestic beast is a stray that I met at <a href="https://maps.app.goo.gl/78d8uQ19jJc6BPx88">Gamcheon Culture Village!</a></p>
-</div>
+- ⚡ **Fast & Lightweight** – Scans large repos in seconds.
+- 🛡️ **Extensible Policy Engine** – Author rules in **Rego**, JSON logic, or simple **YAML**.
+- 🌍 **Broad IaC Coverage** – Terraform, CloudFormation, Kubernetes, Docker, Helm charts, generic YAML/JSON.
+- 📚 **Curated PaC Library** – Aggregates rules from open‑source IaC scanners into one framework.
+- 🧠 **Smart Normalization** – Deduplicates, tags, and versions imported rules for consistency.
+- 🏗️ **CI/CD Ready** – GitHub Actions, GitLab CI, Jenkins, CircleCI.
+- 📊 **Rich Reports** – JSON, **SARIF** (Code Scanning), HTML dashboards, or concise CLI output.
+- 🔌 **Pluggable Rulesets** – Use built‑ins or your own bundles.
+- 🐍 **Poetry‑Powered** – Reproducible environments & dependency pinning with **Poetry**.
 
-<h3 align="center">
-    <a href="https://github.com/hyuns9808">Calvin(Hyunsoo) Yang</a>
-</h3>
-<h3 align="center">
-    Check out my <a href="https://hyuns9808.github.io/">personal website!</a>
-</h3>
+---
+
+## 🚀 Quick Start
+
+```bash
+# Clone and install with Poetry (recommended)
+git clone https://github.com/yourorg/pac-scanner.git
+cd pac-scanner
+poetry install
+
+# Run your first scan
+poetry run pac-scanner scan ./iac
+```
+
+---
+
+## 📦 Installation
+
+### Using Poetry (recommended)
+```bash
+poetry install
+```
+
+### Using pip
+```bash
+pip install pac-scanner
+```
+
+### Using Homebrew (macOS/Linux)
+```bash
+brew install pac-scanner
+```
+
+### Using Docker
+```bash
+docker run --rm -v $(pwd):/scan yourorg/pac-scanner scan .
+```
+
+> **Note:** When running through Poetry, prefix commands with `poetry run ...`.
+
+---
+
+## 🖥️ Usage
+
+### Scan a directory
+```bash
+poetry run pac-scanner scan ./iac
+```
+
+### Apply custom policy bundles
+```bash
+poetry run pac-scanner scan . --policy-bundle ./policies
+```
+
+### Select input types explicitly
+```bash
+poetry run pac-scanner scan ./ --types terraform,kubernetes
+```
+
+### Fail the build on severity threshold
+```bash
+poetry run pac-scanner scan ./ --fail-on high
+```
+
+### Output results in JSON or SARIF
+```bash
+poetry run pac-scanner scan ./ --output json > results.json
+poetry run pac-scanner scan ./ --output sarif > results.sarif
+```
+
+### HTML report
+```bash
+poetry run pac-scanner scan ./ --output html --out-file report.html
+```
+
+---
+
+## ⚙️ Configuration
+
+Create a `.pac-scanner.yaml` at repo root:
+
+```yaml
+# .pac-scanner.yaml
+inputs:
+  paths:
+    - ./iac
+    - ./k8s
+  types: [terraform, kubernetes, docker]
+policies:
+  bundles:
+    - ./policies  # your custom bundle(s)
+  sources:
+    checkov: enabled
+    tfsec: enabled
+    terrascan: enabled
+    kube_score: enabled
+  exclude_rules:
+    - experimental-*
+    - deprecated-*
+report:
+  format: sarif        # cli|json|sarif|html
+  fail_on: high        # none|low|medium|high|critical
+  out_file: results.sarif
+runtime:
+  parallelism: 8
+  cache_dir: ./.pac-cache
+```
+
+---
+
+## 🧑‍💻 Writing Policies
+
+You can write policies in **OPA/Rego**, JSON logic, or simple **YAML** checks.
+
+**YAML example**
+```yaml
+id: aws-sg-no-80
+title: Disallow 0.0.0.0/0 ingress on port 80
+severity: high
+resource: aws_security_group
+check:
+  ingress:
+    - port: 80
+      cidr: 0.0.0.0/0
+```
+
+**Rego example (`policies/network/sg.rego`)**
+```rego
+package pac.network
+
+deny[res] {
+  some sg
+  input.resource.type == "aws_security_group"
+  sg := input.resource.config
+  ingress := sg.ingress[_]
+  ingress.from_port <= 80
+  ingress.to_port >= 80
+  ingress.cidr_blocks[_] == "0.0.0.0/0"
+  res := {
+    "id": "aws-sg-no-80",
+    "message": sprintf("Security group allows 0.0.0.0/0 on port 80 at %s", [input.resource.filepath]),
+    "severity": "high"
+  }
+}
+```
+
+---
+
+## 📥 Policy Sources (Open‑Source Collectors)
+
+PaC‑Scanner can **ingest policies** from popular open‑source IaC scanners, normalize them, and tag them with a consistent schema:
+
+| Source       | Importer | Notes |
+|--------------|----------|-------|
+| Checkov      | `checkov` | Imports built‑in checks and maps severities/tags. |
+| tfsec        | `tfsec`   | Converts rules and remediation links. |
+| Terrascan    | `terrascan` | Normalizes categories and resource filters. |
+| kube‑score   | `kube_score` | Adapts findings to K8s resource schema. |
+
+Example enabling collectors:
+
+```bash
+poetry run pac-scanner fetch-policies   --enable checkov,tfsec,terrascan,kube_score   --dest ./external-policies
+```
+
+> **Attribution:** Imported policies retain original IDs, titles, and references. See [LICENSES-THIRD-PARTY.md](./LICENSES-THIRD-PARTY.md).
+
+---
+
+## 📊 Reports
+
+**CLI summary**
+```text
+✅ Passed: 153   ❌ Failed: 7   ⏭ Skipped: 12
+High: 3   Medium: 2   Low: 2
+```
+
+**JSON**
+```bash
+poetry run pac-scanner scan ./ --output json > results.json
+```
+
+**SARIF (GitHub Code Scanning)**
+```bash
+poetry run pac-scanner scan ./ --output sarif > results.sarif
+```
+
+**HTML**
+```bash
+poetry run pac-scanner scan ./ --output html --out-file report.html
+```
+
+---
+
+## 🔗 CI/CD
+
+### GitHub Actions
+
+```yaml
+name: pac-scan
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v2
+
+      - name: Configure Poetry
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install --no-interaction --no-ansi
+
+      - name: Run PaC-Scanner
+        run: poetry run pac-scanner scan ./iac --output sarif > results.sarif
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
+```
+
+### GitLab CI
+
+```yaml
+pac_scan:
+  image: python:3.11
+  script:
+    - pip install poetry
+    - poetry install --no-interaction --no-ansi
+    - poetry run pac-scanner scan ./ --fail-on high
+  artifacts:
+    paths:
+      - results.sarif
+```
+
+---
+
+## 🧰 Development
+
+```bash
+# 1) Install dependencies (creates .venv via Poetry)
+poetry install
+
+# 2) Run unit tests
+poetry run pytest -q
+
+# 3) Lint & type-check
+poetry run ruff check .
+poetry run mypy src
+
+# 4) Run CLI locally
+poetry run pac-scanner --help
+```
+
+**Useful Poetry scripts** (in `pyproject.toml`)
+```toml
+[tool.poetry.scripts]
+pac-scanner = "pac_scanner.cli:app"
+```
+
+---
+
+## 🗺️ Roadmap
+
+- ✅ Terraform, CloudFormation, Kubernetes support  
+- ✅ Aggregate policies from open‑source IaC scanners into unified PaC library  
+- 🔄 Cloud provider **live‑state** scanning (AWS, Azure, GCP)  
+- 📡 Remote policy registries (fetch from Git/OCI)  
+- 🖥️ IDE inline feedback (VSCode/JetBrains extensions)  
+- 🧬 Policy graph & dependency awareness  
+
+Contribute ideas in [Discussions](https://github.com/yourorg/pac-scanner/discussions) or open a [feature request](https://github.com/yourorg/pac-scanner/issues/new?template=feature_request.md).
+
+---
+
+## ❓ FAQ
+
+**Why Poetry?**  
+Poetry provides deterministic dependency resolution, locked environments, and reproducible builds, making CI/CD more predictable.
+
+**Can I disable certain imported rules?**  
+Yes — use `exclude_rules` patterns or disable an entire collector in `.pac-scanner.yaml`.
+
+**What if I already use Checkov/tfsec?**  
+Great! Keep them. PaC‑Scanner can **import** their policies so your teams get a single pane of glass for rules, severities, and outputs.
+
+---
+
+## 📜 License
+
+Released under the **MIT License**. See [LICENSE](./LICENSE) for details.
+
+---
+
+## 🙌 Credits
+
+This project stands on the shoulders of giants:  
+**Checkov**, **tfsec**, **Terrascan**, **kube‑score**, **OPA/Regal**, and the broader Open‑Source Security and IaC communities.  
+We thank the authors and maintainers of these projects and preserve attribution in imported rules.
+
+---
+
+> 🛠 Built for developers who care about security **before** production.
