@@ -100,7 +100,7 @@ def app():
         )
         db_only = st.checkbox(
             "Create database files only without updating the files",
-            value=True,
+            value=False,
             help="If selected, only database files will be created for selected tools without downloading/updating the raw PaC files."
         )
         tools_input = st.multiselect(

@@ -7,7 +7,7 @@
             "is_repo": "True",
             "folder_path": "docs/5.Policy Index",
             "branch": "main",
-            "head_path": "5.Policy Index\\all.md"
+            "head_path": "5.Policy Index/all.md"
         },
         "KICS": {
             "url": "https://docs.kics.io/latest/queries/all-queries/",
