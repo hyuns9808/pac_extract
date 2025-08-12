@@ -1,5 +1,6 @@
 # data folder and all subdirectories; all repos must be freshly cloned when user runs script
-data
+pac_raw
+pac_database
 # pycache
 **/__pycache__/
 poetry.lock
