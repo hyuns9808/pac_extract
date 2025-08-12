@@ -75,12 +75,12 @@ Traditional IaC scanners are powerful, but each has its own rule format, executi
 
 ```bash
 # Clone and install with Poetry (recommended)
-git clone https://github.com/yourorg/pac-scanner.git
-cd pac-scanner
+git clone https://github.com/hyuns9808/pac_extract.git
+cd pac_extract
 poetry install
 
-# Run your first scan
-poetry run pac-scanner scan ./iac
+# Launch web application
+poetry run streamlit run src/app.py
 ```
 
 ---
@@ -90,21 +90,6 @@ poetry run pac-scanner scan ./iac
 ### Using Poetry (recommended)
 ```bash
 poetry install
-```
-
-### Using pip
-```bash
-pip install pac-scanner
-```
-
-### Using Homebrew (macOS/Linux)
-```bash
-brew install pac-scanner
-```
-
-### Using Docker
-```bash
-docker run --rm -v $(pwd):/scan yourorg/pac-scanner scan .
 ```
 
 > **Note:** When running through Poetry, prefix commands with `poetry run ...`.
