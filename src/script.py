@@ -2,8 +2,8 @@ import os
 import pandas as pd
 
 from init_setup.setup_parser import parser_setup
-from init_setup.setup_integrity import data_checker, create_ver_token
-from init_setup.setup_base import create_save_dir, get_update_tool_list
+from init_setup.setup_base import dir_init, dir_update, get_update_tool_list
+from init_setup.setup_integrity import data_init, data_checker, create_ver_token
 from init_setup.setup_data import get_pac_folder, get_pac_url
 from init_setup.setup_save_master import save_dataframe
 from parse_pac.parse_tool import get_pac_of_tool
@@ -16,34 +16,34 @@ if args.tools and not args.update:
     
 # 1. Check integrity of 'data' dir to check if all repos need to be updated
 # Also return version_info.json content
-project_root = os.getcwd()
-data_dir_path = os.path.join()
-is_valid, version_info = data_checker()
-version = version_info["version"]
-date = version_info["date"]
-full_tool_list = list(version_info["tool_info"].keys())
-full_tool_info = version_info["tool_info"]
+project_root, pac_raw_dir, pac_db_dir = dir_init()
 
-# 2. Based on integrity check results, create empty save directory
-save_dir = create_save_dir(is_valid)
+# 2. Get version info and run data integrity check
+version_info, version, date, full_tool_list, full_tool_info = data_init(project_root)
 
-# 3. Based on user input and integrity check results, set list of tools to download
+# 3. Run integrity check
+is_valid = data_checker(project_root, pac_raw_dir)
+
+# 4. Based on integrity check, update directory content
+dir_update(project_root, pac_raw_dir, is_valid)
+
+# 5. Download PaC repos of list of tools to update
 up_tool_list = get_update_tool_list(is_valid, args.tools, full_tool_list)
-
-# 4. Download PaC repos of list of tools to update
 for tool in up_tool_list:
+    path = os.path.join(pac_raw_dir, tool)
     if full_tool_info[tool]["is_repo"] == "True":
         get_pac_folder(
             tool_name=tool,
             repo_git=full_tool_info[tool]["url"],
             folder=full_tool_info[tool]["folder_path"],
-            dest=os.path.join(save_dir, tool),
+            dest=path,
             ref=full_tool_info[tool]["branch"],
         )
     else:
         get_pac_url(
             tool_name=tool,
-            url=full_tool_info[tool]["url"]
+            url=full_tool_info[tool]["url"],
+            dest=path
         )
 
 # 5. Update 'version_token.flag' file

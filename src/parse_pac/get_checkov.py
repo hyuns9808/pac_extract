@@ -3,8 +3,6 @@ Functions related to getting relevant Checkov PaCs
 '''
 import pandas as pd
 
-# Change file path of md if necessary
-file_path = "data\\Checkov\\5.Policy Index\\all.md"
 # Correctly parses code into provider name
 id_to_provider = {
     "ADO": "Azure DevOps",
@@ -41,7 +39,7 @@ id_to_provider = {
     "YC": "Yandex Cloud"
 }
     
-def get_checkov_pac(file_path=file_path):
+def get_checkov_pac(file_path):
     '''
     Creates final pandas df for Checkov
     '''

@@ -5,8 +5,6 @@ import os
 import yaml
 import pandas as pd
 
-# Change file path of md if necessary
-folder_path = "data\\Trivy\\checks"
 # Correctly parses code into provider name
 # ['aws' 'azure' 'cloudstack' 'digitalocean' 'github' 'google' 'kubernetes'
 # 'nifcloud' 'openstack' 'oracle' '']
@@ -133,7 +131,7 @@ def extract_fields(metadata, filepath):
         "Related Document": related_resources
     }
 
-def get_trivy_pac(folder_path=folder_path):
+def get_trivy_pac(folder_path):
     '''
     Combined final parser for Trivy PaC files
     '''

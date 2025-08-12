@@ -5,8 +5,6 @@ import os
 import json
 import pandas as pd
 
-# Change file path of md if necessary
-folder_path = "data\\Terrascan\\rego"
 # Correctly parses code into provider name
 # ['aws' 'azure' 'docker' 'gcp' 'github' 'k8s']
 id_to_provider = {
@@ -23,7 +21,7 @@ severity_unify = {
     "LOW": "Low"
 }
 
-def get_terrascan_pac(folder_path=folder_path):
+def get_terrascan_pac(folder_path):
     '''
     Creates final pandas df for Terrascan
     '''

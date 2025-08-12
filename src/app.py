@@ -43,8 +43,10 @@ def app():
             menu_icon="cast",
             default_index=0,
         )
+    # Home menu
     if selected == "Home":
         st.header("Home")
+    # Download menu
     elif selected == "Download PaC Files":
         st.title("📥 Download PaC Files")
         st.markdown("Easily select tools and update **Policy as Code** (PaC) files with just a few clicks.")
@@ -70,6 +72,11 @@ def app():
             value=True,
             help="If selected, all tools will be updated regardless of your tool selection."
         )
+        db_only = st.checkbox(
+            "Create database files only without updating the files",
+            value=True,
+            help="If selected, only database files will be created for selected tools without downloading/updating the raw PaC files."
+        )
         tools_input = st.multiselect(
             "Select tools to update",
             options=full_tool_list,
@@ -88,6 +95,7 @@ def app():
         # Start button
         st.markdown("### 🚀 Ready?")
         if st.button("Start Download", use_container_width=True):
+            # Check update options
             if update:
                 tools_input = full_tool_list
             if not update and not tools_input:
@@ -96,8 +104,8 @@ def app():
             if not file_types:
                 st.error("Please select at least one file type.")
                 return
-            
             st.success("Download process started...")
+            
             # Run integrity check
             is_valid = data_checker(project_root, pac_raw_dir)
             # Based on integrity check, update directory content
@@ -108,23 +116,38 @@ def app():
             status_text = st.empty()
             task_count = 0
             up_tool_list = get_update_tool_list(is_valid, tools_input, full_tool_list)
-            total_tasks = len(up_tool_list)
+            # All tools + Master file
+            total_tasks = len(up_tool_list) + 1
+            # Master DF
+            master_df = pd.DataFrame()
             
             # Status section
             if is_valid:
                 st.success("✅ Data integrity check complete — all files are valid!")
             else:
                 st.error("❗ Invalid file composition — redownloading all files...")
-            st.info(
-                f"""
-                **Downloading files for total {len(up_tool_list)} tools...**\n
-                **List of tools: {up_tool_list}**
-                """,
-                icon="ℹ️"
-            )
+            if db_only:
+                st.info(
+                    f"""
+                    **Creating database files for total {len(up_tool_list)} tools...**\n
+                    **List of tools: {up_tool_list}** \n
+                    **Database file types: {file_types}**
+                    """,
+                    icon="ℹ️"
+                )
+            else:
+                st.info(
+                    f"""
+                    **Downloading files for total {len(up_tool_list)} tools...**\n
+                    **List of tools: {up_tool_list}**
+                    """,
+                    icon="ℹ️"
+                )
+            st.markdown("<hr style='margin:0; border: 0.5px solid #ddd;'>", unsafe_allow_html=True)
             
             # Update all tools based on user input
             for tool in up_tool_list:
+                # Setup progress bar
                 if total_tasks > 0:
                     progress_value = task_count / total_tasks
                 else:
@@ -132,24 +155,64 @@ def app():
                 progress_bar.progress(progress_value)
                 percent = int(progress_value * 100)
                 status_text.markdown(f"**Progress:** {percent}% — Downloading **{tool}**...")
-                path = os.path.join(pac_raw_dir, tool)
-                if full_tool_info[tool]["is_repo"] == "True":
-                    get_pac_folder(
-                        tool_name=tool,
-                        repo_git=full_tool_info[tool]["url"],
-                        folder=full_tool_info[tool]["folder_path"],
-                        dest=path,
-                        ref=full_tool_info[tool]["branch"],
+                tool_raw_path = os.path.join(pac_raw_dir, tool)
+                
+                # First, download RAW PaC files
+                if not db_only:
+                    st.info(
+                        f"""
+                        **Downloading raw PaC files for tool: {tool}**
+                        """,
+                        icon="ℹ️"
                     )
-                else:
-                    get_pac_url(
-                        tool_name=tool,
-                        url=full_tool_info[tool]["url"],
-                        dest=path
-                    )
-                st.success(f"✅ Tool: {tool}, Saved at: `{path}`")
+                    if full_tool_info[tool]["is_repo"] == "True":
+                        get_pac_folder(
+                            tool_name=tool,
+                            repo_git=full_tool_info[tool]["url"],
+                            folder=full_tool_info[tool]["folder_path"],
+                            dest=tool_raw_path,
+                            ref=full_tool_info[tool]["branch"],
+                        )
+                    else:
+                        get_pac_url(
+                            tool_name=tool,
+                            url=full_tool_info[tool]["url"],
+                            dest=tool_raw_path
+                        )
+                    st.success(f"✅ Raw PaC files for tool - '{tool}' -  saved at: `{tool_raw_path}`")
+                    st.markdown("<hr style='margin:0; border: 0.5px solid #ddd;'>", unsafe_allow_html=True)
+                
+                # Second, save individual file
+                st.info(
+                    f"""
+                    **Creating database files for tool: {tool}**
+                    """,
+                    icon="ℹ️"
+                )
+                head_file_path = os.path.join(tool_raw_path, full_tool_info[tool]["head_path"])
+                tool_df = get_pac_of_tool(tool, head_file_path)
+                master_df = pd.concat([master_df, tool_df], ignore_index=True)
+                tool_db_dir = os.path.join(pac_db_dir, tool)
+                for type in file_types:
+                    output_path = save_dataframe(tool_db_dir, tool_df, tool, type)
+                    st.success(f"✅ Database file for - '{tool}' - in format - '{type}' - saved at: {output_path}\n")
+                st.markdown("<hr style='margin:0; border: 0.5px solid #ddd;'>", unsafe_allow_html=True)
                 task_count += 1
-            progress_bar.progress(1.0)
+            
+            # Third and last, save master file
+            st.info(
+                    f"""
+                    **Creating MASTER database files...**
+                    """,
+                    icon="ℹ️"
+            )
+            master_db_dir = os.path.join(pac_db_dir, "master")
+            for type in file_types:
+                save_dataframe(master_db_dir, master_df, "MASTER", type)
+                st.success(f"✅ MASTER database file in format - '{type}' saved at: {output_path}\n")
+            st.markdown("<hr style='margin:0; border: 0.5px solid #ddd;'>", unsafe_allow_html=True)
+            
+            # After all individual files are downloaded, update token
             if is_valid is False:
                 st.info(
                     f"""
@@ -158,10 +221,11 @@ def app():
                     icon="ℹ️"
                 )
                 create_ver_token(pac_raw_dir, version_info)
-            # Create DB files
             
+            progress_bar.progress(1.0)
             status_text.markdown("✅ **All tasks completed!** 🎉")
             st.balloons()
+    # Search menu
     elif selected == "Search Data":
         st.header("Search Data")
         files = [f for f in os.listdir(DOWNLOAD_DIR) if f.endswith((".csv", ".json", ".sql"))]
@@ -183,6 +247,7 @@ def app():
 
             st.write(f"Showing {len(filtered_df)} results")
             st.dataframe(filtered_df)
+    # Visualize menu
     elif selected == "Visualize Data":
         st.header("Visualize Data")
         files = [f for f in os.listdir(DOWNLOAD_DIR) if f.endswith((".csv", ".json", ".sql"))]

@@ -6,23 +6,27 @@
             "url": "https://github.com/bridgecrewio/checkov.git",
             "is_repo": "True",
             "folder_path": "docs/5.Policy Index",
-            "branch": "main"
+            "branch": "main",
+            "head_path": "5.Policy Index\\all.md"
         },
         "KICS": {
             "url": "https://docs.kics.io/latest/queries/all-queries/",
-            "is_repo": "False"
+            "is_repo": "False",
+            "head_path": "all_queries.csv"
         },
         "Terrascan": {
             "url": "https://github.com/tenable/terrascan.git",
             "is_repo": "True",
             "folder_path": "pkg/policies/opa/rego",
-            "branch": "master"
+            "branch": "master",
+            "head_path": "rego"
         },
         "Trivy": {
             "url": "https://github.com/aquasecurity/trivy-checks.git",
             "is_repo": "True",
             "folder_path": "checks",
-            "branch": "main"
+            "branch": "main",
+            "head_path": "checks"
         }
     }
 }

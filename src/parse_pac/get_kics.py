@@ -4,8 +4,6 @@ Reads stored .csv file for all queries, searches relevant ones and returns it as
 '''
 import pandas as pd
 
-# Change file path of csv if necessary
-file_path = "data\\KICS\\all_queries.csv"
 # Correctly parses query document link into provider name
 id_to_provider = {
     "alicloud": "Alibaba Cloud",
@@ -17,7 +15,7 @@ id_to_provider = {
     "tencentcloud": "Tencent Cloud",
 }
     
-def get_kics_pac(file_path=file_path):
+def get_kics_pac(file_path):
     '''
     Wrapper function for creating pd dataframe
     '''
