@@ -22,6 +22,7 @@ streamlit-aggrid = "1.1.7"
 tqdm = "4.67.1"
 ydata-profiling = "4.8.3"
 setuptools = "80.9.0"
+sqlalchemy = "2.0.43"
 xlsxwriter = "3.2.5"
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
