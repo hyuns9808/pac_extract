@@ -49,7 +49,7 @@
 
 ## ✨ Why PaC_Scanner?
 
-Traditional IaC scanners are powerful, but each has its own rule format, execution model, and report style. **PaC‑Scanner** acts as a **policy hub**:
+Traditional IaC scanners are powerful, but each has its own PaC library with different rule format, execution model, and report style. **PaC‑Scanner** acts as a **policy hub** by:
 
 - **Collects & normalizes policies** from popular open-source IaC scanners (e.g., **Checkov**, **tfsec**, **Terrascan**, **kube‑score**).
 - **Unifies evaluation** through a single, consistent engine (OPA/Rego, JSON logic, and YAML checks).
@@ -60,14 +60,13 @@ Traditional IaC scanners are powerful, but each has its own rule format, executi
 ## 🌟 Features
 
 - ⚡ **Fast & Lightweight** – Scans large repos in seconds.
-- 🛡️ **Extensible Policy Engine** – Author rules in **Rego**, JSON logic, or simple **YAML**.
+- 🛡️ **Extensible Policy Lookups** – Find all PaC files of each open-source tool, some which do not provide official documents for.
 - 🌍 **Broad IaC Coverage** – Terraform, CloudFormation, Kubernetes, Docker, Helm charts, generic YAML/JSON.
-- 📚 **Curated PaC Library** – Aggregates rules from open‑source IaC scanners into one framework.
+- 📚 **Curated PaC Library** – Aggregates rules from open‑source IaC scanners into one pandas dataframe.
 - 🧠 **Smart Normalization** – Deduplicates, tags, and versions imported rules for consistency.
-- 🏗️ **CI/CD Ready** – GitHub Actions, GitLab CI, Jenkins, CircleCI.
-- 📊 **Rich Reports** – JSON, **SARIF** (Code Scanning), HTML dashboards, or concise CLI output.
-- 🔌 **Pluggable Rulesets** – Use built‑ins or your own bundles.
+- 📊 **Rich Reports** – Save results in various file formats, such as **.csv, .sql, .json, .xlsx.**
 - 🐍 **Poetry‑Powered** – Reproducible environments & dependency pinning with **Poetry**.
+- 🧑 **Straightforward UI** - Based on Streamlit, launch an easy-to-use UI to download, search and look up data.
 
 ---
 
@@ -98,109 +97,10 @@ poetry install
 
 ## 🖥️ Usage
 
-### Scan a directory
-```bash
-poetry run pac-scanner scan ./iac
-```
-
-### Apply custom policy bundles
-```bash
-poetry run pac-scanner scan . --policy-bundle ./policies
-```
-
-### Select input types explicitly
-```bash
-poetry run pac-scanner scan ./ --types terraform,kubernetes
-```
-
-### Fail the build on severity threshold
-```bash
-poetry run pac-scanner scan ./ --fail-on high
-```
-
-### Output results in JSON or SARIF
-```bash
-poetry run pac-scanner scan ./ --output json > results.json
-poetry run pac-scanner scan ./ --output sarif > results.sarif
-```
-
-### HTML report
-```bash
-poetry run pac-scanner scan ./ --output html --out-file report.html
-```
 
 ---
 
-## ⚙️ Configuration
 
-Create a `.pac-scanner.yaml` at repo root:
-
-```yaml
-# .pac-scanner.yaml
-inputs:
-  paths:
-    - ./iac
-    - ./k8s
-  types: [terraform, kubernetes, docker]
-policies:
-  bundles:
-    - ./policies  # your custom bundle(s)
-  sources:
-    checkov: enabled
-    tfsec: enabled
-    terrascan: enabled
-    kube_score: enabled
-  exclude_rules:
-    - experimental-*
-    - deprecated-*
-report:
-  format: sarif        # cli|json|sarif|html
-  fail_on: high        # none|low|medium|high|critical
-  out_file: results.sarif
-runtime:
-  parallelism: 8
-  cache_dir: ./.pac-cache
-```
-
----
-
-## 🧑‍💻 Writing Policies
-
-You can write policies in **OPA/Rego**, JSON logic, or simple **YAML** checks.
-
-**YAML example**
-```yaml
-id: aws-sg-no-80
-title: Disallow 0.0.0.0/0 ingress on port 80
-severity: high
-resource: aws_security_group
-check:
-  ingress:
-    - port: 80
-      cidr: 0.0.0.0/0
-```
-
-**Rego example (`policies/network/sg.rego`)**
-```rego
-package pac.network
-
-deny[res] {
-  some sg
-  input.resource.type == "aws_security_group"
-  sg := input.resource.config
-  ingress := sg.ingress[_]
-  ingress.from_port <= 80
-  ingress.to_port >= 80
-  ingress.cidr_blocks[_] == "0.0.0.0/0"
-  res := {
-    "id": "aws-sg-no-80",
-    "message": sprintf("Security group allows 0.0.0.0/0 on port 80 at %s", [input.resource.filepath]),
-    "severity": "high"
-  }
-}
-```
-
----
 
 ## 📥 Policy Sources (Open‑Source Collectors)
 
@@ -209,122 +109,13 @@ PaC‑Scanner can **ingest policies** from popular open‑source IaC scanners, n
 | Source       | Importer | Notes |
 |--------------|----------|-------|
 | Checkov      | `checkov` | Imports built‑in checks and maps severities/tags. |
-| tfsec        | `tfsec`   | Converts rules and remediation links. |
+| KICS        | `kics`   | Converts rules and remediation links. |
 | Terrascan    | `terrascan` | Normalizes categories and resource filters. |
-| kube‑score   | `kube_score` | Adapts findings to K8s resource schema. |
+| Trivy   | `trivy` | Adapts findings to K8s resource schema. |
 
-Example enabling collectors:
-
-```bash
-poetry run pac-scanner fetch-policies   --enable checkov,tfsec,terrascan,kube_score   --dest ./external-policies
-```
+Go to the "Download PaC Files" menu to download all information per each tool.
 
 > **Attribution:** Imported policies retain original IDs, titles, and references. See [LICENSES-THIRD-PARTY.md](./LICENSES-THIRD-PARTY.md).
-
----
-
-## 📊 Reports
-
-**CLI summary**
-```text
-✅ Passed: 153   ❌ Failed: 7   ⏭ Skipped: 12
-High: 3   Medium: 2   Low: 2
-```
-
-**JSON**
-```bash
-poetry run pac-scanner scan ./ --output json > results.json
-```
-
-**SARIF (GitHub Code Scanning)**
-```bash
-poetry run pac-scanner scan ./ --output sarif > results.sarif
-```
-
-**HTML**
-```bash
-poetry run pac-scanner scan ./ --output html --out-file report.html
-```
-
----
-
-## 🔗 CI/CD
-
-### GitHub Actions
-
-```yaml
-name: pac-scan
-on:
-  pull_request:
-  push:
-    branches: [ main ]
-
-jobs:
-  scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install Poetry
-        uses: abatilo/actions-poetry@v2
-
-      - name: Configure Poetry
-        run: |
-          poetry config virtualenvs.in-project true
-          poetry install --no-interaction --no-ansi
-
-      - name: Run PaC-Scanner
-        run: poetry run pac-scanner scan ./iac --output sarif > results.sarif
-
-      - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: results.sarif
-```
-
-### GitLab CI
-
-```yaml
-pac_scan:
-  image: python:3.11
-  script:
-    - pip install poetry
-    - poetry install --no-interaction --no-ansi
-    - poetry run pac-scanner scan ./ --fail-on high
-  artifacts:
-    paths:
-      - results.sarif
-```
-
----
-
-## 🧰 Development
-
-```bash
-# 1) Install dependencies (creates .venv via Poetry)
-poetry install
-
-# 2) Run unit tests
-poetry run pytest -q
-
-# 3) Lint & type-check
-poetry run ruff check .
-poetry run mypy src
-
-# 4) Run CLI locally
-poetry run pac-scanner --help
-```
-
-**Useful Poetry scripts** (in `pyproject.toml`)
-```toml
-[tool.poetry.scripts]
-pac-scanner = "pac_scanner.cli:app"
-```
 
 ---
 
