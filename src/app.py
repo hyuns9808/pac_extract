@@ -40,16 +40,16 @@ def app():
         ## 🖥️ Menus
 
         Within the sidebar, there are **four** menus:
-        - **Home**
-            - Brief introduction to the app and its features.
-        - **Download**
-            - Download/update your raw PaC files to get the most recent PaCs per each tool.
-            - Download either the combined or individual PaC database by your desired format(**CSV**, **JSON**, **SQL**, **XLSX**).
-        - **Search**
-            - Interact with the database by searching PaCs with specific keywords or filtering out data.
-            - Download search/filtered results as a **CSV** or **XLSX** file for closer examination.
-        - **Visualize**
-            - Visualize the combined database for a closer look into the trends and statistics of the PaC database.
+        ### 1. **Home**
+        - Brief introduction to the app and its features.
+        ### 2. **Download**
+        - Download/update your raw PaC files to get the most recent PaCs per each tool.
+        - Download either the combined or individual PaC database by your desired format(**CSV**, **JSON**, **SQL**, **XLSX**).
+        ### 3. **Search**
+        - Interact with the database by searching PaCs with specific keywords or filtering out data.
+        - Download search/filtered results as a **CSV** or **XLSX** file for closer examination.
+        ### 4. **Visualize**
+        - Visualize the combined database for a closer look into the trends and statistics of the PaC database.
         
         ---
          ## ✨ Why PaC Extract?

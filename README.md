@@ -160,8 +160,8 @@ Honorable mention to the broader Open‑Source Security and IaC communities, and
   <p style="font-size: 1.1rem; margin-top: 12px;">
     🐾 Fun fact: This majestic beast is a stray I met at 
     <a href="https://maps.app.goo.gl/78d8uQ19jJc6BPx88" target="_blank" style="color: #ff9800; text-decoration: none;">
-      Gamcheon Culture Village.
-    </a>!
+      Gamcheon Culture Village
+    </a>
   </p>
 
   <!-- Links -->
