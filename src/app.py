@@ -36,9 +36,25 @@ def app():
         st.title("⚗️ PaC Extract")
         st.markdown("""
         ### Lookup PaCs(Policy as Code) of popular open-source tools, straight from the source.
-        ## ✨ Why PaC Extract?
+        
+        ## 🖥️ Menus
 
-       Open-source IaC scanners are powerful, but each has its own PaC library with different rule format, execution model, and report style. Thus, there is a need for a combined database of policies for DevOps engineers to look up popular misconfigurations and its corresponding PaCs. **PaC‑Scanner** acts as a **policy hub** by:
+        Within the sidebar, there are **four** menus:
+        - **Home**
+            - Brief introduction to the app and its features.
+        - **Download**
+            - Download/update your raw PaC files to get the most recent PaCs per each tool.
+            - Download either the combined or individual PaC database by your desired format(**CSV**, **JSON**, **SQL**, **XLSX**).
+        - **Search**
+            - Interact with the database by searching PaCs with specific keywords or filtering out data.
+            - Download search/filtered results as a **CSV** or **XLSX** file for closer examination.
+        - **Visualize**
+            - Visualize the combined database for a closer look into the trends and statistics of the PaC database.
+        
+        ---
+         ## ✨ Why PaC Extract?
+
+        Open-source IaC scanners are powerful, but each has its own PaC library with different rule format, execution model, and report style. Thus, there is a need for a combined database of policies for DevOps engineers to look up popular misconfigurations and its corresponding PaCs. **PaC‑Scanner** acts as a **policy hub** by:
 
         - **Collects & normalizes policies** from popular open-source IaC scanners (e.g., **Checkov**, **KICS**, **Terrascan**, **Trivy**).
         - **Creates a unified database** to look-up and compare what polices each open-source tool uses.
@@ -57,22 +73,6 @@ def app():
         - 📊 **Flexible DB** – Save results in various file formats, such as **.csv, .sql, .json, .xlsx.**
         - 🐍 **Poetry‑Powered** – Reproducible environments & dependency pinning with **Poetry**.
         - 👶 **Straightforward UI** - Based on Streamlit, launch an easy-to-use UI to download, search and look up data.        
-        
-        ---
-        
-        ## 🖥️ Menus
-
-        Within the sidebar, there are **four** menus:
-        - **Home**
-            - Brief introduction to the app and its features.
-        - **Download**
-            - Download/update your raw PaC files to get the most recent PaCs per each tool.
-            - Download either the combined or individual PaC database by your desired format(**CSV**, **JSON**, **SQL**, **XLSX**).
-        - **Search**
-            - Interact with the database by searching PaCs with specific keywords or filtering out data.
-            - Download search/filtered results as a **CSV** or **XLSX** file for closer examination.
-        - **Visualize**
-            - Visualize the combined database for a closer look into the trends and statistics of the PaC database.
         
         ---
         

@@ -15,9 +15,9 @@
 
 ## 📚 Table of Contents
 
+- [Quick Start](#-quick-start)
 - [Why PaC Extract?](#-why-pac-extract)
 - [Features](#-features)
-- [Quick Start](#-quick-start)
 - [Menus](#-menus)
 - [Policy Sources (Open‑Source Collectors)](#-policy-sources-open-source-collectors)
 - [Roadmap](#-roadmap)
@@ -25,30 +25,6 @@
 - [License](#-license)
 - [Credits](#-credits)
 - [Creator](#-creator)
-
----
-
-## ✨ Why PaC Extract?
-
-Open-source IaC scanners are powerful, but each has its own PaC library with different rule format, execution model, and report style. Thus, there is a need for a combined database of policies for DevOps engineers to look up popular misconfigurations and its corresponding PaCs. **PaC‑Scanner** acts as a **policy hub** by:
-
-- **Collects & normalizes policies** from popular open-source IaC scanners (e.g., **Checkov**, **KICS**, **Terrascan**, **Trivy**).
-- **Creates a unified database** to look-up and compare what polices each open-source tool uses.
-- **Streamlines results** into standardized outputs (**CSV**, **JSON**, **SQL**, **XLSX**).
-
----
-
-## 🌟 Features
-
-- ⚡ **Fast & Lightweight** – Scans large repos of multiple open-source IaC scanning tools within seconds.
-- 🛡️ **Thorough Policy Lookups** – Find all PaC files of each open-source tool, some which do not provide official documents for.
-- 🔍 **Easy search engine** – Easily search for content within the app and export search results in either **.csv or .xlsx** for closer examination.
-- 🌍 **Broad IaC Coverage** – Library contains PaCs for multiple IaC languages, including Terraform, CloudFormation, Kubernetes, Docker, Helm charts, and generic YAML/JSON.
-- 📚 **Curated PaC Library** – Aggregates rules from open‑source IaC scanners into one pandas dataframe.
-- 🧠 **Smart Normalization** – Preserved original PaC files from each tool as much as possible to maintain its contents and meaning.
-- 📊 **Flexible DB** – Save results in various file formats, such as **.csv, .sql, .json, .xlsx.**
-- 🐍 **Poetry‑Powered** – Reproducible environments & dependency pinning with **Poetry**.
-- 👶 **Straightforward UI** - Based on Streamlit, launch an easy-to-use UI to download, search and look up data.
 
 ---
 
@@ -76,6 +52,30 @@ To run the app, simply create a virtual environment using Poetry by the folliown
 
 Next, launch the web application:
 **poetry run streamlit run src/app.py**
+
+---
+
+## ✨ Why PaC Extract?
+
+Open-source IaC scanners are powerful, but each has its own PaC library with different rule format, execution model, and report style. Thus, there is a need for a combined database of policies for DevOps engineers to look up popular misconfigurations and its corresponding PaCs. **PaC‑Scanner** acts as a **policy hub** by:
+
+- **Collects & normalizes policies** from popular open-source IaC scanners (e.g., **Checkov**, **KICS**, **Terrascan**, **Trivy**).
+- **Creates a unified database** to look-up and compare what polices each open-source tool uses.
+- **Streamlines results** into standardized outputs (**CSV**, **JSON**, **SQL**, **XLSX**).
+
+---
+
+## 🌟 Features
+
+- ⚡ **Fast & Lightweight** – Scans large repos of multiple open-source IaC scanning tools within seconds.
+- 🛡️ **Thorough Policy Lookups** – Find all PaC files of each open-source tool, some which do not provide official documents for.
+- 🔍 **Easy search engine** – Easily search for content within the app and export search results in either **.csv or .xlsx** for closer examination.
+- 🌍 **Broad IaC Coverage** – Library contains PaCs for multiple IaC languages, including Terraform, CloudFormation, Kubernetes, Docker, Helm charts, and generic YAML/JSON.
+- 📚 **Curated PaC Library** – Aggregates rules from open‑source IaC scanners into one pandas dataframe.
+- 🧠 **Smart Normalization** – Preserved original PaC files from each tool as much as possible to maintain its contents and meaning.
+- 📊 **Flexible DB** – Save results in various file formats, such as **.csv, .sql, .json, .xlsx.**
+- 🐍 **Poetry‑Powered** – Reproducible environments & dependency pinning with **Poetry**.
+- 👶 **Straightforward UI** - Based on Streamlit, launch an easy-to-use UI to download, search and look up data.
 
 ---
 
