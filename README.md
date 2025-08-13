@@ -1,20 +1,15 @@
 # ⚗️ PaC_Extract
 
-> A blazing‑fast, developer‑friendly **Policy‑as‑Code (PaC)** file extraction tool.  
-> Collects policies from **open‑source IaC scanners** directly from the source and creates a single unified database via **Pandas**.
-> **Poetry‑powered** for clean dependency management and reproducible builds.
-
 <p align="center">
-  <img src="docs/assets/banner.png" alt="PaC-Scanner banner" width="720"/>
-</p>
-
-<p align="center">
-  <img alt="Python" src="https://img.shields.io/pypi/pyversions/pac-scanner.svg"/>
   <img alt="License" src="https://img.shields.io/badge/license-MIT-informational.svg"/>
   <a href="https://python-poetry.org/">
     <img alt="Poetry" src="https://img.shields.io/badge/deps-managed%20by%20Poetry-60b?logo=poetry"/>
   </a>
 </p>
+
+> A blazing‑fast, developer‑friendly **Policy‑as‑Code (PaC)** file extraction tool.  
+> Collects policies from **open‑source IaC scanners** directly from the source and creates a single unified database via **Pandas**.
+> **Poetry‑powered** for clean dependency management and reproducible builds.
 
 ---
 
