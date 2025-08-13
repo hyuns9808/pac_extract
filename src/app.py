@@ -281,7 +281,7 @@ def app():
 
             # Setup AgGrid options
             gb = GridOptionsBuilder.from_dataframe(filtered_df)
-            gb.configure_pagination(paginationAutoPageSize=False, paginationPageSize=5)  # Pagination with page size 5
+            gb.configure_pagination(paginationAutoPageSize=False, paginationPageSize=100)  # Pagination with page size 5
             gb.configure_default_column(editable=True, filter=True, sortable=True, resizable=True)
             gb.configure_grid_options(domLayout='normal')  # Normal layout to show pagination controls
 
@@ -295,7 +295,7 @@ def app():
                 allow_unsafe_jscode=True,
                 theme="alpine",  # 'streamlit', 'alpine', 'balham', 'material', ...
                 enable_enterprise_modules=False,
-                height=500,
+                height=600,
                 fit_columns_on_grid_load=True
             )
 
@@ -316,9 +316,15 @@ def app():
 
             col1, col2 = st.columns(2)
             with col1:
-                st.download_button("📥 Download CSV", data=to_csv(edited_df), file_name="filtered_data.csv", mime="text/csv")
+                if search_term:
+                    st.download_button("📥 Download CSV", data=to_csv(edited_df), file_name=f"db_keyword_{search_term}.csv", mime="text/csv")
+                else:
+                    st.download_button("📥 Download CSV", data=to_csv(edited_df), file_name="db_filtered.csv", mime="text/csv")
             with col2:
-                st.download_button("📥 Download Excel", data=to_excel(edited_df), file_name="filtered_data.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                if search_term:
+                    st.download_button("📥 Download Excel", data=to_excel(edited_df), file_name=f"db_keyword_{search_term}.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                else:
+                    st.download_button("📥 Download Excel", data=to_excel(edited_df), file_name="db_filtered.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     # Visualize menu
     elif selected == "Visualize":
         st.title("📊 PaC Data Visualization")
