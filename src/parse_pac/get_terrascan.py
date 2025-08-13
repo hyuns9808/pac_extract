@@ -51,13 +51,13 @@ def get_terrascan_pac(folder_path):
     result["Tool"] = ["Terrascan"] * len(df)
     result["ID"] = df["id"]
     result["Title"] = df["description"]
-    result["Description"] = ["NaN"] * len(df)
+    result["Description"] = pd.Series([pd.NA] * len(df))
     result["IaC"] = ["Terraform"] * len(df)
     result["Category"] =  df["category"]
     result["Provider"] = df["policy_type"].map(id_to_provider)
     result["Severity"] = df["severity"].map(severity_unify)
-    result["Query Document"] = ["NaN"] * len(df)
-    result["Related Document"] = ["NaN"] * len(df)
+    result["Query Document"] = pd.Series([pd.NA] * len(df))
+    result["Related Document"] = pd.Series([pd.NA] * len(df))
     
     return result
 

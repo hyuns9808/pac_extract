@@ -62,14 +62,14 @@ def get_checkov_pac(file_path):
     result["Tool"] = ["Checkov"] * len(df)
     result["ID"] = df["Id"]
     result["Title"] = df["Policy"]
-    result["Description"] = ["NaN"] * len(df)
+    result["Description"] = pd.Series([pd.NA] * len(df))
     result["IaC"] = df["IaC"]
-    result["Category"] = ["NaN"] * len(df)
+    result["Category"] = pd.Series([pd.NA] * len(df))
     name_ptn = r"([^_]+)_([^_]+)_([^_]+)"
     result["Provider"] = df["Id"].str.extract(name_ptn)[1].map(id_to_provider)
-    result["Severity"] = "NaN"
+    result["Severity"] = pd.Series([pd.NA] * len(df))
     result["Query Document"] = df["Resource Link"]
-    result["Related Document"] = "NaN"
+    result["Related Document"] = pd.Series([pd.NA] * len(df))
     return result
 
 '''

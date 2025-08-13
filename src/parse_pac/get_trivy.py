@@ -4,6 +4,7 @@ Functions related to getting relevant Trivy PaCs
 import os
 import yaml
 import pandas as pd
+import numpy as np
 
 # Correctly parses code into provider name
 # ['aws' 'azure' 'cloudstack' 'digitalocean' 'github' 'google' 'kubernetes'
@@ -123,11 +124,11 @@ def extract_fields(metadata, filepath):
         "ID": custom.get('id', ""),
         "Title": title,
         "Description": description,
-        "IaC": "Multiple(Rego)",
-        "Category": "NaN",
+        "IaC": "Multiple",
+        "Category": np.nan,
         "Provider": id_to_provider[provider_value],
         "Severity": severity_unify[custom.get('severity', "")],
-        "Query Document": "NaN",
+        "Query Document": np.nan,
         "Related Document": related_resources
     }
 

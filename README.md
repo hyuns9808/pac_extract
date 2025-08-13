@@ -1,7 +1,7 @@
 # ⚗️ PaC_Extract
 
-> A blazing‑fast, developer‑friendly **Policy‑as‑Code (PaC)** file extraction tool for **Terraform**.  
-> Collects policies from **open‑source IaC scanners** directly from the source and creates a single unified database via **Pandas**.  
+> A blazing‑fast, developer‑friendly **Policy‑as‑Code (PaC)** file extraction tool.  
+> Collects policies from **open‑source IaC scanners** directly from the source and creates a single unified database via **Pandas**.
 > **Poetry‑powered** for clean dependency management and reproducible builds.
 
 <p align="center">
@@ -9,19 +9,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/yourorg/pac-scanner/actions">
-    <img alt="CI" src="https://img.shields.io/github/actions/workflow/status/yourorg/pac-scanner/ci.yml?label=CI"/>
-  </a>
-  <a href="https://pypi.org/project/pac-scanner/">
-    <img alt="PyPI" src="https://img.shields.io/pypi/v/pac-scanner.svg"/>
-  </a>
   <img alt="Python" src="https://img.shields.io/pypi/pyversions/pac-scanner.svg"/>
   <img alt="License" src="https://img.shields.io/badge/license-MIT-informational.svg"/>
   <a href="https://python-poetry.org/">
     <img alt="Poetry" src="https://img.shields.io/badge/deps-managed%20by%20Poetry-60b?logo=poetry"/>
-  </a>
-  <a href="https://hub.docker.com/r/yourorg/pac-scanner">
-    <img alt="Docker pulls" src="https://img.shields.io/docker/pulls/yourorg/pac-scanner.svg"/>
   </a>
 </p>
 
@@ -29,48 +20,49 @@
 
 ## 📚 Table of Contents
 
-- [Why PaC_Scanner?](#-why-pac-scanner)
+- [Why PaC Extract?](#-why-pac-extract)
 - [Features](#-features)
 - [Quick Start](#-quick-start)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [Configuration](#-configuration)
-- [Writing Policies](#-writing-policies)
+- [Menus](#-menus)
 - [Policy Sources (Open‑Source Collectors)](#-policy-sources-open-source-collectors)
-- [Reports](#-reports)
-- [CI/CD](#-cicd)
-- [Development](#-development)
 - [Roadmap](#-roadmap)
 - [FAQ](#-faq)
 - [License](#-license)
 - [Credits](#-credits)
+- [Creator](#-creator)
 
 ---
 
-## ✨ Why PaC_Scanner?
+## ✨ Why PaC Extract?
 
-Traditional IaC scanners are powerful, but each has its own PaC library with different rule format, execution model, and report style. **PaC‑Scanner** acts as a **policy hub** by:
+Open-source IaC scanners are powerful, but each has its own PaC library with different rule format, execution model, and report style. Thus, there is a need for a combined database of policies for DevOps engineers to look up popular misconfigurations and its corresponding PaCs. **PaC‑Scanner** acts as a **policy hub** by:
 
-- **Collects & normalizes policies** from popular open-source IaC scanners (e.g., **Checkov**, **tfsec**, **Terrascan**, **kube‑score**).
-- **Unifies evaluation** through a single, consistent engine (OPA/Rego, JSON logic, and YAML checks).
-- **Streamlines results** into standardized outputs (CLI, **JSON**, **SARIF**, **HTML**).
+- **Collects & normalizes policies** from popular open-source IaC scanners (e.g., **Checkov**, **KICS**, **Terrascan**, **Trivy**).
+- **Creates a unified database** to look-up and compare what polices each open-source tool uses.
+- **Streamlines results** into standardized outputs (**CSV**, **JSON**, **SQL**, **XLSX**).
 
 ---
 
 ## 🌟 Features
 
-- ⚡ **Fast & Lightweight** – Scans large repos in seconds.
-- 🛡️ **Extensible Policy Lookups** – Find all PaC files of each open-source tool, some which do not provide official documents for.
-- 🌍 **Broad IaC Coverage** – Terraform, CloudFormation, Kubernetes, Docker, Helm charts, generic YAML/JSON.
+- ⚡ **Fast & Lightweight** – Scans large repos of multiple open-source IaC scanning tools within seconds.
+- 🛡️ **Thorough Policy Lookups** – Find all PaC files of each open-source tool, some which do not provide official documents for.
+- 🔍 **Easy search engine** – Easily search for content within the app and export search results in either **.csv or .xlsx** for closer examination.
+- 🌍 **Broad IaC Coverage** – Library contains PaCs for multiple IaC languages, including Terraform, CloudFormation, Kubernetes, Docker, Helm charts, and generic YAML/JSON.
 - 📚 **Curated PaC Library** – Aggregates rules from open‑source IaC scanners into one pandas dataframe.
-- 🧠 **Smart Normalization** – Deduplicates, tags, and versions imported rules for consistency.
-- 📊 **Rich Reports** – Save results in various file formats, such as **.csv, .sql, .json, .xlsx.**
+- 🧠 **Smart Normalization** – Preserved original PaC files from each tool as much as possible to maintain its contents and meaning.
+- 📊 **Flexible DB** – Save results in various file formats, such as **.csv, .sql, .json, .xlsx.**
 - 🐍 **Poetry‑Powered** – Reproducible environments & dependency pinning with **Poetry**.
-- 🧑 **Straightforward UI** - Based on Streamlit, launch an easy-to-use UI to download, search and look up data.
+- 👶 **Straightforward UI** - Based on Streamlit, launch an easy-to-use UI to download, search and look up data.
 
 ---
 
 ## 🚀 Quick Start
+
+This app is created via **Python and Streamlit** for its core functionality and UI.
+**Poetry** is used for environment and dependency management.
+
+To start, type in the following commands in order:
 
 ```bash
 # Clone and install with Poetry (recommended)
@@ -82,38 +74,44 @@ poetry install
 poetry run streamlit run src/app.py
 ```
 
----
+If you already cloned the repo:
 
-## 📦 Installation
+To run the app, simply create a virtual environment using Poetry by the folliowng command:
+**poetry install**
 
-### Using Poetry (recommended)
-```bash
-poetry install
-```
-
-> **Note:** When running through Poetry, prefix commands with `poetry run ...`.
+Next, launch the web application:
+**poetry run streamlit run src/app.py**
 
 ---
 
-## 🖥️ Usage
+## 🖥️ Menus
 
+Within the sidebar, there are **four** menus:
+- **Home**
+  - Brief introduction to the app and its features.
+- **Download**
+  - Download/update your raw PaC files to get the most recent PaCs per each tool.
+  - Download either the combined or individual PaC database by your desired format(**CSV**, **JSON**, **SQL**, **XLSX**).
+- **Search**
+  - Interact with the database by searching PaCs with specific keywords or filtering out data.
+  - Download search/filtered results as a **CSV** or **XLSX** file for closer examination.
+- **Visualize**
+  - Visualize the combined database for a closer look into the trends and statistics of the PaC database.
 
 ---
-
-
 
 ## 📥 Policy Sources (Open‑Source Collectors)
 
-PaC‑Scanner can **ingest policies** from popular open‑source IaC scanners, normalize them, and tag them with a consistent schema:
+PaC‑Scanner can **ingest policies** from popular open‑source IaC scanners, normalize them, and creates a combined database via **pandas** which can be saved in various file formats:
 
 | Source       | Importer | Notes |
 |--------------|----------|-------|
-| Checkov      | `checkov` | Imports built‑in checks and maps severities/tags. |
-| KICS        | `kics`   | Converts rules and remediation links. |
-| Terrascan    | `terrascan` | Normalizes categories and resource filters. |
-| Trivy   | `trivy` | Adapts findings to K8s resource schema. |
+| Checkov      | `checkov` | Imports PaCs from Checkov's official documentation. |
+| KICS        | `kics`   | Imports PaCs from KICS's official documentation. |
+| Terrascan    | `terrascan` | Parses PaCs directly from Terrascan's raw Pac files. |
+| Trivy   | `trivy` | Parses PaCs directly from Trivy's raw Pac files. |
 
-Go to the "Download PaC Files" menu to download all information per each tool.
+Both combined and individual PaC databases for each tool is downloaded in the **.pac_database** directory.
 
 > **Attribution:** Imported policies retain original IDs, titles, and references. See [LICENSES-THIRD-PARTY.md](./LICENSES-THIRD-PARTY.md).
 
@@ -121,14 +119,14 @@ Go to the "Download PaC Files" menu to download all information per each tool.
 
 ## 🗺️ Roadmap
 
-- ✅ Terraform, CloudFormation, Kubernetes support  
-- ✅ Aggregate policies from open‑source IaC scanners into unified PaC library  
-- 🔄 Cloud provider **live‑state** scanning (AWS, Azure, GCP)  
-- 📡 Remote policy registries (fetch from Git/OCI)  
-- 🖥️ IDE inline feedback (VSCode/JetBrains extensions)  
-- 🧬 Policy graph & dependency awareness  
+- ✅ Download all PaC information from Checkov, KICS, Terraform, and Trivy  
+- ✅ Aggregate policies from open‑source IaC scanners into unified PaC library
+- ✅ Basic search functionality and pandas profile view
+- 📊 Better visualization support 
+- 🗒️ Manually adding info for each NaN values within the DB which are not provided
+- 🧬 Manual parsing of Checkov/KICS instead of using official documentation
 
-Contribute ideas in [Discussions](https://github.com/yourorg/pac-scanner/discussions) or open a [feature request](https://github.com/yourorg/pac-scanner/issues/new?template=feature_request.md).
+Contribute ideas in [Discussions](https://github.com/hyuns9808/pac_extract/discussions).
 
 ---
 
@@ -136,12 +134,6 @@ Contribute ideas in [Discussions](https://github.com/yourorg/pac-scanner/discuss
 
 **Why Poetry?**  
 Poetry provides deterministic dependency resolution, locked environments, and reproducible builds, making CI/CD more predictable.
-
-**Can I disable certain imported rules?**  
-Yes — use `exclude_rules` patterns or disable an entire collector in `.pac-scanner.yaml`.
-
-**What if I already use Checkov/tfsec?**  
-Great! Keep them. PaC‑Scanner can **import** their policies so your teams get a single pane of glass for rules, severities, and outputs.
 
 ---
 
@@ -153,10 +145,37 @@ Released under the **MIT License**. See [LICENSE](./LICENSE) for details.
 
 ## 🙌 Credits
 
-This project stands on the shoulders of giants:  
-**Checkov**, **tfsec**, **Terrascan**, **kube‑score**, **OPA/Regal**, and the broader Open‑Source Security and IaC communities.  
-We thank the authors and maintainers of these projects and preserve attribution in imported rules.
+Full credit for each open-source IaC scanning tool for maintaining their PaC libraries public:  
+**Checkov**, **KICS**, **Terrascan**, and **Trivy**.
+Honorable mention to the broader Open‑Source Security and IaC communities, and **Streamlit** for letting this be more than a simple CLI tool.
 
 ---
 
-> 🛠 Built for developers who care about security **before** production.
+## ✨ Creator
+
+<div align="center" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; width: 100%;">
+  
+  <!-- Profile Image -->
+  <img src="https://github.com/hyuns9808.png?size=300" 
+       alt="Majestic Cat" 
+       title="Majestic Cat"
+       style="border-radius: 20px; max-width: 300px; height: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+
+  <!-- Fun Fact -->
+  <p style="font-size: 1.1rem; margin-top: 12px;">
+    🐾 Fun fact: This majestic beast is a stray I met at 
+    <a href="https://maps.app.goo.gl/78d8uQ19jJc6BPx88" target="_blank" style="color: #ff9800; text-decoration: none;">
+      Gamcheon Culture Village.
+    </a>!
+  </p>
+
+  <!-- Links -->
+  <h3>
+    <a href="https://github.com/hyuns9808" style="color: #4cafef; text-decoration: none;">💻 Calvin(Hyunsoo) Yang</a>
+  </h3>
+  <h3>
+    🌐 Check out my 
+    <a href="https://hyuns9808.github.io/" style="color: #4cafef; text-decoration: none;">personal website</a>!
+  </h3>
+
+</div>
