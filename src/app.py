@@ -40,16 +40,13 @@ def app():
         ## 🖥️ Menus
 
         Within the sidebar, there are **four** menus:
-        ### 1. **Home**
-        - Brief introduction to the app and its features.
-        ### 2. **Download**
-        - Download/update your raw PaC files to get the most recent PaCs per each tool.
-        - Download either the combined or individual PaC database by your desired format(**CSV**, **JSON**, **SQL**, **XLSX**).
-        ### 3. **Search**
-        - Interact with the database by searching PaCs with specific keywords or filtering out data.
-        - Download search/filtered results as a **CSV** or **XLSX** file for closer examination.
-        ### 4. **Visualize**
-        - Visualize the combined database for a closer look into the trends and statistics of the PaC database.
+        
+        | Menu | Icon | Description |
+        |------|------|-------------|
+        | **Home** | :house: | 🏃 Quick overview and essential info at a glance. |
+        | **Download** | :arrow_down: | 📥 Download/update your raw PaC files and get most recent PaCs per tool <br> 🗂️ Save combined/individual PaC database as file(**CSV**, **JSON**, **SQL**, **XLSX**) |
+        | **Search** | :mag: | 🕹️ Search PaCs with specific keywords or filtering out data <br> 🗂️ Save search/filtered results as a **CSV** or **XLSX** file for closer examination |
+        | **Visualize** | :bar_chart: | 🗒️ Visualize statistics and details of the combined database|
         
         ---
          ## ✨ Why PaC Extract?
@@ -72,12 +69,12 @@ def app():
         - 🧠 **Smart Normalization** – Preserved original PaC files from each tool as much as possible to maintain its contents and meaning.
         - 📊 **Flexible DB** – Save results in various file formats, such as **.csv, .sql, .json, .xlsx.**
         - 🐍 **Poetry‑Powered** – Reproducible environments & dependency pinning with **Poetry**.
-        - 👶 **Straightforward UI** - Based on Streamlit, launch an easy-to-use UI to download, search and look up data.        
+        - 👶 **Straightforward UI** - Based on Streamlit, launch an easy-to-use UI to download, search and look up data.
         
         ---
         
         Feel free to explore and reach out if you have questions or feedback!
-        """)
+        """, unsafe_allow_html=True)
     # Download menu
     elif selected == "Download":
         st.title("📥 Download PaC Files")

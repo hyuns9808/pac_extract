@@ -82,17 +82,13 @@ Open-source IaC scanners are powerful, but each has its own PaC library with dif
 ## 🖥️ Menus
 
 Within the sidebar, there are **four** menus:
-- **Home**
-  - Brief introduction to the app and its features.
-- **Download**
-  - Download/update your raw PaC files to get the most recent PaCs per each tool.
-  - Download either the combined or individual PaC database by your desired format(**CSV**, **JSON**, **SQL**, **XLSX**).
-- **Search**
-  - Interact with the database by searching PaCs with specific keywords or filtering out data.
-  - Download search/filtered results as a **CSV** or **XLSX** file for closer examination.
-- **Visualize**
-  - Visualize the combined database for a closer look into the trends and statistics of the PaC database.
-
+        
+| Menu | Icon | Description |
+|------|------|-------------|
+| **Home** | :house: | 🏃 Quick overview and essential info at a glance. |
+| **Download** | :arrow_down: | 📥 Download/update your raw PaC files and get most recent PaCs per tool <br> 🗂️ Save combined/individual PaC database as file(**CSV**, **JSON**, **SQL**, **XLSX**) |
+| **Search** | :mag: | 🕹️ Search PaCs with specific keywords or filtering out data <br> 🗂️ Save search/filtered results as a **CSV** or **XLSX** file for closer examination |
+| **Visualize** | :bar_chart: | 🗒️ Visualize statistics and details of the combined database|
 ---
 
 ## 📥 Policy Sources (Open‑Source Collectors)
