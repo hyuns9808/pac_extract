@@ -18,9 +18,9 @@
 - [Quick Start](#-quick-start)
 - [Why PaC Extract?](#-why-pac-extract)
 - [Features](#-features)
-- [Menus](#-menus)
-- [Policy Sources (Open‑Source Collectors)](#-policy-sources-open-source-collectors)
-- [Roadmap](#-roadmap)
+- [Menus](#️-menus)
+- [Policy Sources (Open‑Source Collectors)](#-policy-sources-opensource-collectors)
+- [Roadmap](#️-roadmap)
 - [FAQ](#-faq)
 - [License](#-license)
 - [Credits](#-credits)
@@ -45,9 +45,7 @@ poetry install
 poetry run streamlit run src/app.py
 ```
 
-If you already cloned the repo:
-
-To run the app, simply create a virtual environment using Poetry by the folliowng command:
+To run the app, simply create a virtual environment using Poetry by running the following command:
 **poetry install**
 
 Next, launch the web application:
@@ -57,7 +55,7 @@ Next, launch the web application:
 
 ## ✨ Why PaC Extract?
 
-Open-source IaC scanners are powerful, but each has its own PaC library with different rule format, execution model, and report style. Thus, there is a need for a combined database of policies for DevOps engineers to look up popular misconfigurations and its corresponding PaCs. **PaC‑Scanner** acts as a **policy hub** by:
+Open-source IaC scanners are powerful, but each has its own PaC library with different rule format, execution model, and document style. Thus, there is a need for a combined database of policies for DevOps engineers to look up popular misconfigurations and its corresponding PaCs. **PaC‑Scanner** acts as a **policy hub** by:
 
 - **Collects & normalizes policies** from popular open-source IaC scanners (e.g., **Checkov**, **KICS**, **Terrascan**, **Trivy**).
 - **Creates a unified database** to look-up and compare what polices each open-source tool uses.
@@ -93,16 +91,20 @@ Within the sidebar, there are **four** menus:
 
 ## 📥 Policy Sources (Open‑Source Collectors)
 
-PaC‑Scanner can **ingest policies** from popular open‑source IaC scanners, normalize them, and creates a combined database via **pandas** which can be saved in various file formats:
+PaC_Extract **ingests policies** from popular open‑source IaC scanners, normalizes them, and creates a combined database via **pandas** which can be saved in various file formats.
 
-| Source       | Importer | Notes |
+PaC_Extract gets PaCs from open-source tools from two methods:
+1. **Parsing information from tool's official documents**: By using a custom parser, directly get relative info from the official policy documents of each tools and create a database. Noted via **"Target"** category as **"Docs"** in the table below. This option is chosen when the tool's policies are written in custom format and thus for direct parsing from files requires excessive resources.
+2. **Parsing information directly from tool's PaC files**: By using a custom parser, directly parse info from each PaC files within repo. Noted via **"Target"** category as **"Files"** in the table below. This option is chosen when the tool does not provide an exhaustive document on its polices. This tends to be more accurate than parsing information from the official document files, as sometimes the documents may be outdated.
+
+| Tool       | Target | Notes |
 |--------------|----------|-------|
-| Checkov      | `checkov` | Imports PaCs from Checkov's official documentation. |
-| KICS        | `kics`   | Imports PaCs from KICS's official documentation. |
-| Terrascan    | `terrascan` | Parses PaCs directly from Terrascan's raw Pac files. |
-| Trivy   | `trivy` | Parses PaCs directly from Trivy's raw Pac files. |
+| [Checkov](https://github.com/bridgecrewio/checkov)      | [Docs](https://github.com/bridgecrewio/checkov/tree/main/docs/5.Policy%20Index) | Imports PaCs from Checkov's **official documentation** within repo. |
+| [KICS](https://github.com/Checkmarx/kics)        | [Docs](https://docs.kics.io/latest/queries/all-queries/)   | Downloads PaCs from KICS's **official documentation** URL. |
+| [Terrascan](https://github.com/tenable/terrascan)    | [Files](https://github.com/tenable/terrascan/tree/master/pkg/policies/opa/rego) | Parses PaCs **directly from Terrascan's raw Pac files**. |
+| [Trivy](https://github.com/aquasecurity/trivy)   | [Files](https://github.com/aquasecurity/trivy-checks/tree/main/checks) | Parses PaCs **directly from Trivy's raw Pac files provided in separate repo**. |
 
-Both combined and individual PaC databases for each tool is downloaded in the **.pac_database** directory.
+Both combined and individual PaC databases for each tool is downloaded in the **"./pac_database"** directory.
 
 > **Attribution:** Imported policies retain original IDs, titles, and references. See [LICENSES-THIRD-PARTY.md](./LICENSES-THIRD-PARTY.md).
 

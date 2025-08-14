@@ -73,6 +73,21 @@ def app():
         
         ---
         
+        ## 📥 Policy Sources (Open‑Source Collectors)
+
+        PaC‑Scanner **ingests policies** from popular open‑source IaC scanners, normalizes them, and creates a combined database via **pandas** which can be saved in various file formats:
+
+        | Tool       | Target | Notes |
+        |--------------|----------|-------|
+        | [Checkov](https://github.com/bridgecrewio/checkov)      | [Docs](https://github.com/bridgecrewio/checkov/tree/main/docs/5.Policy%20Index) | Imports PaCs from Checkov's **official documentation** within repo. |
+        | [KICS](https://github.com/Checkmarx/kics)        | [Docs](https://docs.kics.io/latest/queries/all-queries/)   | Downloads PaCs from KICS's **official documentation** URL. |
+        | [Terrascan](https://github.com/tenable/terrascan)    | [Files](https://github.com/tenable/terrascan/tree/master/pkg/policies/opa/rego) | Parses PaCs **directly from Terrascan's raw Pac files**. |
+        | [Trivy](https://github.com/aquasecurity/trivy)   | [Files](https://github.com/aquasecurity/trivy-checks/tree/main/checks) | Parses PaCs **directly from Trivy's raw Pac files provided in separate repo**. |
+
+        Both combined and individual PaC databases for each tool is downloaded in the **"./pac_database"** directory.
+
+        ---
+        
         Feel free to explore and reach out if you have questions or feedback!
         """, unsafe_allow_html=True)
     # Download menu
