@@ -166,9 +166,5 @@ Honorable mention to the broader Open‑Source Security and IaC communities, and
   <h3>
     <a href="https://github.com/hyuns9808" style="color: #4cafef; text-decoration: none;">💻 Calvin(Hyunsoo) Yang</a>
   </h3>
-  <h3>
-    🌐 Check out my 
-    <a href="https://hyuns9808.github.io/" style="color: #4cafef; text-decoration: none;">personal website</a>!
-  </h3>
 
 </div>
