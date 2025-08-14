@@ -149,7 +149,7 @@ def get_trivy_pac(folder_path):
             record = extract_fields(metadata, filepath)
             if record:
                 records.append(record)
-    return pd.DataFrame(records)
+    return pd.DataFrame(records).drop_duplicates()
 
 '''
 if __name__ == '__main__':

@@ -70,7 +70,7 @@ def get_checkov_pac(file_path):
     result["Severity"] = pd.Series([pd.NA] * len(df))
     result["Query Document"] = df["Resource Link"]
     result["Related Document"] = pd.Series([pd.NA] * len(df))
-    return result
+    return result.drop_duplicates()
 
 '''
 if __name__ == '__main__':

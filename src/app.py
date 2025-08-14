@@ -96,10 +96,10 @@ def app():
         st.divider()
         # Inputs
         st.subheader("⚙️ Download Settings")
-        update = st.checkbox(
-            "Update all repositories",
+        select_all = st.checkbox(
+            "Select all tools",
             value=True,
-            help="If selected, all tools will be updated regardless of your tool selection."
+            help="If selected, update/download PaCs of all supported tools."
         )
         db_only = st.checkbox(
             "Create database files only without updating the files",
@@ -110,7 +110,7 @@ def app():
             "Select tools to update",
             options=full_tool_list,
             default=[full_tool_list[0]],
-            disabled=update,
+            disabled=select_all,
             help="Choose which tools you want to update. Disabled if 'Update all' is checked."
         )
         file_types = st.multiselect(
@@ -125,9 +125,9 @@ def app():
         st.markdown("### 🚀 Ready?")
         if st.button("Start Download", use_container_width=True):
             # Check update options
-            if update:
+            if select_all:
                 tools_input = full_tool_list
-            if not update and not tools_input:
+            if not select_all and not tools_input:
                 st.error("Please enter at least one tool.")
                 return
             if not file_types:

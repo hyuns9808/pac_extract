@@ -35,7 +35,7 @@ def get_kics_pac(file_path):
     result["Severity"] = df["Severity "]
     result["Query Document"] = df["Query Details"]
     result["Related Document"] = df["Documentation"]
-    return result
+    return result.drop_duplicates()
 
 '''
 if __name__ == '__main__':

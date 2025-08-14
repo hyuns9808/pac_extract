@@ -59,7 +59,7 @@ def get_terrascan_pac(folder_path):
     result["Query Document"] = pd.Series([pd.NA] * len(df))
     result["Related Document"] = pd.Series([pd.NA] * len(df))
     
-    return result
+    return result.drop_duplicates()
 
 '''
 if __name__ == '__main__':
