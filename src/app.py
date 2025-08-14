@@ -37,6 +37,14 @@ def app():
         st.markdown("""
         ### Lookup PaCs(Policy as Code) of popular open-source tools, straight from the source.
         
+         ## ✨ What is PaC Extract?
+
+        - **Collects & normalizes policies** from popular open-source IaC scanners (e.g., **Checkov**, **KICS**, **Terrascan**, **Trivy**).
+        - **Creates a unified database** to look-up and compare what polices each open-source tool uses.
+        - **Streamlines results** into standardized outputs (**CSV**, **JSON**, **SQL**, **XLSX**).
+        
+        ---
+        
         ## 🖥️ Menus
 
         Within the sidebar, there are **four** menus:
@@ -47,29 +55,6 @@ def app():
         | **Download** | :arrow_down: | 📥 Download/update your raw PaC files and get most recent PaCs per tool <br> 🗂️ Save combined/individual PaC database as file(**CSV**, **JSON**, **SQL**, **XLSX**) |
         | **Search** | :mag: | 🕹️ Search PaCs with specific keywords or filtering out data <br> 🗂️ Save search/filtered results as a **CSV** or **XLSX** file for closer examination |
         | **Visualize** | :bar_chart: | 🗒️ Visualize statistics and details of the combined database|
-        
-        ---
-         ## ✨ Why PaC Extract?
-
-        Open-source IaC scanners are powerful, but each has its own PaC library with different rule format, execution model, and report style. Thus, there is a need for a combined database of policies for DevOps engineers to look up popular misconfigurations and its corresponding PaCs. **PaC‑Scanner** acts as a **policy hub** by:
-
-        - **Collects & normalizes policies** from popular open-source IaC scanners (e.g., **Checkov**, **KICS**, **Terrascan**, **Trivy**).
-        - **Creates a unified database** to look-up and compare what polices each open-source tool uses.
-        - **Streamlines results** into standardized outputs (**CSV**, **JSON**, **SQL**, **XLSX**).
-        
-        ---
-
-        ## 🌟 Features
-
-        - ⚡ **Fast & Lightweight** – Scans large repos of multiple open-source IaC scanning tools within seconds.
-        - 🛡️ **Thorough Policy Lookups** – Find all PaC files of each open-source tool, some which do not provide official documents for.
-        - 🔍 **Easy search engine** – Easily search for content within the app and export search results in either **.csv or .xlsx** for closer examination.
-        - 🌍 **Broad IaC Coverage** – Library contains PaCs for multiple IaC languages, including Terraform, CloudFormation, Kubernetes, Docker, Helm charts, and generic YAML/JSON.
-        - 📚 **Curated PaC Library** – Aggregates rules from open‑source IaC scanners into one pandas dataframe.
-        - 🧠 **Smart Normalization** – Preserved original PaC files from each tool as much as possible to maintain its contents and meaning.
-        - 📊 **Flexible DB** – Save results in various file formats, such as **.csv, .sql, .json, .xlsx.**
-        - 🐍 **Poetry‑Powered** – Reproducible environments & dependency pinning with **Poetry**.
-        - 👶 **Straightforward UI** - Based on Streamlit, launch an easy-to-use UI to download, search and look up data.
         
         ---
         
@@ -85,7 +70,21 @@ def app():
         | [Trivy](https://github.com/aquasecurity/trivy)   | [Files](https://github.com/aquasecurity/trivy-checks/tree/main/checks) | Parses PaCs **directly from Trivy's raw Pac files provided in separate repo**. |
 
         Both combined and individual PaC databases for each tool is downloaded in the **"./pac_database"** directory.
+        
+        ---
 
+        ## 🌟 Features
+
+        - ⚡ **Fast & Lightweight** – Scans large repos of multiple open-source IaC scanning tools within seconds.
+        - 🛡️ **Thorough Policy Lookups** – Find all PaC files of each open-source tool, some which do not provide official documents for.
+        - 🔍 **Easy search engine** – Easily search for content within the app and export search results in either **.csv or .xlsx** for closer examination.
+        - 🌍 **Broad IaC Coverage** – Library contains PaCs for multiple IaC languages, including Terraform, CloudFormation, Kubernetes, Docker, Helm charts, and generic YAML/JSON.
+        - 📚 **Curated PaC Library** – Aggregates rules from open‑source IaC scanners into one pandas dataframe.
+        - 🧠 **Smart Normalization** – Preserved original PaC files from each tool as much as possible to maintain its contents and meaning.
+        - 📊 **Flexible DB** – Save results in various file formats, such as **.csv, .sql, .json, .xlsx.**
+        - 🐍 **Poetry‑Powered** – Reproducible environments & dependency pinning with **Poetry**.
+        - 👶 **Straightforward UI** - Based on Streamlit, launch an easy-to-use UI to download, search and look up data.
+        
         ---
         
         Feel free to explore and reach out if you have questions or feedback!
