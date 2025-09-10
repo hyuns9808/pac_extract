@@ -1,7 +1,7 @@
 '''
 File that stores all functions related to checking the integrity of existing data
 Runs the following operations:
-1. Check the 'version_token.flag' file and compare it with .
+1. Check the 'version_token.flag' file and compare it with 'version_info.json'.
 2. If initial run, invalid init_token or data different than info in version_info.json, ignore user input and download all repos
 3. If init_token info and data is correct, download only input given from user
 '''
@@ -68,7 +68,11 @@ def data_checker(project_root, data_dir_path):
                     if set(tool_dir) == tool_set:
                         is_valid = True
             else:
-                print(f"❌ ERROR: Token file is invalid...\n")
+                print(f"❌ ERROR: Token file info does not match provided version info.\n")
+        else:
+            print(f"❌ ERROR: Token file does not exist in correct path.\n")
+    else:
+        print(f"❌ ERROR: \"pac_raw\" folder, where all relevant raw PaC files are stored, does not exist.\n")
     print("✅ Integrity check complete.")
     if is_valid is True:
         print("✅ All files are valid.\n")

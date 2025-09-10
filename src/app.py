@@ -95,6 +95,8 @@ def app():
         st.markdown("Easily select tools and update **Policy as Code** (PaC) files with just a few clicks.")
         # Get version info and run data integrity check
         version_info, version, date, full_tool_list, full_tool_info = data_init(project_root)
+        # Supported full file list; update manually if necessary
+        full_file_list = ["csv", "json", "sql", "xlsx"]
         # Print version info
         st.subheader("📦 PaC_Extract Version Info")
         # Info box for version/date/tools
@@ -110,10 +112,15 @@ def app():
         st.divider()
         # Inputs
         st.subheader("⚙️ Download Settings")
-        select_all = st.checkbox(
+        select_all_tools = st.checkbox(
             "Select all tools",
             value=True,
-            help="If selected, update/download PaCs of all supported tools."
+            help="If selected, update/download PaCs of all supported tools for all selected file types."
+        )
+        select_all_files = st.checkbox(
+            "Select all file types",
+            value=True,
+            help="If selected, update/download PaCs of selected tools for all supported file types."
         )
         db_only = st.checkbox(
             "Create database files only without updating the files",
@@ -124,13 +131,14 @@ def app():
             "Select tools to update",
             options=full_tool_list,
             default=[full_tool_list[0]],
-            disabled=select_all,
+            disabled=select_all_tools,
             help="Choose which tools you want to update. Disabled if 'Update all' is checked."
         )
-        file_types = st.multiselect(
+        files_input = st.multiselect(
             "Select file types to save",
-            options=["csv", "json", "sql", "xlsx"],
-            default=["csv"],
+            options=full_file_list,
+            default=[full_file_list[0]],
+            disabled=select_all_files,
             help="Choose the output formats for your downloaded PaC files."
         )
         # Spacer before button
@@ -138,13 +146,16 @@ def app():
         # Start button
         st.markdown("### 🚀 Ready?")
         if st.button("Start Download", use_container_width=True):
-            # Check update options
-            if select_all:
+            # Check update options - tools
+            if select_all_tools:
                 tools_input = full_tool_list
-            if not select_all and not tools_input:
-                st.error("Please enter at least one tool.")
+            if not select_all_tools and not tools_input:
+                st.error("Please select at least one tool.")
                 return
-            if not file_types:
+            # Check update options - files
+            if select_all_files:
+                files_input = full_file_list
+            if not select_all_files and not files_input:
                 st.error("Please select at least one file type.")
                 return
             st.success("Download process started...")
@@ -172,7 +183,7 @@ def app():
                     f"""
                     **Creating database files for total {len(up_tool_list)} tools...**\n
                     **List of tools: {up_tool_list}** \n
-                    **Database file types: {file_types}**
+                    **Database file types: {files_input}**
                     """,
                     icon="ℹ️"
                 )
@@ -231,10 +242,12 @@ def app():
                     icon="ℹ️"
                 )
                 head_file_path = os.path.join(tool_raw_path, full_tool_info[tool]["head_path"])
+                print(head_file_path)
+                print(tool)
                 tool_df = get_pac_of_tool(tool, head_file_path)
                 master_df = pd.concat([master_df, tool_df], ignore_index=True)
                 tool_db_dir = os.path.join(pac_db_dir, tool)
-                for type in file_types:
+                for type in files_input:
                     output_path = save_dataframe(tool_db_dir, tool_df, tool, type)
                     st.success(f"✅ Database file for - '{tool}' - in format - '{type}' - saved at: {output_path}\n")
                 st.markdown("<hr style='margin:0; border: 0.5px solid #ddd;'>", unsafe_allow_html=True)
@@ -249,9 +262,9 @@ def app():
             )
             # REQUIRED: .csv file for master_df
             master_db_dir = os.path.join(pac_db_dir, "MASTER")
-            if "csv" not in file_types:
-                file_types.append("csv")
-            for type in file_types:
+            if "csv" not in files_input:
+                files_input.append("csv")
+            for type in files_input:
                 save_dataframe(master_db_dir, master_df, "MASTER", type)
                 st.success(f"✅ MASTER database file in format - '{type}' saved at: {output_path}\n")
             st.markdown("<hr style='margin:0; border: 0.5px solid #ddd;'>", unsafe_allow_html=True)

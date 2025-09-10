@@ -9,6 +9,10 @@ import tempfile
 from pathlib import Path
 from typing import List, Optional
 from .setup_url.setup_kics import get_kics_queries
+'''
+Use this import for unit testing
+from setup_url.setup_kics import get_kics_queries
+'''
 
 
 # Regexes to detect progress lines from git
@@ -196,3 +200,28 @@ def get_pac_url(
     Call function per tool to get PaCs from specified URL
     """
     tool_function[tool_name](url, dest)
+    
+'''
+# Use for single dataset clone unit testing
+if __name__ == "__main__":
+    from setup_integrity import data_init, data_checker, create_ver_token
+    from setup_base import dir_init, dir_update, get_update_tool_list
+    project_root, pac_raw_dir, pac_db_dir, master_db_dir = dir_init()
+    version_info, version, date, full_tool_list, full_tool_info = data_init(project_root)
+    tool = "Prisma"
+    tool_raw_path = os.path.join(pac_raw_dir, tool)
+    if full_tool_info[tool]["is_repo"] == "True":
+        get_pac_folder(
+            tool_name=tool,
+            repo_git=full_tool_info[tool]["url"],
+            folder=full_tool_info[tool]["folder_path"],
+            dest=tool_raw_path,
+            ref=full_tool_info[tool]["branch"],
+        )
+    else:
+        get_pac_url(
+            tool_name=tool,
+            url=full_tool_info[tool]["url"],
+            dest=tool_raw_path
+        )
+'''

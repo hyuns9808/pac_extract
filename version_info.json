@@ -1,6 +1,6 @@
 {
-    "version": "1.0.0",
-    "date": "20250814",
+    "version": "1.1.0",
+    "date": "20250910",
     "tool_info": {
         "Checkov": {
             "url": "https://github.com/bridgecrewio/checkov.git",
@@ -27,6 +27,13 @@
             "folder_path": "checks",
             "branch": "main",
             "head_path": "checks"
+        },
+        "Prisma": {
+            "url": "https://github.com/hlxsites/prisma-cloud-docs.git",
+            "is_repo": "True",
+            "folder_path": "docs/en/enterprise-edition/policy-reference",
+            "branch": "main",
+            "head_path": "policy-reference"
         }
     }
 }

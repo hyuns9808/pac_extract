@@ -73,7 +73,20 @@ def get_checkov_pac(file_path):
     return result.drop_duplicates()
 
 '''
-if __name__ == '__main__':
-    df = get_checkov_pac()
-    print(df)
+# Use for single dataset clone unit testing
+if __name__ == "__main__":
+    import sys
+    import os
+    target_dir = os.path.abspath('C:\Exception\InProgress\pac_extract\src')
+    sys.path.append(target_dir)
+    from init_setup.setup_integrity import data_init, data_checker, create_ver_token
+    from init_setup.setup_base import dir_init, dir_update, get_update_tool_list
+    project_root, pac_raw_dir, pac_db_dir, master_db_dir = dir_init()
+    version_info, version, date, full_tool_list, full_tool_info = data_init(project_root)
+    tool = "Checkov"
+    tool_raw_path = os.path.join(os.path.join(pac_raw_dir, tool), '5.Policy Index/all.md')
+    df = get_checkov_pac(tool_raw_path)
+    pd.set_option("display.max_colwidth", 120)
+    print(df.head())
+    print(df.shape)
 '''
