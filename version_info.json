@@ -10,9 +10,11 @@
             "head_path": "5.Policy Index/all.md"
         },
         "KICS": {
-            "url": "https://docs.kics.io/latest/queries/all-queries/",
-            "is_repo": "False",
-            "head_path": "all_queries.csv"
+            "url": "https://github.com/Checkmarx/kics.git",
+            "is_repo": "True",
+            "folder_path": "docs/queries",
+            "branch": "master",
+            "head_path": "queries"
         },
         "Terrascan": {
             "url": "https://github.com/tenable/terrascan.git",

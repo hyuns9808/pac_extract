@@ -1,3 +1,6 @@
+'''
+Functions related to getting relevant Prisma Cloud PaCs
+'''
 import os
 import re
 import pandas as pd
@@ -216,6 +219,7 @@ if __name__ == "__main__":
     version_info, version, date, full_tool_list, full_tool_info = data_init(project_root)
     tool = "Prisma"
     tool_raw_path = os.path.join(pac_raw_dir, tool)
+    print(tool_raw_path)
     df = get_prisma_pac(tool_raw_path)
     pd.set_option("display.max_colwidth", 120)
     print(df.head())
