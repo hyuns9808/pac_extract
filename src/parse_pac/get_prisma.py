@@ -2,8 +2,9 @@
 Functions related to getting relevant Prisma Cloud PaCs
 '''
 import os
-import re
 import pandas as pd
+import re
+import yaml
 
 # Correctly parses policy folder name to provider
 id_to_provider = {
@@ -39,115 +40,137 @@ severity_unify = {
     "INFO": "Info"
 }
 
+def parse_prisma_checkov(text: str) -> pd.DataFrame:
+    """
+    Parse Prisma/Checkov policy doc into a DataFrame.
+    One row per framework fix.
+    Columns:
+    PolicyID, CheckovID, Severity, Subtype, Frameworks, Description,
+    Example_Framework, Resource, Arguments, Solution, Code_example, Code_description
+    """
+    
+    def grab(pattern):
+        m = re.search(pattern, text, re.IGNORECASE)
+        return m.group(1).strip() if m else None
 
-def parse_summary_adoc(filepath):
-    """
-    Parse summary .adoc into dataframe (Policy | Checkov ID | Severity).
-    Returns empty DF if file is only a header.
-    """
-    rows = []
+    # Metadata
+    policy_id = grab(r'Prisma Cloud Policy ID\s*\|\s*(.+)')
+    checkov_id = grab(r'Checkov ID\s*\|\s*(.+)')
+    severity = grab(r'Severity\s*\|\s*(.+)')
+    subtype = grab(r'Subtype\s*\|\s*(.+)')
+    frameworks_meta = grab(r'Frameworks\s*\|\s*(.+)')
+
+    # Description
+    desc_m = re.search(r'===\s*Description\s+([\s\S]*?)(?=^===\s*Fix - Buildtime|\Z)',
+                       text, re.MULTILINE | re.IGNORECASE)
+    description = desc_m.group(1).strip() if desc_m else None
+
+    # Fix section
+    fix_m = re.search(r'===\s*Fix - Buildtime\s*([\s\S]*)', text, re.IGNORECASE)
+    records = []
+
+    def clean(s):
+        if s is None:
+            return None
+        return re.sub(r'^\s*\*+\s*', '', s, flags=re.MULTILINE).strip()
+
+    if fix_m:
+        fix_text = fix_m.group(1)
+
+        # Split framework blocks (*Terraform*, *Ansible*, *Docker*, etc.)
+        framework_blocks = re.findall(
+            r'\*\s*([^\*]+?)\s*\*\s*([\s\S]*?)(?=(?:\*\s*[^\*]+?\s*\*\s*)|$)',
+            fix_text, flags=re.IGNORECASE
+        )
+
+        for fw_name, block in framework_blocks:
+            fw_name = fw_name.strip()
+            block = block.strip()
+
+            # Resource / Module
+            res_m = re.search(r'^\s*(?:\*+\s*)?(?:Resource|Module)\s*:\s*(.+)', block, re.MULTILINE | re.IGNORECASE)
+            resource = res_m.group(1).strip() if res_m else None
+
+            # Arguments / Attribute
+            arg_m = re.search(r'^\s*(?:\*+\s*)?(?:Arguments|Attribute)\s*:\s*(.+)', block, re.MULTILINE | re.IGNORECASE)
+            arguments = arg_m.group(1).strip() if arg_m else None
+
+            # Find first code block
+            code_m = re.search(r'\[source[^\]]*\]\s*----\s*([\s\S]*?)\s*----', block)
+            if code_m:
+                code_example = code_m.group(1).strip()
+                code_start = code_m.start()
+                code_end = code_m.end()
+                # Solution is everything before code block, excluding Resource/Arguments lines
+                solution_text = block[:code_start]
+                if arg_m:
+                    # remove Arguments/Attribute line
+                    solution_text = re.sub(
+                        r'^\s*(?:\*+\s*)?(?:Arguments|Attribute)\s*:\s*.+', '', solution_text,
+                        flags=re.MULTILINE|re.IGNORECASE
+                    )
+                if res_m:
+                    solution_text = re.sub(
+                        r'^\s*(?:\*+\s*)?(?:Resource|Module)\s*:\s*.+', '', solution_text,
+                        flags=re.MULTILINE|re.IGNORECASE
+                    )
+                solution = solution_text.strip() if solution_text.strip() else None
+                # Code description: any text after code block
+                code_description_text = block[code_end:].strip()
+                code_description = code_description_text if code_description_text else None
+            else:
+                # No code block: all remaining text is solution
+                solution = block.strip() if block.strip() else None
+                code_example = None
+                code_description = None
+
+            records.append({
+                "PolicyID": clean(policy_id),
+                "CheckovID": clean(checkov_id),
+                "Severity": clean(severity),
+                "Subtype": clean(subtype),
+                "Frameworks": clean(frameworks_meta),
+                "Description": clean(description),
+                "Example_Framework": clean(fw_name),
+                "Resource": clean(resource),
+                "Arguments": clean(arguments),
+                "Solution": clean(solution),
+                "Code_example": clean(code_example),
+                "Code_description": clean(code_description)
+            })
+    else:
+        # No fix section
+        records.append({
+            "PolicyID": clean(policy_id),
+            "CheckovID": clean(checkov_id),
+            "Severity": clean(severity),
+            "Subtype": clean(subtype),
+            "Frameworks": clean(frameworks_meta),
+            "Description": clean(description),
+            "Example_Framework": None,
+            "Resource": None,
+            "Arguments": None,
+            "Solution": None,
+            "Code_example": None,
+            "Code_description": None
+        })
+
+    return pd.DataFrame(records)
+
+def parse_policy_adoc(filepath):
+    """Decide parser based on content."""
     with open(filepath, encoding="utf-8") as f:
         text = f.read()
 
     # If file is "empty summary" just return empty df
-    if re.fullmatch(r"\s*==.*", text.strip(), flags=re.DOTALL):
+    lines = text.splitlines()
+    if len(lines) == 1 and lines[0].startswith("=="):
         return pd.DataFrame()
-
-    pattern = re.compile(
-        r"\|xref:(?P<file>.+?\.adoc)\[(?P<policy>.+?)\]\s*"
-        r"\n\|\s*(?P<checkov_url>.+?)\[(?P<checkov_id>CKV_[A-Z_0-9]+)\]\s*"
-        r"\n\|(?P<severity>\w+)",
-        re.MULTILINE
-    )
-
-    for m in pattern.finditer(text):
-        rows.append(m.groupdict())
-
-    return pd.DataFrame(rows)
-
-
-def parse_policy_adoc(filepath):
-    """
-    Parse details from individual policy .adoc.
-    result["Tool"] = ["Terrascan"] * len(df)
-    result["ID"] = df["id"]
-    result["Title"] = df["description"]
-    result["Description"] = pd.Series([pd.NA] * len(df))
-    result["IaC"] = ["Terraform"] * len(df)
-    result["Category"] =  df["category"]
-    result["Provider"] = df["policy_type"].map(id_to_provider)
-    result["Severity"] = df["severity"].map(severity_unify)
-    result["Query Document"] = pd.Series([pd.NA] * len(df))
-    result["Related Document"] = pd.Series([pd.NA] * len(df))
-    """
-    
-    rows = []
-    with open(filepath, encoding="utf-8") as f:
-        text = f.read()
-    
-    # First get all frameworks, create each row per framework
-    m = re.search(r"Frameworks\s*\|\s*(.+)", text)
-    if m:
-        frameworks = [fw.strip() for fw in m.group(1).split(",")]
+    if "Prisma Cloud Policy ID" in text:   # Prisma/Checkov style
+        return parse_prisma_checkov(text)
     else:
-        frameworks = []
+        return pd.DataFrame([{"raw_text": text}])
     
-    for framework in frameworks:
-        row = {}
-        row["Tool"] = "Prisma"
-
-        '''
-        # Prisma Cloud Policy ID
-        m = re.search(r"Prisma Cloud Policy ID\\s*\\|\\s*([a-f0-9\\-]+)", text)
-        if m:
-            result["PrismaID"] = m.group(1)
-        '''
-        # Checkov ID
-        m = re.search(r"Checkov ID\s*\|\s*(.+)\[(CKV_[A-Z_0-9]+)\]", text)
-        if m:
-            row["Query Document"] = m.group(1)
-            row["ID"] = m.group(2)
-        
-        # Title
-        m = re.search(r"^==\s*(.*)", text)
-        if m:
-            row["Title"] = m.group(1)
-            
-        # Description (capture whole section until "=== Fix")
-        m = re.search(r"=== Description\s*\n+(.+?)\n=== Fix", text, flags=re.DOTALL)
-        if m:
-            row["Description"] = m.group(1).strip()
-
-        # Severity
-        m = re.search(r"Severity\s*\|\s*(\w+)", text)
-        if m:
-            if m.group(1) in severity_unify.keys():
-                row["Severity"] = severity_unify[m.group(1)]
-            else:
-                row["Severity"] = m.group(1)
-
-        # IaC: parsed tool from frameworks
-        row["IaC"] = framework
-        
-        # No "Related Document" in Prisma
-        row["Related Document"] = pd.NA
-        
-        '''
-        # Subtype
-        m = re.search(r"Subtype\\s*\\|\\s*(\\w+)", text)
-        if m:
-            result["Subtype"] = m.group(1)
-
-        # Fix (everything from "=== Fix" onward)
-        m = re.search(r"=== Fix(.+)", text, flags=re.DOTALL)
-        if m:
-            details["Fix"] = m.group(1).strip()
-        '''
-        rows.append(row)
-    result = pd.DataFrame(rows)
-    return result
-
-
 def get_prisma_pac(rootdir):
     """
     Creates final pandas df for Prisma
@@ -158,53 +181,54 @@ def get_prisma_pac(rootdir):
         dirname = os.path.basename(dirpath)
         summary_file = f"{dirname}.adoc"
 
-        summary_df = pd.DataFrame()
-        if summary_file in files:
-            summary_df = parse_summary_adoc(os.path.join(dirpath, summary_file))
-
         detail_records = []
         for f in files:
             if f.endswith(".adoc") and f != summary_file:
-                detail_records.append(parse_policy_adoc(os.path.join(dirpath, f)))
-
-        detail_df = pd.concat(detail_records, ignore_index=True) if detail_records else pd.DataFrame()
-
-        # Merge summary + details if both exist
-        if not summary_df.empty and not detail_df.empty:
-            merged = summary_df.merge(detail_df, on="file", how="left")
-        elif not detail_df.empty:
-            merged = detail_df
-        else:
-            merged = summary_df  # could be empty
-
-        if not merged.empty:
-            # Add Provider + Category
-            relpath = os.path.relpath(dirpath, rootdir)
-            print(relpath)
-            parts = relpath.split(os.sep)
-            print(parts)
-            def clean_name(name):
-                if not name:
-                    return None
-                return name.replace("-policies", "")
-            parent_folder_name = clean_name(parts[0]) if len(parts) > 0 else None
-            print(parent_folder_name)
-            # Check if parent folder needs to use subfolder name as provider
-            if parent_folder_name in general_folder_names:
-                # Needs to use subfolder
-                merged["Provider"] = clean_name(parts[1]) if len(parts) > 1 else None
-                merged["Category"] = clean_name(parts[1]) if len(parts) > 1 else None
-            else:
-                # No need for subfolder; map straight to provider
-                if parent_folder_name in id_to_provider.keys():
-                    merged["Provider"] = id_to_provider[parent_folder_name]
-                # Not in mapping dict; store as-is
+                filepath = os.path.join(dirpath, f)
+                print(filepath)
+                parsed = parse_policy_adoc(filepath)
+                # parse_policy_adoc returns a DataFrame, extract dict(s)
+                if isinstance(parsed, pd.DataFrame):
+                    detail_records.extend(parsed.to_dict(orient="records"))
                 else:
-                    merged["Provider"] = parent_folder_name
-                merged["Category"] = clean_name(parts[1]) if len(parts) > 1 else None
-            all_records.append(merged)
+                    # fallback in case parse_policy_adoc returns dict
+                    detail_records.append(parsed)
 
-    return pd.concat(all_records, ignore_index=True).drop_duplicates()
+        if not detail_records:
+            continue
+
+        result = pd.DataFrame(detail_records)
+
+        # Add Provider + Category
+        relpath = os.path.relpath(dirpath, rootdir)
+        parts = relpath.split(os.sep)
+
+        def clean_name(name):
+            if not name:
+                return None
+            return name.replace("-policies", "")
+
+        parent_folder_name = clean_name(parts[0]) if len(parts) > 0 else None
+
+        # Check if parent folder needs to use subfolder name as provider
+        if parent_folder_name in general_folder_names:
+            provider = clean_name(parts[1]) if len(parts) > 1 else None
+            result["Provider"] = provider
+            result["Category"] = provider
+        else:
+            # Map straight to provider
+            if parent_folder_name in id_to_provider.keys():
+                result["Provider"] = id_to_provider[parent_folder_name]
+            else:
+                result["Provider"] = parent_folder_name
+            result["Category"] = clean_name(parts[1]) if len(parts) > 1 else None
+
+        all_records.append(result)
+
+    if all_records:
+        return pd.concat(all_records, ignore_index=True)
+    else:
+        return pd.DataFrame()
 
 
 # Use for single dataset clone unit testing
