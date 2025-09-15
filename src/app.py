@@ -5,6 +5,7 @@ from ydata_profiling import ProfileReport
 
 import os
 import io
+import re
 import pandas as pd
 
 from init_setup.setup_integrity import data_init, data_checker, create_ver_token
@@ -242,8 +243,6 @@ def app():
                     icon="ℹ️"
                 )
                 head_file_path = os.path.join(tool_raw_path, full_tool_info[tool]["head_path"])
-                print(head_file_path)
-                print(tool)
                 tool_df = get_pac_of_tool(tool, head_file_path)
                 master_df = pd.concat([master_df, tool_df], ignore_index=True)
                 tool_db_dir = os.path.join(pac_db_dir, tool)
@@ -367,8 +366,13 @@ def app():
                 master_df = pd.read_csv(master_df_csv)
 
             st.header("📋 Data Profiling Report")
+            target_cols = master_df.columns.to_list()
+            no_profile_cols_ptn = re.compile(r"^(Secure|Insecure) Code (Example|Line) \d+$")
+            target_cols = [col for col in target_cols if not no_profile_cols_ptn.match(col)]
+            print(target_cols)
             profile = ProfileReport(master_df, title="Master Data Profiling Report", explorative=True)
-
+            profile.config.interactions.targets = target_cols
+            
             # Custom CSS to widen the report container inside the iframe
             custom_css = """
             <style>

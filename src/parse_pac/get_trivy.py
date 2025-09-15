@@ -120,7 +120,7 @@ def extract_fields(metadata, filepath):
     # 'examples', 'recommended_action', 'frameworks', 'provider', 'recommended_actions', 'aliases'}
     # Tool-ID-Title-Description-IaC-Category-Provider-Severity-Query Document-Related Document
     return {
-        "Tool": "Trivy",
+        "Open-source Tool": "Trivy",
         "ID": custom.get('id', ""),
         "Title": title,
         "Description": description,

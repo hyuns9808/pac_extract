@@ -59,7 +59,7 @@ def get_checkov_pac(file_path):
     # Patch DF to common format
     # Tool-ID-Title-Description-IaC-Category-Provider-Severity-Query Document-Related Document
     result = pd.DataFrame()
-    result["Tool"] = ["Checkov"] * len(df)
+    result["Open-source Tool"] = ["Checkov"] * len(df)
     result["ID"] = df["Id"]
     result["Title"] = df["Policy"]
     result["Description"] = pd.Series([pd.NA] * len(df))

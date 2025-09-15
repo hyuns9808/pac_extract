@@ -43,7 +43,9 @@ severity_unify = {
 def parse_prisma_checkov(text: str) -> pd.DataFrame:
     """
     Parse Prisma/Checkov policy doc into a DataFrame.
-    One row per framework fix.
+    Get List of Frameworks, find if there are examples related to it.
+    Create separate rule per framework within rule if there is an example.
+    If not, empty out example and create barebone row.
     Columns:
     PolicyID, CheckovID, Severity, Subtype, Frameworks, Description,
     Example_Framework, Resource, Arguments, Solution, Code_example, Code_description
@@ -54,19 +56,21 @@ def parse_prisma_checkov(text: str) -> pd.DataFrame:
         return m.group(1).strip() if m else None
 
     # Metadata
+    title = grab(r'^==\s*(.+)')
     policy_id = grab(r'Prisma Cloud Policy ID\s*\|\s*(.+)')
-    checkov_id = grab(r'Checkov ID\s*\|\s*(.+)')
+    query_document = grab(r'Checkov ID\s*\|\s*(.*)\[.+\]')
+    checkov_id = grab(r'Checkov ID\s*\|\s*.*\[(.+)\]')
     severity = grab(r'Severity\s*\|\s*(.+)')
     subtype = grab(r'Subtype\s*\|\s*(.+)')
-    frameworks_meta = grab(r'Frameworks\s*\|\s*(.+)')
+    frameworks_full = grab(r'Frameworks\s*\|\s*(.+)')
 
     # Description
-    desc_m = re.search(r'===\s*Description\s+([\s\S]*?)(?=^===\s*Fix - Buildtime|\Z)',
+    desc_m = re.search(r'\#\#\#\s*Description\s+([\s\S]*?)(?\#^\#\#\#\s*Fix - Buildtime|\Z)',
                        text, re.MULTILINE | re.IGNORECASE)
     description = desc_m.group(1).strip() if desc_m else None
 
     # Fix section
-    fix_m = re.search(r'===\s*Fix - Buildtime\s*([\s\S]*)', text, re.IGNORECASE)
+    fix_m = re.search(r'\#\#\#\s*Fix - Buildtime\s*([\s\S]*)', text, re.IGNORECASE)
     records = []
 
     def clean(s):
@@ -104,6 +108,7 @@ def parse_prisma_checkov(text: str) -> pd.DataFrame:
                 # Solution is everything before code block, excluding Resource/Arguments lines
                 solution_text = block[:code_start]
                 if arg_m:
+                    # Need fix this part
                     # remove Arguments/Attribute line
                     solution_text = re.sub(
                         r'^\s*(?:\*+\s*)?(?:Arguments|Attribute)\s*:\s*.+', '', solution_text,
@@ -125,26 +130,29 @@ def parse_prisma_checkov(text: str) -> pd.DataFrame:
                 code_description = None
 
             records.append({
-                "PolicyID": clean(policy_id),
-                "CheckovID": clean(checkov_id),
+                "Open-source Tool": "Prisma",
+                "ID": clean(checkov_id),
+                "Title": clean(title),
                 "Severity": clean(severity),
-                "Subtype": clean(subtype),
-                "Frameworks": clean(frameworks_meta),
+                "Category": clean(subtype),
+                "Frameworks": clean(frameworks_full),
                 "Description": clean(description),
+                "Query Document": clean(query_document),
                 "Example_Framework": clean(fw_name),
                 "Resource": clean(resource),
                 "Arguments": clean(arguments),
                 "Solution": clean(solution),
-                "Code_example": clean(code_example),
+                "Secure Code Example 1": clean(code_example),
                 "Code_description": clean(code_description)
             })
     else:
         # No fix section
         records.append({
-            "PolicyID": clean(policy_id),
-            "CheckovID": clean(checkov_id),
+            "Open-source Tool": "Prisma",
+            "ID": clean(policy_id),
+            "Title": clean(title),
             "Severity": clean(severity),
-            "Subtype": clean(subtype),
+            "Category": clean(subtype),
             "Frameworks": clean(frameworks_meta),
             "Description": clean(description),
             "Example_Framework": None,
@@ -202,7 +210,6 @@ def get_prisma_pac(rootdir):
         # Add Provider + Category
         relpath = os.path.relpath(dirpath, rootdir)
         parts = relpath.split(os.sep)
-
         def clean_name(name):
             if not name:
                 return None

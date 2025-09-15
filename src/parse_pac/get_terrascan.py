@@ -48,7 +48,7 @@ def get_terrascan_pac(folder_path):
     #   'folder_name'],
     # Tool-ID-Title-Description-IaC-Category-Provider-Severity-Query Document-Related Document
     result = pd.DataFrame()
-    result["Tool"] = ["Terrascan"] * len(df)
+    result["Open-source Tool"] = ["Terrascan"] * len(df)
     result["ID"] = df["id"]
     result["Title"] = df["description"]
     result["Description"] = pd.Series([pd.NA] * len(df))
