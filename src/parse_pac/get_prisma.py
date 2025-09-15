@@ -153,7 +153,7 @@ def parse_prisma_checkov(text: str) -> pd.DataFrame:
             "Title": clean(title),
             "Severity": clean(severity),
             "Category": clean(subtype),
-            "Frameworks": clean(frameworks_meta),
+            "Frameworks": clean(frameworks_full),
             "Description": clean(description),
             "Example_Framework": None,
             "Resource": None,
