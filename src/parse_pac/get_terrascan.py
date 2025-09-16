@@ -52,7 +52,7 @@ def get_terrascan_pac(folder_path):
     result["ID"] = df["id"]
     result["Title"] = df["description"]
     result["Description"] = pd.Series([pd.NA] * len(df))
-    result["IaC"] = ["Terraform"] * len(df)
+    result["IaC Framework"] = ["Terraform"] * len(df)
     result["Category"] =  df["category"]
     result["Provider"] = df["policy_type"].map(id_to_provider)
     result["Severity"] = df["severity"].map(severity_unify)

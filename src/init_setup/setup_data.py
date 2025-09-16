@@ -26,7 +26,6 @@ PHASE_PATTERNS = {
 
 # URL tool function mappings
 tool_function = {
-    "KICS": get_kics_queries
 }
 
 def _make_progress():

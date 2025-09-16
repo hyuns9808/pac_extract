@@ -4,7 +4,7 @@ Functions related to getting relevant Prisma Cloud PaCs
 import os
 import pandas as pd
 import re
-import yaml
+import json
 
 # Correctly parses policy folder name to provider
 id_to_provider = {
@@ -34,6 +34,7 @@ general_folder_names = [
 
 
 severity_unify = {
+    "CRITICAL": "Critical",
     "HIGH": "High",
     "MEDIUM": "Medium",
     "LOW": "Low",
@@ -47,8 +48,8 @@ def parse_prisma_checkov(text: str) -> pd.DataFrame:
     Create separate rule per framework within rule if there is an example.
     If not, empty out example and create barebone row.
     Columns:
-    PolicyID, CheckovID, Severity, Subtype, Frameworks, Description,
-    Example_Framework, Resource, Arguments, Solution, Code_example, Code_description
+    ID(Prisma Cloud ID), CheckovID, Title, Severity, Subcategory, Framework(Divide each framework to single row), Description,
+    Query Document, Related Document, Insecure Code Example 1
     """
     
     def grab(pattern):
@@ -56,112 +57,65 @@ def parse_prisma_checkov(text: str) -> pd.DataFrame:
         return m.group(1).strip() if m else None
 
     # Metadata
-    title = grab(r'^==\s*(.+)')
-    policy_id = grab(r'Prisma Cloud Policy ID\s*\|\s*(.+)')
+    title = grab(r'^\s*(?:==\s*)([^\n]*)')
+    prisma_id = grab(r'Prisma Cloud Policy ID\s*\|\s*(.+)')
     query_document = grab(r'Checkov ID\s*\|\s*(.*)\[.+\]')
-    checkov_id = grab(r'Checkov ID\s*\|\s*.*\[(.+)\]')
+    checkov_id = grab(r'Checkov(?: Check)? ID\s*\|\s*(?:[^\[\n]*\[)?([A-Z0-9_]+)(?:\])?')
     severity = grab(r'Severity\s*\|\s*(.+)')
     subtype = grab(r'Subtype\s*\|\s*(.+)')
-    frameworks_full = grab(r'Frameworks\s*\|\s*(.+)')
 
     # Description
-    desc_m = re.search(r'\#\#\#\s*Description\s+([\s\S]*?)(?\#^\#\#\#\s*Fix - Buildtime|\Z)',
+    desc_m = re.search(r'Description\s+([\s\S]*?)(?=[/=])',
                        text, re.MULTILINE | re.IGNORECASE)
     description = desc_m.group(1).strip() if desc_m else None
 
     # Fix section
-    fix_m = re.search(r'\#\#\#\s*Fix - Buildtime\s*([\s\S]*)', text, re.IGNORECASE)
+    # Ignore "Fix - Runtime"; CLI fixes, not relevant
+    fix_total_block = re.search(r'Fix - Buildtime[\s\S]*(\*[\s\S]*)', text, re.IGNORECASE)
     records = []
 
     def clean(s):
         if s is None:
-            return None
+            return pd.NA
         return re.sub(r'^\s*\*+\s*', '', s, flags=re.MULTILINE).strip()
+    
+    if fix_total_block:
+        fix_text = fix_total_block.group(0)
+        framework_sections = re.split(r"\*(\w+)\*", fix_text)
 
-    if fix_m:
-        fix_text = fix_m.group(1)
+        for i in range(1, len(framework_sections), 2):
+            framework = framework_sections[i]
+            body = framework_sections[i+1]
 
-        # Split framework blocks (*Terraform*, *Ansible*, *Docker*, etc.)
-        framework_blocks = re.findall(
-            r'\*\s*([^\*]+?)\s*\*\s*([\s\S]*?)(?=(?:\*\s*[^\*]+?\s*\*\s*)|$)',
-            fix_text, flags=re.IGNORECASE
-        )
+            '''
+            # Resource and Argument
+            # Removed for better unification between other open-source tools, enable if necessary
+            resource = re.search(r"\* *Resource:\* *([^\n]+)", body)
+            argument = re.search(r"\* *Argument:\* *([^\n]+)", body)
+            '''
+            
+            # Code block(s)
+            code_blocks = re.findall(r"(\[[^*]*)", body, re.S)
+            code_final = [code.strip() for code in code_blocks]
 
-        for fw_name, block in framework_blocks:
-            fw_name = fw_name.strip()
-            block = block.strip()
-
-            # Resource / Module
-            res_m = re.search(r'^\s*(?:\*+\s*)?(?:Resource|Module)\s*:\s*(.+)', block, re.MULTILINE | re.IGNORECASE)
-            resource = res_m.group(1).strip() if res_m else None
-
-            # Arguments / Attribute
-            arg_m = re.search(r'^\s*(?:\*+\s*)?(?:Arguments|Attribute)\s*:\s*(.+)', block, re.MULTILINE | re.IGNORECASE)
-            arguments = arg_m.group(1).strip() if arg_m else None
-
-            # Find first code block
-            code_m = re.search(r'\[source[^\]]*\]\s*----\s*([\s\S]*?)\s*----', block)
-            if code_m:
-                code_example = code_m.group(1).strip()
-                code_start = code_m.start()
-                code_end = code_m.end()
-                # Solution is everything before code block, excluding Resource/Arguments lines
-                solution_text = block[:code_start]
-                if arg_m:
-                    # Need fix this part
-                    # remove Arguments/Attribute line
-                    solution_text = re.sub(
-                        r'^\s*(?:\*+\s*)?(?:Arguments|Attribute)\s*:\s*.+', '', solution_text,
-                        flags=re.MULTILINE|re.IGNORECASE
-                    )
-                if res_m:
-                    solution_text = re.sub(
-                        r'^\s*(?:\*+\s*)?(?:Resource|Module)\s*:\s*.+', '', solution_text,
-                        flags=re.MULTILINE|re.IGNORECASE
-                    )
-                solution = solution_text.strip() if solution_text.strip() else None
-                # Code description: any text after code block
-                code_description_text = block[code_end:].strip()
-                code_description = code_description_text if code_description_text else None
-            else:
-                # No code block: all remaining text is solution
-                solution = block.strip() if block.strip() else None
-                code_example = None
-                code_description = None
-
+            # Create row per framework
+            '''
+            # Removed for better unification between other open-source tools, enable if necessary
+            "Resource": resource.group(1) if resource else None,
+            "Argument": argument.group(1) if argument else None,
+            '''
             records.append({
                 "Open-source Tool": "Prisma",
-                "ID": clean(checkov_id),
+                "ID": clean(prisma_id),
+                "CheckovID": clean(checkov_id),
                 "Title": clean(title),
-                "Severity": clean(severity),
-                "Category": clean(subtype),
-                "Frameworks": clean(frameworks_full),
+                "Severity": severity_unify[clean(severity)] if clean(severity) in severity_unify.keys() else clean(severity),
+                "Subcategory": clean(subtype),
+                "IaC Framework": clean(framework),
                 "Description": clean(description),
                 "Query Document": clean(query_document),
-                "Example_Framework": clean(fw_name),
-                "Resource": clean(resource),
-                "Arguments": clean(arguments),
-                "Solution": clean(solution),
-                "Secure Code Example 1": clean(code_example),
-                "Code_description": clean(code_description)
+                "Insecure Code Example 1": json.dumps([code_final]) if len(code_final) != 0 else pd.NA
             })
-    else:
-        # No fix section
-        records.append({
-            "Open-source Tool": "Prisma",
-            "ID": clean(policy_id),
-            "Title": clean(title),
-            "Severity": clean(severity),
-            "Category": clean(subtype),
-            "Frameworks": clean(frameworks_full),
-            "Description": clean(description),
-            "Example_Framework": None,
-            "Resource": None,
-            "Arguments": None,
-            "Solution": None,
-            "Code_example": None,
-            "Code_description": None
-        })
 
     return pd.DataFrame(records)
 
@@ -174,10 +128,8 @@ def parse_policy_adoc(filepath):
     lines = text.splitlines()
     if len(lines) == 1 and lines[0].startswith("=="):
         return pd.DataFrame()
-    if "Prisma Cloud Policy ID" in text:   # Prisma/Checkov style
-        return parse_prisma_checkov(text)
     else:
-        return pd.DataFrame([{"raw_text": text}])
+        return parse_prisma_checkov(text)
     
 def get_prisma_pac(rootdir):
     """
@@ -193,7 +145,6 @@ def get_prisma_pac(rootdir):
         for f in files:
             if f.endswith(".adoc") and f != summary_file:
                 filepath = os.path.join(dirpath, f)
-                print(filepath)
                 parsed = parse_policy_adoc(filepath)
                 # parse_policy_adoc returns a DataFrame, extract dict(s)
                 if isinstance(parsed, pd.DataFrame):
@@ -207,7 +158,7 @@ def get_prisma_pac(rootdir):
 
         result = pd.DataFrame(detail_records)
 
-        # Add Provider + Category
+        # Add Category
         relpath = os.path.relpath(dirpath, rootdir)
         parts = relpath.split(os.sep)
         def clean_name(name):
@@ -217,18 +168,13 @@ def get_prisma_pac(rootdir):
 
         parent_folder_name = clean_name(parts[0]) if len(parts) > 0 else None
 
-        # Check if parent folder needs to use subfolder name as provider
+        # Check if parent folder needs to use subfolder name as Category
         if parent_folder_name in general_folder_names:
-            provider = clean_name(parts[1]) if len(parts) > 1 else None
-            result["Provider"] = provider
-            result["Category"] = provider
+            category = clean_name(parts[1]) if len(parts) > 1 else None
+            result["Category"] = id_to_provider[category] if category in id_to_provider.keys() else category 
         else:
-            # Map straight to provider
-            if parent_folder_name in id_to_provider.keys():
-                result["Provider"] = id_to_provider[parent_folder_name]
-            else:
-                result["Provider"] = parent_folder_name
-            result["Category"] = clean_name(parts[1]) if len(parts) > 1 else None
+            category = clean_name(parts[1]) if len(parts) > 1 else None
+            result["Category"] = id_to_provider[category] if category in id_to_provider.keys() else category
 
         all_records.append(result)
 
@@ -237,12 +183,13 @@ def get_prisma_pac(rootdir):
     else:
         return pd.DataFrame()
 
-
+'''
 # Use for single dataset clone unit testing
 if __name__ == "__main__":
     import sys
     import os
-    target_dir = os.path.abspath('C:\\Exception\\InProgress\\pac_extract\\src')
+    # Add target dir here
+    # target_dir = 
     sys.path.append(target_dir)
     from init_setup.setup_integrity import data_init, data_checker, create_ver_token
     from init_setup.setup_base import dir_init, dir_update, get_update_tool_list
@@ -256,3 +203,4 @@ if __name__ == "__main__":
     print(df.head())
     print(df.shape)
     df.to_csv("prisma.csv")
+'''

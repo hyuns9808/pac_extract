@@ -19,11 +19,11 @@ def parse_kics_md(filepath, subcategory="Unknown"):
     with open(filepath, "r", encoding="utf-8") as f:
         md_content = f.read()
 
-    # --- 1. Extract metadata ---
+    # 1. Extract metadata
     metadata_patterns = {
         "ID": r"\*\*Query id:\*\*\s*(.+)",
         "Title": r"\*\*Query name:\*\*\s*(.+)",
-        "IaC": r"\*\*Platform:\*\*\s*(.+)",
+        "IaC Framework": r"\*\*Platform:\*\*\s*(.+)",
         "Severity": r"\*\*Severity:\*\*.*?>(.+)<",
         "Category": r"\*\*Category:\*\*\s*(.+)",
         "CWE": r"\*\*CWE:\*\*.*?\'(.+)\'",
@@ -33,18 +33,18 @@ def parse_kics_md(filepath, subcategory="Unknown"):
     
     metadata = {key: re.search(pattern, md_content, re.MULTILINE).group(1).strip() 
             for key, pattern in metadata_patterns.items()}
-    # --- 2. Extract description ---
+    # 2. Extract description
     desc_match = re.search(r"### Description\s*(.+?)<", md_content, re.DOTALL)
     description = desc_match.group(1).strip() if desc_match else ""
 
-    # --- 3. Extract code samples ---
+    # 3. Extract code samples
     code_block_re = re.compile(
         r"(?P<fence>```|~~~)(?P<lang>[^\s`~]+)(?P<attrs>[^\n`]*)[ \t]*\n(?P<code>[\s\S]*?)\n?(?P=fence)",
         re.DOTALL
     )
 
 
-    # --- 4. Separate positive and negative examples ---
+    # 4. Separate positive and negative examples
     
     secure_code_blocks = []
     insecure_code_blocks = []
@@ -68,18 +68,17 @@ def parse_kics_md(filepath, subcategory="Unknown"):
         elif title and "Negative" in title:
             secure_code_blocks.append(code)
 
-    # --- 5. Build single-row DataFrame ---
-    # --- Build row with dynamic columns ---
+    # 5. Build single-row DataFrame, each row with dynamic columns
     row = {
         **metadata,
         "Subcategory": subcategory,
         "Description": description
     }
-    # add secure examples
+    # 6. Add secure examples
     for i, code in enumerate(secure_code_blocks, start=1):
         row[f"Secure Code Example {i}"] = code
 
-    # add insecure examples + line highlights
+    # 7. Add insecure examples + line highlights
     for i, (code, lines) in enumerate(zip(insecure_code_blocks, insecure_hl_blocks), start=1):
         row[f"Insecure Code Example {i}"] = code
         # serialize list so SQLite can handle it

@@ -63,7 +63,7 @@ def get_checkov_pac(file_path):
     result["ID"] = df["Id"]
     result["Title"] = df["Policy"]
     result["Description"] = pd.Series([pd.NA] * len(df))
-    result["IaC"] = df["IaC"]
+    result["IaC Framework"] = df["IaC"]
     result["Category"] = pd.Series([pd.NA] * len(df))
     name_ptn = r"([^_]+)_([^_]+)_([^_]+)"
     result["Provider"] = df["Id"].str.extract(name_ptn)[1].map(id_to_provider)
@@ -77,7 +77,8 @@ def get_checkov_pac(file_path):
 if __name__ == "__main__":
     import sys
     import os
-    target_dir = os.path.abspath('C:\Exception\InProgress\pac_extract\src')
+    # Add target dir here
+    # target_dir = 
     sys.path.append(target_dir)
     from init_setup.setup_integrity import data_init, data_checker, create_ver_token
     from init_setup.setup_base import dir_init, dir_update, get_update_tool_list

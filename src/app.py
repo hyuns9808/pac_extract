@@ -66,7 +66,8 @@ def app():
         | Tool       | Target | Notes |
         |--------------|----------|-------|
         | [Checkov](https://github.com/bridgecrewio/checkov)      | [Docs](https://github.com/bridgecrewio/checkov/tree/main/docs/5.Policy%20Index) | Imports PaCs from Checkov's **official documentation** within repo. |
-        | [KICS](https://github.com/Checkmarx/kics)        | [Docs](https://docs.kics.io/latest/queries/all-queries/)   | Downloads PaCs from KICS's **official documentation** URL. |
+        | [KICS](https://github.com/Checkmarx/kics)        | [Docs](https://github.com/Checkmarx/kics/tree/master/docs/queries)   | Imports PaCs from KICS **official documentation** within repo. |
+        | [Prisma Cloud Docs](https://github.com/hlxsites/prisma-cloud-docs)        | [Docs](https://github.com/hlxsites/prisma-cloud-docs/tree/main/docs/en/enterprise-edition/policy-reference)   | Imports PaCs from Prisma Cloud's **official documentation** within repo. |
         | [Terrascan](https://github.com/tenable/terrascan)    | [Files](https://github.com/tenable/terrascan/tree/master/pkg/policies/opa/rego) | Parses PaCs **directly from Terrascan's raw Pac files**. |
         | [Trivy](https://github.com/aquasecurity/trivy)   | [Files](https://github.com/aquasecurity/trivy-checks/tree/main/checks) | Parses PaCs **directly from Trivy's raw Pac files provided in separate repo**. |
 
@@ -259,6 +260,12 @@ def app():
                     """,
                     icon="ℹ️"
             )
+            for full_tool in full_tool_list:
+                if full_tool not in up_tool_list:
+                    tool_raw_path = os.path.join(pac_raw_dir, full_tool)
+                    head_file_path = os.path.join(tool_raw_path, full_tool_info[full_tool]["head_path"])
+                    tool_df = get_pac_of_tool(full_tool, head_file_path)
+                    master_df = pd.concat([master_df, tool_df], ignore_index=True)
             # REQUIRED: .csv file for master_df
             master_db_dir = os.path.join(pac_db_dir, "MASTER")
             if "csv" not in files_input:
@@ -367,11 +374,19 @@ def app():
 
             st.header("📋 Data Profiling Report")
             target_cols = master_df.columns.to_list()
+            # Remove columns with extremely long values
             no_profile_cols_ptn = re.compile(r"^(Secure|Insecure) Code (Example|Line) \d+$")
-            target_cols = [col for col in target_cols if not no_profile_cols_ptn.match(col)]
-            print(target_cols)
-            profile = ProfileReport(master_df, title="Master Data Profiling Report", explorative=True)
-            profile.config.interactions.targets = target_cols
+            profile_cols = [col for col in target_cols if not no_profile_cols_ptn.match(col)]
+            profile_cols.remove("Query Document")
+            profile_cols.remove("Related Document")
+            profile_cols.remove("CheckovID")
+            profile = ProfileReport(
+                master_df[profile_cols],
+                title="Master Data Profiling Report",
+                explorative=True
+            )
+            profile.config.interactions.targets = profile_cols
+
             
             # Custom CSS to widen the report container inside the iframe
             custom_css = """

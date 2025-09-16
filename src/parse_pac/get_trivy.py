@@ -124,7 +124,7 @@ def extract_fields(metadata, filepath):
         "ID": custom.get('id', ""),
         "Title": title,
         "Description": description,
-        "IaC": "Multiple",
+        "IaC Framework": "Multiple",
         "Category": np.nan,
         "Provider": id_to_provider[provider_value],
         "Severity": severity_unify[custom.get('severity', "")],
