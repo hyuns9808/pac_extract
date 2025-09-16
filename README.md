@@ -36,6 +36,8 @@ This app is created via **Python and Streamlit** for its core functionality and 
 To start, type in the following commands in order:
 
 ```bash
+# If you do not have Poetry, use pipx to install Poetry
+pipx install poetry
 # Clone and install with Poetry (recommended)
 git clone https://github.com/hyuns9808/pac_extract.git
 cd pac_extract
@@ -80,13 +82,14 @@ Open-source IaC scanners are powerful, but each has its own PaC library with dif
 ## 🖥️ Menus
 
 Within the sidebar, there are **four** menus:
-        
-| Menu | Icon | Description |
-|------|------|-------------|
-| **Home** | :house: | 🏃 Quick overview and essential info at a glance. |
-| **Download** | :arrow_down: | 📥 Download/update your raw PaC files and get most recent PaCs per tool <br> 🗂️ Save combined/individual PaC database as file(**CSV**, **JSON**, **SQL**, **XLSX**) |
-| **Search** | :mag: | 🕹️ Search PaCs with specific keywords or filtering out data <br> 🗂️ Save search/filtered results as a **CSV** or **XLSX** file for closer examination |
-| **Visualize** | :bar_chart: | 🗒️ Visualize statistics and details of the combined database|
+
+| Menu          | Icon         | Description                                                                                                                                                         |
+| ------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Home**      | :house:      | 🏃 Quick overview and essential info at a glance.                                                                                                                   |
+| **Download**  | :arrow_down: | 📥 Download/update your raw PaC files and get most recent PaCs per tool <br> 🗂️ Save combined/individual PaC database as file(**CSV**, **JSON**, **SQL**, **XLSX**) |
+| **Search**    | :mag:        | 🕹️ Search PaCs with specific keywords or filtering out data <br> 🗂️ Save search/filtered results as a **CSV** or **XLSX** file for closer examination               |
+| **Visualize** | :bar_chart:  | 🗒️ Visualize statistics and details of the combined database                                                                                                        |
+
 ---
 
 ## 📥 Policy Sources (Open‑Source Collectors)
@@ -94,15 +97,16 @@ Within the sidebar, there are **four** menus:
 PaC_Extract **ingests policies** from popular open‑source IaC scanners, normalizes them, and creates a combined database via **pandas** which can be saved in various file formats.
 
 PaC_Extract gets PaCs from open-source tools from two methods:
+
 1. **Parsing information from tool's official documents**: By using a custom parser, directly get relative info from the official policy documents of each tools and create a database. Noted via **"Target"** category as **"Docs"** in the table below. This option is chosen when the tool's policies are written in custom format and thus for direct parsing from files requires excessive resources.
 2. **Parsing information directly from tool's PaC files**: By using a custom parser, directly parse info from each PaC files within repo. Noted via **"Target"** category as **"Files"** in the table below. This option is chosen when the tool does not provide an exhaustive document on its polices. This tends to be more accurate than parsing information from the official document files, as sometimes the documents may be outdated.
 
-| Tool       | Target | Notes |
-|--------------|----------|-------|
-| [Checkov](https://github.com/bridgecrewio/checkov)      | [Docs](https://github.com/bridgecrewio/checkov/tree/main/docs/5.Policy%20Index) | Imports PaCs from Checkov's **official documentation** within repo. |
-| [KICS](https://github.com/Checkmarx/kics)        | [Docs](https://docs.kics.io/latest/queries/all-queries/)   | Downloads PaCs from KICS's **official documentation** URL. |
-| [Terrascan](https://github.com/tenable/terrascan)    | [Files](https://github.com/tenable/terrascan/tree/master/pkg/policies/opa/rego) | Parses PaCs **directly from Terrascan's raw Pac files**. |
-| [Trivy](https://github.com/aquasecurity/trivy)   | [Files](https://github.com/aquasecurity/trivy-checks/tree/main/checks) | Parses PaCs **directly from Trivy's raw Pac files provided in separate repo**. |
+| Tool                                               | Target                                                                          | Notes                                                                          |
+| -------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [Checkov](https://github.com/bridgecrewio/checkov) | [Docs](https://github.com/bridgecrewio/checkov/tree/main/docs/5.Policy%20Index) | Imports PaCs from Checkov's **official documentation** within repo.            |
+| [KICS](https://github.com/Checkmarx/kics)          | [Docs](https://docs.kics.io/latest/queries/all-queries/)                        | Downloads PaCs from KICS's **official documentation** URL.                     |
+| [Terrascan](https://github.com/tenable/terrascan)  | [Files](https://github.com/tenable/terrascan/tree/master/pkg/policies/opa/rego) | Parses PaCs **directly from Terrascan's raw Pac files**.                       |
+| [Trivy](https://github.com/aquasecurity/trivy)     | [Files](https://github.com/aquasecurity/trivy-checks/tree/main/checks)          | Parses PaCs **directly from Trivy's raw Pac files provided in separate repo**. |
 
 Both combined and individual PaC databases for each tool is downloaded in the **"./pac_database"** directory.
 
@@ -112,10 +116,10 @@ Both combined and individual PaC databases for each tool is downloaded in the **
 
 ## 🗺️ Roadmap
 
-- ✅ Download all PaC information from Checkov, KICS, Terraform, and Trivy  
+- ✅ Download all PaC information from Checkov, KICS, Terraform, and Trivy
 - ✅ Aggregate policies from open‑source IaC scanners into unified PaC library
 - ✅ Basic search functionality and pandas profile view
-- 📊 Better visualization support 
+- 📊 Better visualization support
 - 🗒️ Manually adding info for each NaN values within the DB which are not provided
 - 🧬 Manual parsing of Checkov/KICS instead of using official documentation
 
