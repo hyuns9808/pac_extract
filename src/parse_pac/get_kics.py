@@ -119,6 +119,7 @@ def get_kics_pac(rootdir):
                 all_records.append(file_result)
     return pd.concat(all_records, ignore_index=True) if all_records else pd.DataFrame()
 
+'''
 # Use for single dataset clone unit testing
 if __name__ == "__main__":
     import sys
@@ -137,4 +138,4 @@ if __name__ == "__main__":
     print(df.head())
     print(df.shape)
     df.to_csv("kics.csv")
-
+'''
