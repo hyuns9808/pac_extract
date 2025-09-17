@@ -1,6 +1,6 @@
 [project]
 name = "pac-extract"
-version = "1.0.0"
+version = "1.2.0"
 description = "Program that extracts PaC(Policy as Code) files from the most popular open-source IaC(Infrastructure as Code) scanning tools. Used to guide DevOps engineers on which policies are standardized and how they are written."
 authors = [
     {name = "Calvin(Hyunsoo) Yang | 양현수"}
