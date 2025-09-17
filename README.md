@@ -101,12 +101,15 @@ PaC_Extract gets PaCs from open-source tools from two methods:
 1. **Parsing information from tool's official documents**: By using a custom parser, directly get relative info from the official policy documents of each tools and create a database. Noted via **"Target"** category as **"Docs"** in the table below. This option is chosen when the tool's policies are written in custom format and thus for direct parsing from files requires excessive resources.
 2. **Parsing information directly from tool's PaC files**: By using a custom parser, directly parse info from each PaC files within repo. Noted via **"Target"** category as **"Files"** in the table below. This option is chosen when the tool does not provide an exhaustive document on its polices. This tends to be more accurate than parsing information from the official document files, as sometimes the documents may be outdated.
 
-| Tool                                               | Target                                                                          | Notes                                                                          |
-| -------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| [Checkov](https://github.com/bridgecrewio/checkov) | [Docs](https://github.com/bridgecrewio/checkov/tree/main/docs/5.Policy%20Index) | Imports PaCs from Checkov's **official documentation** within repo.            |
-| [KICS](https://github.com/Checkmarx/kics)          | [Docs](https://docs.kics.io/latest/queries/all-queries/)                        | Downloads PaCs from KICS's **official documentation** URL.                     |
-| [Terrascan](https://github.com/tenable/terrascan)  | [Files](https://github.com/tenable/terrascan/tree/master/pkg/policies/opa/rego) | Parses PaCs **directly from Terrascan's raw Pac files**.                       |
-| [Trivy](https://github.com/aquasecurity/trivy)     | [Files](https://github.com/aquasecurity/trivy-checks/tree/main/checks)          | Parses PaCs **directly from Trivy's raw Pac files provided in separate repo**. |
+Both modes are supported. However, in order to parse PaCs as accurately as possible, all tools are currently implemented via parsing information directly from tool's PaC files at GitHub.
+
+| Tool                                                               | Target                                                                                                      | Notes                                                                          |
+| ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| [Checkov](https://github.com/bridgecrewio/checkov)                 | [Docs](https://github.com/bridgecrewio/checkov/tree/main/docs/5.Policy%20Index)                             | Imports PaCs from Checkov's **official documentation** within repo.            |
+| [KICS](https://github.com/Checkmarx/kics)                          | [Docs](https://github.com/Checkmarx/kics/tree/master/docs/queries)                                          | Imports PaCs from KICS **official documentation** within repo.                 |
+| [Prisma Cloud Docs](https://github.com/hlxsites/prisma-cloud-docs) | [Docs](https://github.com/hlxsites/prisma-cloud-docs/tree/main/docs/en/enterprise-edition/policy-reference) | Imports PaCs from Prisma Cloud's **official documentation** within repo.       |
+| [Terrascan](https://github.com/tenable/terrascan)                  | [Files](https://github.com/tenable/terrascan/tree/master/pkg/policies/opa/rego)                             | Parses PaCs **directly from Terrascan's raw Pac files**.                       |
+| [Trivy](https://github.com/aquasecurity/trivy)                     | [Files](https://github.com/aquasecurity/trivy-checks/tree/main/checks)                                      | Parses PaCs **directly from Trivy's raw Pac files provided in separate repo**. |
 
 Both combined and individual PaC databases for each tool is downloaded in the **"./pac_database"** directory.
 
