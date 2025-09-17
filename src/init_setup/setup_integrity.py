@@ -83,9 +83,9 @@ def data_checker(project_root, data_dir_path):
 def create_ver_token(data_dir_path, version_info):
     '''Creates '.version_token.flag' file based on 'version_info.json' file'''
     ver_token_path = os.path.join(data_dir_path, f".version_token.flag")
-    line_0 = f"Version: {version_info["version"]}\n"
-    line_1 = f"Date: {version_info["date"]}\n"
-    line_2 = f"Tool list: {json.dumps(list(version_info["tool_info"].keys()))}"
+    line_0 = f"Version: {version_info['version']}\n"
+    line_1 = f"Date: {version_info['date']}\n"
+    line_2 = f"Tool list: {json.dumps(list(version_info['tool_info'].keys()))}"
     with open(ver_token_path, 'w') as f:
         f.writelines([line_0, line_1, line_2])
         
